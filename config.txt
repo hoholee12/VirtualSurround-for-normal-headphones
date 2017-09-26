@@ -104,7 +104,7 @@ Preamp: 0dB
 
 
 #LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L1=L RL1=RL R1=R RR1=RR L11=R RL11=RR R11=L RR11=RL #LR11 start with source echo
+Copy: L1=L RL1=RL R1=R RR1=RR L11=L RL11=RL R11=R RR11=RR #LR11 start with source echo
 Channel: L1 RL1 R1 RR1
 GraphicEQ: 440 0; 441 -57
 Delay: 1ms
