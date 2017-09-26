@@ -5,11 +5,6 @@ Preamp: 0dB
 
 #left + right mix to center
 
-#headphone - disable 'Loudness Equalization' on sound properties first!
-Device: 헤드폰
-Preamp: 0dB
-
-
 #LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L1=L R1=R L11=L R11=R #LR11 start with source echo
 Channel: L1 R1
@@ -92,99 +87,12 @@ Copy: R=R10+R9+L0+R0+R6+R17
 
 Channel: all
 
-#volume boost
+#headphone - disable 'Loudness Equalization' on sound properties first!
+Device: 헤드폰
 Channel: L R
-
 
 #quadrophonic speakers - turn up 'Loudness Equalization' on sound properties to SHORTEST release time first!
 Device: 스피커
-Preamp: 0dB
-
-
-#LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L1=L RL1=RL R1=R RR1=RR L11=L RL11=RL R11=R RR11=RR #LR11 start with source echo
-Channel: L1 RL1 R1 RR1
-GraphicEQ: 440 0; 441 -57
-Delay: 1ms
-Preamp: 0dB
-Channel: L11 RL11 R11 RR11
-GraphicEQ: 440 -57; 441 0
-Delay: 1ms			#HAS TO START WITH 1ms FOR NULLIFYING ECHO
-Preamp: -3dB
-
-Copy: L2=L1 RL2=RL1 R2=R1 RR2=RR1 L12=R11 RL12=RR11 R12=L11 RR12=RL11
-Channel: L2 RL2 R2 RR2
-Delay: 1ms
-Preamp: 0dB
-Channel: L12 RL12 R12 RR12
-Delay: 4ms			#second best tweak, rest below is for ambience
-Preamp: -6dB
-
-Copy: L3=L2 RL3=RL2 R3=R2 RR3=RR2 L13=R12 RL13=RR12 R13=L12 RR13=RL12
-Channel: L3 RL3 R3 RR3
-Delay: 1ms
-Preamp: 0dB
-Channel: L13 RL13 R13 RR13
-Delay: 7ms
-Preamp: -9dB
-
-Copy: L4=L3 RL4=RL3 R4=R3 RR4=RR3 L14=R13 RL14=RR13 R14=L13 RR14=RL13
-Channel: L4 RL4 R4 RR4
-Delay: 1ms
-Preamp: 0dB
-Channel: L14 RL14 R14 RR14
-Delay: 10ms
-Preamp: -12dB
-
-Copy: L5=L4 RL5=RL4 R5=R4 RR5=RR4 L15=R14 RL15=RR14 R15=L14 RR15=RL14
-Channel: L5 RL5 R5 RR5
-Delay: 1ms
-Preamp: 0dB
-Channel: L15 RL15 R15 RR15
-Delay: 13ms
-Preamp: -15dB
-
-Copy: L16=R15 RL16=RR15 R16=L15 RR16=RL15
-Channel: L16 RL16 R16 RR16
-Delay: 16ms
-Preamp: -18dB
-
-#LR0,9,11 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#woofer
-Copy: L6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5 RL6=RL1+RL2+RL3+RL4+RL5+RR1+RR2+RR3+RR4+RR5 R6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5 LR6=RL1+RL2+RL3+RL4+RL5+RR1+RR2+RR3+RR4+RR5
-Channel: L6 RL6 R6 RR6
-Preamp: -12dB		#set -57 to kill woofer
-#reverb
-Copy: L17=L11+L12+L13+L14+L15+L16 RL17=RL11+RL12+RL13+RL14+RL15+RL16 R17=R11+R12+R13+R14+R15+R16 RR17=RR11+RR12+RR13+RR14+RR15+RR16
-Channel: L17 RL17 R17 RR17
-Preamp: 0dB		#set -57 to kill reverb
-
-#mixed echo
-Copy: L0=L RL0=RL R0=R RR0=RR
-Channel: L0 RL0 R0 RR0
-Delay: 0ms
-Preamp: -57dB
-
-#per speaker echo
-Copy: L9=L RL9=RL R9=R RR9=RR
-Channel: L9 RL9 R9 RR9
-Delay: 1ms
-Preamp: -57dB
-
-#per speaker source volume
-Copy: L10=L RL10=RL R10=R RR10=RR
-Channel: L10 RL10 R10 RR10
-GraphicEQ: 1 -57; 440 0; 441 0; 44100 -57
-Preamp: -6dB
-
-#Copy: L=L10+L9+R0+L0+L6+L17 RL=RL10+RL9+RR0+RL0+RL6+RL17
-#Copy: R=R10+R9+L0+R0+R6+R17 RR=RR10+RR9+RL0+RR0+RR6+RR17
-
-Channel: all
-
-#volume boost
-#bass L R tweeter RL RR
-Channel: L RL R RR
 GraphicEQ: 160 0; 161 10
 
 
