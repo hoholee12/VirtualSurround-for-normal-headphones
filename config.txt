@@ -87,7 +87,7 @@ Copy: R=R10+R9+L0+R0+R6+R17
 
 Channel: all
 
-#headphone - disable 'Loudness Equalization' on sound properties first!
+#headphone - turn up 'Loudness Equalization' on sound properties to SHORTEST release time first!
 Device: 헤드폰
 Channel: L R
 
