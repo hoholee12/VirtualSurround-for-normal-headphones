@@ -87,11 +87,11 @@ Copy: R=R10+R9+L0+R0+R6+R17
 
 Channel: all
 
-#headphone - turn up 'Loudness Equalization' on sound properties to SHORTEST release time first!
+#headphone - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 헤드폰
 Channel: L R
 
-#quadrophonic speakers - turn up 'Loudness Equalization' on sound properties to SHORTEST release time first!
+#quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
 GraphicEQ: 160 0; 161 10
 
