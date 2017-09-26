@@ -11,7 +11,7 @@ Preamp: 0dB
 
 
 #LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L1=L R1=R L11=R R11=L
+Copy: L1=L R1=R L11=L R11=R #LR11 start with source echo
 Channel: L1 R1
 GraphicEQ: 440 0; 441 -57
 Delay: 1ms
@@ -87,9 +87,8 @@ Channel: L10 R10
 GraphicEQ: 1 -57; 440 0; 441 0; 44100 -57
 Preamp: 0dB
 
-#LR17 MUST BE SWAPPED
-Copy: L=L10+L9+R0+L0+L6+R17
-Copy: R=R10+R9+L0+R0+R6+L17
+Copy: L=L10+L9+R0+L0+L6+L17
+Copy: R=R10+R9+L0+R0+R6+R17
 
 Channel: all
 
@@ -105,7 +104,7 @@ Preamp: 0dB
 
 
 #LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L1=L RL1=RL R1=R RR1=RR L11=R RL11=RR R11=L RR11=RL
+Copy: L1=L RL1=RL R1=R RR1=RR L11=R RL11=RR R11=L RR11=RL #LR11 start with source echo
 Channel: L1 RL1 R1 RR1
 GraphicEQ: 440 0; 441 -57
 Delay: 1ms
@@ -180,9 +179,8 @@ Channel: L10 RL10 R10 RR10
 GraphicEQ: 1 -57; 440 0; 441 0; 44100 -57
 Preamp: 0dB
 
-#LR17 MUST BE SWAPPED
-Copy: L=L10+L9+R0+L0+L6+R17 RL=RL10+RL9+RR0+RL0+RL6+RR17
-Copy: R=R10+R9+L0+R0+R6+L17 RR=RR10+RR9+RL0+RR0+RR6+RL17
+Copy: L=L10+L9+R0+L0+L6+L17 RL=RL10+RL9+RR0+RL0+RL6+RL17
+Copy: R=R10+R9+L0+R0+R6+R17 RR=RR10+RR9+RL0+RR0+RR6+RR17
 
 Channel: all
 
