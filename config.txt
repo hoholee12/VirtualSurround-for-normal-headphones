@@ -58,11 +58,11 @@ Preamp: -18dB
 #woofer
 Copy: L6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5 R6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5
 Channel: L6 R6
-Preamp: -12dB		#set -57 to kill woofer
+Preamp: -6dB		#set -57 to kill woofer
 #reverb
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
 Channel: L17 R17
-Preamp: 0dB		#set -57 to kill reverb
+Preamp: 6dB		#set -57 to kill reverb
 
 #mixed echo
 Copy: L0=L R0=R
