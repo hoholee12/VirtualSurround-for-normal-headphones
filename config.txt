@@ -62,7 +62,7 @@ Preamp: -6dB		#set -57 to kill woofer
 #reverb
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
 Channel: L17 R17
-Preamp: 6dB		#set -57 to kill reverb
+Preamp: 0dB		#set -57 to kill reverb
 
 #mixed echo
 Copy: L0=L R0=R
@@ -93,6 +93,7 @@ Channel: L R
 
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
-GraphicEQ: 160 0; 161 10
+#Preamp: 12dB
+GraphicEQ: 160 6; 161 12
 
 
