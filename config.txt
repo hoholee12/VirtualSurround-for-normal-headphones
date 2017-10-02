@@ -8,11 +8,11 @@ Preamp: 0dB
 #LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L1=L R1=R L11=L R11=R #LR11 start with source echo
 Channel: L1 R1
-GraphicEQ: 440 0; 441 -57
+GraphicEQ: 1 0; 440 0; 441 -57; 44100 -57
 Delay: 1ms
 Preamp: 0dB
 Channel: L11 R11
-GraphicEQ: 440 -57; 441 0
+GraphicEQ: 1 -57; 440 -57; 441 0; 44100 0
 Delay: 1ms			#HAS TO START WITH 1ms FOR NULLIFYING ECHO
 Preamp: -3dB
 
@@ -94,6 +94,5 @@ Channel: L R
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
 #Preamp: 12dB
-GraphicEQ: 160 6; 161 12
 
 
