@@ -86,6 +86,6 @@ Channel: L R
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
 #Preamp: 12dB
-GraphicEQ: 1 -57; 160 6; 441 6; 44100 12
+GraphicEQ: 1 -57; 160 12; 441 12; 44100 12
 
 
