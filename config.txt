@@ -29,29 +29,29 @@ Channel: L3 R3
 Delay: 1ms
 Preamp: 0dB
 Channel: L13 R13
-Delay: 7ms
-Preamp: -9dB
+Delay: 10ms
+Preamp: -6dB
 
 Copy: L4=L3 R4=R3 L14=R13 R14=L13
 Channel: L4 R4
 Delay: 1ms
 Preamp: 0dB
 Channel: L14 R14
-Delay: 10ms
-Preamp: -12dB
+Delay: 16ms
+Preamp: -9dB
 
 Copy: L5=L4 R5=R4 L15=R14 R15=L14
 Channel: L5 R5
 Delay: 1ms
 Preamp: 0dB
 Channel: L15 R15
-Delay: 13ms
-Preamp: -15dB
+Delay: 25ms
+Preamp: -9dB
 
 Copy: L16=R15 R16=L15
 Channel: L16 R16
-Delay: 16ms
-Preamp: -18dB
+Delay: 34ms
+Preamp: -9dB
 
 
 #LR0,9,11 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
