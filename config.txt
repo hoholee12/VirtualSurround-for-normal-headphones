@@ -40,27 +40,19 @@ Channel: L14 R14
 Delay: 16ms
 Preamp: -12dB
 
-Copy: L5=L4 R5=R4 L15=R14 R15=L14
+Copy: L5=L4 R5=R4
 Channel: L5 R5
 Delay: 1ms
 Preamp: 0dB
-Channel: L15 R15
-Delay: 25ms
-Preamp: -15dB
-
-Copy: L16=R15 R16=L15
-Channel: L16 R16
-Delay: 34ms
-Preamp: -18dB
 
 
 #LR0,9,11 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #woofer
 Copy: L6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5 R6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5
 Channel: L6 R6
-Preamp: -6dB		#set -57 to kill woofer
+Preamp: -12dB		#set -57 to kill woofer
 #reverb
-Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
+Copy: L17=L11+L12+L13+L14 R17=R11+R12+R13+R14
 Channel: L17 R17
 Preamp: 0dB		#set -57 to kill reverb
 
@@ -80,7 +72,7 @@ Preamp: -57dB
 Copy: L10=L R10=R
 Channel: L10 R10
 GraphicEQ: 1 -57; 440 0; 441 0; 44100 -57
-Preamp: -6dB
+Preamp: -12dB
 
 Copy: L=L10+L9+R0+L0+L6+L17
 Copy: R=R10+R9+L0+R0+R6+R17
