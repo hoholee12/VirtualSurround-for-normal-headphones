@@ -54,7 +54,7 @@ Preamp: -12dB		#set -57 to kill woofer
 #reverb
 Copy: L17=L11+L12+L13+L14 R17=R11+R12+R13+R14
 Channel: L17 R17
-Preamp: 3dB		#set -57 to kill reverb
+Preamp: 6dB		#set -57 to kill reverb
 
 #mixed echo
 Copy: L0=L R0=R
@@ -79,7 +79,7 @@ Copy: R=R10+R9+L0+R0+R6+R17
 
 Channel: all
 
-#headphone - turn on 'Loudness Equalization' on sound properties to default release time first!
+#headphone - turn OFF 'Loudness Equalization' on sound properties.
 Device: 헤드폰
 Channel: L R
 
