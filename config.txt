@@ -1,81 +1,56 @@
 
-#audio settings for MF840KH/A (Cirrus Logic CS4208 (AB 123))
+#ECHO 4 ???
 
 Preamp: 0dB
 
 #left + right mix to center
 
-#LR1~5 BASS, LR11~16 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L1=L R1=R L11=L R11=R #LR11 start with source echo
-Channel: L1 R1
+#LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#BASS
+Copy: L3=L R3=R
+Channel: L3 R3
 GraphicEQ: 1 0; 440 0; 441 -57; 44100 -57
-Delay: 1ms
-Preamp: 0dB
-Channel: L11 R11
-GraphicEQ: 1 -57; 440 -57; 441 0; 44100 0
-Delay: 1ms			#HAS TO START WITH 1ms FOR NULLIFYING ECHO
-Preamp: -3dB
+Preamp: 6dB
 
-Copy: L2=L1 R2=R1 L12=R11 R12=L11
+#ECHO
+Copy: L1=L L2=L R1=R R2=R #LR1 start with source
+Channel: L1 L2 R1 R2
+GraphicEQ: 1 -57; 440 -57; 441 0; 44100 0
+
 Channel: L2 R2
-Delay: 1ms
-Preamp: 0dB
+Delay: 5ms
+Preamp: -6dB
+Copy: L7=L1+L2 R7=R1+R2
+
+#LR11~14 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Copy: L11=L7 R11=R7 #LR11 start with source
+Channel: L11 R11
+Delay: 0ms
+Preamp: -0dB
+
+Copy: L12=R11 R12=L11
 Channel: L12 R12
-Delay: 4ms			#second best tweak, rest below is for ambience
+Delay: 10ms
 Preamp: -6dB
 
-Copy: L3=L2 R3=R2 L13=R12 R13=L12
-Channel: L3 R3
-Delay: 1ms
-Preamp: 0dB
+Copy: L13=R12 R13=L12
 Channel: L13 R13
-Delay: 10ms
-Preamp: -9dB
+Delay: 20ms
+Preamp: -6dB
 
-Copy: L4=L3 R4=R3 L14=R13 R14=L13
-Channel: L4 R4
-Delay: 1ms
-Preamp: 0dB
+Copy: L14=R13 R14=L13
 Channel: L14 R14
-Delay: 16ms
-Preamp: -12dB
+Delay: 40ms
+Preamp: -6dB
 
-Copy: L5=L4 R5=R4
-Channel: L5 R5
-Delay: 1ms
-Preamp: 0dB
-
-
-#LR0,9,11 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#woofer
-Copy: L6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5 R6=L1+L2+L3+L4+L5+R1+R2+R3+R4+R5
-Channel: L6 R6
-Preamp: -12dB		#set -57 to kill woofer
-#reverb
+#mixer
 Copy: L17=L11+L12+L13+L14 R17=R11+R12+R13+R14
 Channel: L17 R17
-Preamp: 6dB		#set -57 to kill reverb
+Preamp: 0dB		#set -57 to kill reverb
 
-#mixed echo
-Copy: L0=L R0=R
-Channel: L0 R0
-Delay: 0ms
-Preamp: -57dB
-
-#per speaker echo
-Copy: L9=L R9=R
-Channel: L9 R9
-Delay: 1ms
-Preamp: -57dB
-
-#per speaker source volume
-Copy: L10=L R10=R
-Channel: L10 R10
-GraphicEQ: 1 -57; 440 0; 441 0; 44100 -57
-Preamp: -12dB
-
-Copy: L=L10+L9+R0+L0+L6+L17
-Copy: R=R10+R9+L0+R0+R6+R17
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#add hash marks below two lines to temporarily disable effect
+Copy: L=L17+L3 R=R17+R3
 
 Channel: all
 
@@ -86,6 +61,6 @@ Channel: L R
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
 #Preamp: 12dB
-GraphicEQ: 1 -57; 160 12; 441 12; 44100 12
+GraphicEQ: 1 -57; 161 12; 441 12; 44100 12
 
 
