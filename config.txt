@@ -6,17 +6,7 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#BASS
-Copy: L3=L R3=R
-Channel: L3 R3
-GraphicEQ: 1 0; 400 0; 401 -57; 44100 -57
-Preamp: 0dB
-
-#ECHO
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
-Channel: L1 L2 R1 R2
-GraphicEQ: 1 -57; 400 -57; 401 0; 44100 0
-
 Channel: L2 R2
 Delay: 5ms
 Preamp: -57dB
@@ -34,25 +24,25 @@ Preamp: -0dB
 
 Copy: L12=R11 R12=L11
 Channel: L12 R12
-GraphicEQ: 1 0; 40000 0; 40001 -57; 44100 -57
+GraphicEQ: 1 -57; 25 -57; 26 0; 40000 0; 40001 -57; 44100 -57
 Delay: 10ms
 Preamp: -6dB
 
 Copy: L13=R12 R13=L12
 Channel: L13 R13
-GraphicEQ: 1 0; 16000 0; 16001 -57; 44100 -57
+GraphicEQ: 1 -57; 63 -57; 64 0; 16000 0; 16001 -57; 44100 -57
 Delay: 20ms
 Preamp: -6dB
 
 Copy: L14=R13 R14=L13
 Channel: L14 R14
-GraphicEQ: 1 0; 6300 0; 6301 -57; 44100 -57
+GraphicEQ: 1 -57; 160 -57; 161 0; 6300 0; 6301 -57; 44100 -57
 Delay: 40ms
 Preamp: -6dB
 
 Copy: L15=R14 R15=L14
 Channel: L15 R15
-GraphicEQ: 1 0; 2500 0; 2501 -57; 44100 -57
+GraphicEQ: 1 -57; 400 -57; 401 0; 2500 0; 2501 -57; 44100 -57
 Delay: 80ms
 Preamp: -6dB
 
@@ -63,7 +53,7 @@ Copy: L17=L11+L12+L13+L14+L15 R17=R11+R12+R13+R14+R15
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #add hash marks below two lines to temporarily disable effect
-Copy: L=L17+L3 R=R17+R3
+Copy: L=L17 R=R17
 
 Channel: all
 
