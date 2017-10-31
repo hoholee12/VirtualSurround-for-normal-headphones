@@ -6,14 +6,18 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
+
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
 Channel: L2 R2
 Delay: 5ms
+#Preamp: -6dB
 Preamp: -57dB
 Copy: L7=L1+L2 R7=R1+R2
 
 #left right delay
 Channel: L7
+#Delay: 0ms
 Delay: 5ms
 
 #LR11~15 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
