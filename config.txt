@@ -6,9 +6,11 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#bass
 Copy: L3=L R3=R
 Channel: L3 R3
 GraphicEQ: 1 0; 160 0; 161 -57; 44100 -57
+Preamp: -6dB
 
 #EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
 
