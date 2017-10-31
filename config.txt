@@ -6,6 +6,10 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Copy: L3=L R3=R
+Channel: L3 R3
+GraphicEQ: 1 0; 160 0; 161 -57; 44100 -57
+
 #EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
 
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
@@ -57,7 +61,7 @@ Copy: L17=L11+L12+L13+L14+L15 R17=R11+R12+R13+R14+R15
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #add hash marks below two lines to temporarily disable effect
-Copy: L=L17 R=R17
+Copy: L=L17+L3 R=R17+R3
 
 Channel: all
 
