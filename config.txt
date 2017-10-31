@@ -6,14 +6,18 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
+
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
 Channel: L2 R2
 Delay: 5ms
+#Preamp: -6dB
 Preamp: -57dB
 Copy: L7=L1+L2 R7=R1+R2
 
 #left right delay
 Channel: L7
+#Delay: 0ms
 Delay: 5ms
 
 #LR11~15 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -24,25 +28,25 @@ Preamp: -0dB
 
 Copy: L12=R11 R12=L11
 Channel: L12 R12
-GraphicEQ: 1 -57; 25 -57; 26 0; 40000 0; 40001 -57; 44100 -57
+GraphicEQ: 1 -57; 25 -57; 26 0; 16000 0; 16001 -57; 40000 -57
 Delay: 10ms
 Preamp: -6dB
 
 Copy: L13=R12 R13=L12
 Channel: L13 R13
-GraphicEQ: 1 -57; 63 -57; 64 0; 16000 0; 16001 -57; 44100 -57
+GraphicEQ: 1 -57; 63 -57; 64 0; 6300 0; 6301 -57; 40000 -57
 Delay: 20ms
 Preamp: -6dB
 
 Copy: L14=R13 R14=L13
 Channel: L14 R14
-GraphicEQ: 1 -57; 160 -57; 161 0; 6300 0; 6301 -57; 44100 -57
+GraphicEQ: 1 -57; 160 -57; 161 0; 2500 0; 2501 -57; 40000 -57
 Delay: 40ms
 Preamp: -6dB
 
 Copy: L15=R14 R15=L14
 Channel: L15 R15
-GraphicEQ: 1 -57; 400 -57; 401 0; 2500 0; 2501 -57; 44100 -57
+GraphicEQ: 1 -57; 400 -57; 401 0; 1000 0; 1001 -57; 40000 -57
 Delay: 80ms
 Preamp: -6dB
 
@@ -63,6 +67,6 @@ Channel: L R
 
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
-GraphicEQ: 1 -57; 160 -57; 161 12; 44100 12
+GraphicEQ: 1 -57; 160 -57; 161 12; 40000 12
 
 
