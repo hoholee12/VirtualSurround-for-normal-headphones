@@ -6,11 +6,11 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#bass
+#lower speaker volume
 Copy: L3=L R3=R
 Channel: L3 R3
-GraphicEQ: 1 0; 160 0; 161 -57; 44100 -57
-Preamp: -0dB
+GraphicEQ: 1 0; 400 0; 401 -57; 44100 -57
+Preamp: 6dB		#set -57 to kill bass
 
 #EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
 
@@ -29,36 +29,37 @@ Delay: 5ms
 #LR11~15 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L11=L7 R11=R7 #LR11 start with source
 Channel: L11 R11
+GraphicEQ: 1 -57; 400 -57; 401 0; 44100 0
 Delay: 0ms
 Preamp: -0dB
 
 Copy: L12=R11 R12=L11
 Channel: L12 R12
-GraphicEQ: 1 -57; 25 -57; 26 0; 40000 0; 40001 -57; 44100 -57
+GraphicEQ: 1 0; 40000 0; 40001 -57; 44100 -57
 Delay: 10ms
 Preamp: -6dB
 
 Copy: L13=R12 R13=L12
 Channel: L13 R13
-GraphicEQ: 1 -57; 63 -57; 64 0; 16000 0; 16001 -57; 44100 -57
+GraphicEQ: 1 0; 16000 0; 16001 -57; 44100 -57
 Delay: 20ms
 Preamp: -6dB
 
 Copy: L14=R13 R14=L13
 Channel: L14 R14
-GraphicEQ: 1 -57; 160 -57; 161 0; 6300 0; 6301 -57; 44100 -57
+GraphicEQ: 1 0; 6300 0; 6301 -57; 44100 -57
 Delay: 40ms
 Preamp: -6dB
 
 Copy: L15=R14 R15=L14
 Channel: L15 R15
-GraphicEQ: 1 -57; 400 -57; 401 0; 2500 0; 2501 -57; 44100 -57
+GraphicEQ: 1 0; 2500 0; 2501 -57; 44100 -57
 Delay: 80ms
 Preamp: -6dB
 
-#mixer
+#upper speaker volume
 Channel: L12 L13 L14 L15 R12 R13 R14 R15
-Preamp: 0dB		#set -57 to kill reverb
+Preamp: -0dB		#set -57 to kill reverb
 Copy: L17=L11+L12+L13+L14+L15 R17=R11+R12+R13+R14+R15
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
