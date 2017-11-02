@@ -6,65 +6,89 @@ Preamp: 0dB
 #left + right mix to center
 
 #LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#lower speaker volume
-Copy: L3=L R3=R
-Channel: L3 R3
-GraphicEQ: 1 0; 400 0; 401 -57; 44100 -57
-Preamp: 6dB		#set -57 to kill bass
-
-#EITHER use echo: -6dB 0ms OR use delay: -57dB 5ms
-
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
 Channel: L2 R2
 Delay: 5ms
-#Preamp: -6dB
 Preamp: -57dB
 Copy: L7=L1+L2 R7=R1+R2
 
 #left right delay
 Channel: L7
-#Delay: 0ms
-Delay: 5ms
+Delay: 0ms
 
 #LR11~15 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L11=L7 R11=R7 #LR11 start with source
+Copy: L1=L R1=R L11=L7 R11=R7 #LR11 start with source
+Channel: L1 R1
+GraphicEQ: 1 0; 400 0; 401 -57; 44100 -57
+Delay: 0ms
+Preamp: -0dB
 Channel: L11 R11
 GraphicEQ: 1 -57; 400 -57; 401 0; 44100 0
 Delay: 0ms
 Preamp: -0dB
 
-Copy: L12=R11 R12=L11
+Copy: L2=R1 R2=L1 L12=R11 R12=L11
+Channel: L2 R2
+Delay: 10ms
+Preamp: -6dB
 Channel: L12 R12
 GraphicEQ: 1 0; 40000 0; 40001 -57; 44100 -57
 Delay: 10ms
 Preamp: -6dB
 
-Copy: L13=R12 R13=L12
+#reverb only delay
+Channel: R12 R2
+Delay: 5ms
+
+Copy: L3=R2 R3=L2 L13=R12 R13=L12
+Channel: L3 R3
+Delay: 20ms
+Preamp: -6dB
 Channel: L13 R13
 GraphicEQ: 1 0; 16000 0; 16001 -57; 44100 -57
 Delay: 20ms
 Preamp: -6dB
 
-Copy: L14=R13 R14=L13
+Copy: L4=R3 R4=L3 L14=R13 R14=L13
+Channel: L4 R4
+Delay: 40ms
+Preamp: -6dB
 Channel: L14 R14
 GraphicEQ: 1 0; 6300 0; 6301 -57; 44100 -57
 Delay: 40ms
 Preamp: -6dB
 
-Copy: L15=R14 R15=L14
+Copy: L5=R4 R5=L4 L15=R14 R15=L14
+Channel: L5 R5
+Delay: 80ms
+Preamp: -6dB
 Channel: L15 R15
 GraphicEQ: 1 0; 2500 0; 2501 -57; 44100 -57
 Delay: 80ms
 Preamp: -6dB
 
-#upper speaker volume
-Channel: L12 L13 L14 L15 R12 R13 R14 R15
-Preamp: -0dB		#set -57 to kill reverb
-Copy: L17=L11+L12+L13+L14+L15 R17=R11+R12+R13+R14+R15
+Copy: L6=R5 R6=L5 L16=R15 R16=L15
+Channel: L6 R6
+Delay: 160ms
+Preamp: -6dB
+Channel: L16 R16
+GraphicEQ: 1 0; 1000 0; 1001 -57; 44100 -57
+Delay: 160ms
+Preamp: -6dB
+
+#upper speaker system
+Channel: L12 L13 L14 L15 L16 R12 R13 R14 R15 R16
+Preamp: 0dB		#set -57 to kill reverb
+Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
+
+#bass speaker system
+Channel: L2 L3 L4 L5 L6 R2 R3 R4 R5 R6
+Preamp: 0dB		#set -57 to kill reverb on BASS
+Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #add hash marks below two lines to temporarily disable effect
-Copy: L=L17+L3 R=R17+R3
+Copy: L=L17+L7 R=R17+R7
 
 Channel: all
 
