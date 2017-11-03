@@ -104,4 +104,5 @@ Channel: L R
 
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
+Copy: RL=L RR=R
 GraphicEQ: 1 -57; 160 -57; 161 12; 44100 12
