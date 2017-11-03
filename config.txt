@@ -3,6 +3,10 @@
 
 Preamp: 0dB
 
+#headphone - turn OFF 'Loudness Equalization' on sound properties.
+Device: 헤드폰
+Channel: L R
+
 #DELAY SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
@@ -100,13 +104,7 @@ Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 #add hash mark to a line below to temporarily disable effect
 Copy: L=0.5*L17+0.7*L7 R=0.5*R17+0.7*R7
 
-Channel: all
-
-#headphone - turn OFF 'Loudness Equalization' on sound properties.
-Device: 헤드폰
-Channel: L R
 
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
-Copy: RL=L RR=R
 GraphicEQ: 1 -57; 160 -57; 161 12; 40000 12
