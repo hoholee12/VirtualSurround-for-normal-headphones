@@ -3,20 +3,18 @@
 
 Preamp: 0dB
 
-#left + right mix to center
-
-#LR1~2 ECHO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#ECHO SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L1=L L2=L R1=R R2=R #LR1 start with source
 Channel: L2 R2
 Delay: 5ms
-Preamp: -57dB
+Preamp: -57dB		#set -57 to kill echo
 Copy: L7=L1+L2 R7=R1+R2
 
-#left right delay
+#source delay
 Channel: L7
 Delay: 0ms
 
-#LR11~15 REVERB<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#REVERB SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L1=L R1=R L11=L7 R11=R7 #LR11 start with source
 Channel: L1 R1
 GraphicEQ: 1 0; 400 0; 401 -57; 44100 -57
@@ -87,7 +85,7 @@ Preamp: 6dB		#set -57 to kill reverb on BASS
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#add hash marks below two lines to temporarily disable effect
+#add hash mark to a line below to temporarily disable effect
 Copy: L=L17+L7 R=R17+R7
 
 Channel: all
@@ -99,5 +97,3 @@ Channel: L R
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
 GraphicEQ: 1 -57; 160 -57; 161 12; 44100 12
-
-
