@@ -84,12 +84,12 @@ Channel: L4 L5 L6 R4 R5 R6
 Preamp: 6dB		#set -57 to kill ECHO
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
-#reverb=0db echo=6db is ECHO 4, reverb=6db echo=-57db is REVERB 3 ...probably
+#reverb=0db echo=6db is ECHO 4, reverb=4db echo=-57db is REVERB 3 ...probably
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #add hash mark to a line below to temporarily disable effect
-Copy: L=0.7*L17+0.7*L7 R=0.7*R17+0.7*R7
+Copy: L=0.9*L17+0.9*L7 R=0.9*R17+0.9*R7
 
 
 #quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
