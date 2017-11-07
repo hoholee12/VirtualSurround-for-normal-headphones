@@ -3,13 +3,20 @@
 
 Preamp: 0dB
 
-#headphone - turn OFF 'Loudness Equalization' on sound properties.
+
 Device: 헤드폰
-Channel: L R
+Copy: L1=L R1=R L11=L R11=R
 
+
+Device: 스피커
+Copy: L1=L+RL R1=R+RR L11=RL+L R11=RR+R
+
+
+
+
+
+Device: all
 #REVERB SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Copy: L1=L R1=R L11=L R11=R #LR11 start with source
 Channel: L1 R1
 GraphicEQ: 1 0; 250 0; 251 -57; 40000 -57
 Delay: 0ms
@@ -26,23 +33,22 @@ GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57
 Delay: 10ms
 Preamp: -6dB
 Channel: L12 R12
+GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57
 Delay: 10ms
 Preamp: -6dB
 
 #reverb/echo only delay
 Channel: R12 R2
-Delay: 20ms
+Delay: 10ms
 
+#ECHO SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L3=R2 R3=L2 L13=R12 R13=L12
 Channel: L3 R3
 Delay: 20ms
 Preamp: -6dB
 Channel: L13 R13
-GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57
 Delay: 20ms
 Preamp: -6dB
-
-#ECHO SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Copy: L4=R3 R4=L3 L14=R13 R14=L13
 Channel: L4 R4
@@ -68,32 +74,50 @@ Channel: L16 R16
 Delay: 160ms
 Preamp: -6dB
 
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+Device: 헤드폰
 #MIXER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #upper speaker system
-Channel: L12 L13 R12 R13
+Channel: L12 R12
 Preamp: 0dB		#set -57 to kill REVERB
-Channel: L14 L15 L16 R14 R15 R16
+Channel: L13 L14 L15 L16 R13 R14 R15 R16
 Preamp: 6dB		#set -57 to kill ECHO
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
 
 #bass speaker system
-Channel: L2 L3 R2 R3
+Channel: L2 R2
 Preamp: 0dB		#set -57 to kill REVERB
-Channel: L4 L5 L6 R4 R5 R6
+Channel: L3 L4 L5 L6 R3 R4 R5 R6
 Preamp: 6dB		#set -57 to kill ECHO
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
-#reverb=0db echo=6db is ECHO 4, reverb=4db echo=-57db is REVERB 3 ...probably
-
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-#add hash mark to a line below to temporarily disable effect
 Copy: L=0.9*L17+0.9*L7 R=0.9*R17+0.9*R7
 
 
-
-
-#quadrophonic speakers - turn on 'Loudness Equalization' on sound properties to default release time first!
 Device: 스피커
-GraphicEQ: 1 -57; 160 -57; 161 12; 40000 12
+#MIXER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#upper speaker system
+Channel: L12 R12
+Preamp: 0dB		#set -57 to kill REVERB
+Channel: L13 L14 L15 L16 R13 R14 R15 R16
+Preamp: 20dB		#set -57 to kill ECHO
+Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
+
+#bass speaker system
+Channel: L2 R2
+Preamp: 0dB		#set -57 to kill REVERB
+Channel: L3 L4 L5 L6 R3 R4 R5 R6
+Preamp: 20dB		#set -57 to kill ECHO
+Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Copy: L=0.9*L17+0.9*L7 R=0.9*R17+0.9*R7 RL=0.9*L17+0.9*L7 RR=0.9*R17+0.9*R7
+
