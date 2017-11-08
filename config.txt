@@ -29,11 +29,9 @@ Preamp: -0dB
 #first occurrence
 Copy: L2=R1 R2=L1 L12=R11 R12=L11
 Channel: L2 R2
-GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57
 Delay: 10ms
 Preamp: -6dB
 Channel: L12 R12
-GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57
 Delay: 10ms
 Preamp: -6dB
 
@@ -44,9 +42,11 @@ Delay: 10ms
 #ECHO SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Copy: L3=R2 R3=L2 L13=R12 R13=L12
 Channel: L3 R3
+GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57
 Delay: 20ms
 Preamp: -6dB
 Channel: L13 R13
+GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57
 Delay: 20ms
 Preamp: -6dB
 
