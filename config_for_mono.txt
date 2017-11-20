@@ -1,11 +1,7 @@
 
 #ECHO 4 ???
 
-Preamp: 0dB
-
-#EQ ONLY???
-Channel: L R
-GraphicEQ: 1 -6; 25 -6; 26 0; 400 0; 401 -6; 40000 -6
+Preamp: -4.9dB	#assuming that REVERB settings should never go over 0dB
 
 Device: 헤드폰
 Copy: L1=L R1=R L11=L R11=R
@@ -101,7 +97,7 @@ Preamp: 6dB		#set -57 to kill ECHO
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L=0.9*L17+0.9*L7 R=0.9*R17+0.9*R7
+Copy: L=L17+L7 R=R17+R7
 
 
 Device: 스피커
@@ -122,5 +118,5 @@ Preamp: 20dB		#set -57 to kill ECHO
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Copy: L=0.6*L17+0.6*L7 R=0.6*R17+0.6*R7 RL=0.6*L17+0.6*L7 RR=0.6*R17+0.6*R7
+Copy: L=L17+L7 R=R17+R7 RL=L17+L7 RR=R17+R7
 
