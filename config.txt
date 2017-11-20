@@ -5,7 +5,7 @@ Preamp: 0dB
 
 #EQ ONLY???
 Channel: L R
-GraphicEQ: 1 0; 160 0; 161 -6; 400 -6; 401 0; 40000 0
+#GraphicEQ: 1 -6; 25 -6; 26 0; 400 0; 401 -6; 40000 -6
 
 Device: 헤드폰
 Copy: L1=L R1=R L11=L R11=R
