@@ -1,7 +1,12 @@
 
 #ECHO 4 ???
 
-Preamp: -4.9dB	#assuming that REVERB settings should never go over 0dB
+#assuming that REVERB settings should never go over 0dB
+Copy: L99=L R99=R
+Channel: L99 R99
+Preamp: -6dB
+Delay: 5ms
+Copy: L=0.5*L+0.5*L99 R=0.5*R+0.5*R99
 
 Device: 헤드폰
 Copy: L1=L R1=R L11=L R11=R
