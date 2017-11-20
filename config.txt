@@ -5,6 +5,7 @@
 #assuming that REVERB settings should never go over 0dB
 Copy: L99=L R99=R
 Channel: L99 R99
+GraphicEQ: 1 0; 40000 -6
 Delay: 5ms
 Preamp: 0dB		#strength
 Copy: L=0.5*L+0.5*L99 R=0.5*R+0.5*R99
