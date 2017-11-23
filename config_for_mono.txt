@@ -5,7 +5,7 @@
 #assuming that REVERB settings should never go over 0dB
 Copy: L99=L R99=R
 Channel: L99 R99
-GraphicEQ: 1 -6; 250 0; 2500 -6
+GraphicEQ: 1 -6; 250 6; 2500 -6
 Delay: 5ms
 Copy: L=0.5*L+0.5*L99 R=0.5*R+0.5*R99
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -17,8 +17,6 @@ Copy: L1=L R1=R L11=L R11=R
 
 
 Device: 스피커
-Channel: L R RL RR
-GraphicEQ: 1 -57; 160 -57; 161 12; 40000 12
 Copy: L1=L+RL R1=R+RR L11=RL+L R11=RR+R
 
 
