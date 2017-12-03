@@ -1,7 +1,7 @@
 
 #ECHO 4 ???
 
-
+Preamp: -6dB
 
 
 
