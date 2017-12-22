@@ -1,7 +1,7 @@
 
 #ECHO 4 ???
 
-Preamp: -12dB
+Preamp: -6dB
 
 
 
@@ -10,7 +10,6 @@ Copy: L1=L R1=R
 
 
 Device: 스피커
-Preamp: 12dB
 Copy: L1=L+RL R1=R+RR
 
 
