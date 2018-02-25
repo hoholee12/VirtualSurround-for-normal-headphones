@@ -95,7 +95,7 @@ Preamp: -6dB
 
 #upper speaker system
 Channel: L12 R12
-Preamp: -6dB		#set -57 to kill REVERB		20dB maximum
+Preamp: -57dB		#set -57 to kill REVERB		20dB maximum
 Channel: L13 L14 L15 L16 R13 R14 R15 R16
 Preamp: 6dB		#set -57 to kill ECHO		6dB maximum
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
