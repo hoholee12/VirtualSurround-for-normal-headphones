@@ -27,7 +27,7 @@ Preamp: 6dB
 Copy: L99=L1 R99=R1
 Channel: L99 R99
 GraphicEQ: 1 -6; 250 6; 2500 -6
-Delay: 5ms
+Delay: 0ms
 Copy: L1=0.5*L1+0.5*L99 R1=0.5*R1+0.5*R99
 Copy: L11=L1 R11=R1
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -95,16 +95,16 @@ Preamp: -6dB
 
 #upper speaker system
 Channel: L12 R12
-Preamp: 6dB		#set -57 to kill REVERB		20dB maximum
+Preamp: 0dB		#set -57 to kill REVERB		20dB maximum
 Channel: L13 L14 L15 L16 R13 R14 R15 R16
-Preamp: 6dB		#set -57 to kill ECHO		6dB maximum
+Preamp: 0dB		#set -57 to kill ECHO		6dB maximum
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
 
 #bass speaker system
 Channel: L2 R2
-Preamp: -6dB		#set -57 to kill REVERB		6dB maximum
+Preamp: 0dB		#set -57 to kill REVERB		6dB maximum
 Channel: L3 L4 L5 L6 R3 R4 R5 R6
-Preamp: 6dB		#set -57 to kill ECHO		20dB maximum
+Preamp: 0dB		#set -57 to kill ECHO		20dB maximum
 Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
