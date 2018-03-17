@@ -1,5 +1,5 @@
 
-#ECHO 4 ???
+#REVERB 3
 
 Preamp: -6dB
 

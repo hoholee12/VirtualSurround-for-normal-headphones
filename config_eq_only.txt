@@ -1,5 +1,5 @@
 
-#ECHO 4 ???
+#EQ ONLY
 
 Preamp: -6dB
 

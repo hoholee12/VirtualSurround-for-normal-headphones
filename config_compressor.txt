@@ -1,5 +1,5 @@
 
-#ECHO 4 ???
+#COMPRESSOR 3
 
 Preamp: -6dB
 
