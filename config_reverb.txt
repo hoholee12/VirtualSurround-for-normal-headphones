@@ -23,11 +23,15 @@ Device: all
 Channel: L1 R1
 Preamp: 6dB
 
-#assuming that REVERB settings should never go over 0dB
 Copy: L99=L1 R99=R1
 Channel: L99 R99
 GraphicEQ: 1 -6; 250 6; 2500 -6
 Delay: 0ms
+#
+# LEVEL 1: 83/17
+# LEVEL 2: 80/20
+# LEVEL 3: 75/25
+# LEVEL 4: 67/33
 Copy: L1=0.75*L1+0.25*L99 R1=0.75*R1+0.25*R99
 Copy: L11=L1 R11=R1
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
