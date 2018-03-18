@@ -14,6 +14,6 @@ it now sounds 90% close to the original! <br/>
 formula: <br/>
 ECHO = DELAY(5ms) + SURROUND <br/>
 REVERB = SURROUND <br/>
-EQ ONLY = DELAY(5ms) <br/>
+EQ ONLY = none <br/>
 COMPRESSOR = DELAY(0.5ms) <br/>
-<br/>
+REVERB EX = REVERB x2<br/>
