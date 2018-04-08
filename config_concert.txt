@@ -25,7 +25,7 @@ Preamp: 0dB
 Copy: L99=L1 R99=R1
 Channel: L99 R99
 GraphicEQ: 1 -6; 250 6; 2500 -6
-Delay: 0ms
+Delay: 0.5ms
 #
 # LEVEL 1: 83/17
 # LEVEL 2: 80/20
@@ -100,7 +100,7 @@ Preamp: -6dB
 Channel: L12 R12
 Preamp: 12dB		#set -57 to kill REVERB		12dB maximum
 Channel: L13 L14 L15 L16 R13 R14 R15 R16
-Preamp: 12dB		#set -57 to kill ECHO		12dB maximum
+Preamp: -57dB		#set -57 to kill ECHO		12dB maximum
 Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
 
 #bass speaker system
