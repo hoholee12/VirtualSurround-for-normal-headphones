@@ -1,0 +1,123 @@
+
+#KARAOKE
+
+Preamp: -6dB
+
+
+
+Device: all
+Copy: L1=L R1=R
+
+
+Device: 스피커; speaker
+Copy: L1=L+RL R1=R+RR
+
+
+
+Device: all
+#DELAY SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#L1 R1: BASS SPEAKER SYSTEM
+#L11 R11: UPPER SPEAKER SYSTEM
+
+Channel: L1 R1
+Preamp: 6dB
+
+Copy: L99=L1 R99=R1
+Channel: L99 R99
+GraphicEQ: 1 -6; 250 6; 2500 -6
+Delay: 0.5ms
+#
+# LEVEL 1: 83/17
+# LEVEL 2: 80/20
+# LEVEL 3: 75/25
+# LEVEL 4: 67/33
+Copy: L1=0.67*L1+0.33*L99 R1=0.67*R1+0.33*R99
+Copy: L11=L1 R11=R1
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#SURROUND SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Channel: L1 R1
+GraphicEQ: 1 0; 250 0; 251 -57; 40000 -57
+Delay: 0ms
+Preamp: -0dB
+Channel: L11 R11
+GraphicEQ: 1 -57; 250 -57; 251 0; 40000 0
+Delay: 0ms
+Preamp: -0dB
+
+#first occurrence
+Copy: L2=R1 R2=L1 L12=R11 R12=L11
+Channel: L2 R2
+Delay: 160ms
+Preamp: -6dB
+Channel: L12 R12
+Delay: 160ms
+Preamp: -6dB
+
+#reverb/echo only delay
+Channel: R12 R2
+Delay: 160ms
+
+Copy: L3=R2 R3=L2 L13=R12 R13=L12
+Channel: L3 R3
+GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57
+Delay: 160ms
+Preamp: -6dB
+Channel: L13 R13
+GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57
+Delay: 160ms
+Preamp: -6dB
+
+Copy: L4=R3 R4=L3 L14=R13 R14=L13
+Channel: L4 R4
+Delay: 160ms
+Preamp: -6dB
+Channel: L14 R14
+Delay: 160ms
+Preamp: -6dB
+
+Copy: L5=R4 R5=L4 L15=R14 R15=L14
+Channel: L5 R5
+Delay: 160ms
+Preamp: -6dB
+Channel: L15 R15
+Delay: 160ms
+Preamp: -6dB
+
+Copy: L6=R5 R6=L5 L16=R15 R16=L15
+Channel: L6 R6
+Delay: 160ms
+Preamp: -6dB
+Channel: L16 R16
+Delay: 160ms
+Preamp: -6dB
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#MIXER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#upper speaker system
+Channel: L12 R12
+Preamp: -6dB		#set -57 to kill REVERB		12dB maximum
+Channel: L13 L14 L15 L16 R13 R14 R15 R16
+Preamp: 6dB		#set -57 to kill ECHO		12dB maximum
+Copy: L17=L11+L12+L13+L14+L15+L16 R17=R11+R12+R13+R14+R15+R16
+
+#bass speaker system
+Channel: L2 R2
+Preamp: -6dB		#set -57 to kill REVERB		12dB maximum
+Channel: L3 L4 L5 L6 R3 R4 R5 R6
+Preamp: 6dB		#set -57 to kill ECHO		12dB maximum
+Copy: L7=L1+L2+L3+L4+L5+L6 R7=R1+R2+R3+R4+R5+R6
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+Device: all
+Copy: L=L17+L7 R=R17+R7
+
+
+Device: 스피커; speaker
+Copy: RL=L17+L7 RR=R17+R7
+
