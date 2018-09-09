@@ -1,7 +1,7 @@
 
 #REVERB 3
 
-Preamp: -6dB
+Preamp: 0dB
 
 
 
