@@ -24,8 +24,8 @@ Preamp: 3dB
 
 Copy: L99=L1 R99=R1
 Channel: L99 R99
-GraphicEQ: 1 -6; 250 6; 2500 -6
-Delay: 0.5ms
+GraphicEQ: 1 12; 250 12; 2500 -6
+Delay: 0ms
 #
 # LEVEL 1: 83/17
 # LEVEL 2: 80/20
