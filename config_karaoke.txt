@@ -20,18 +20,18 @@ Device: all
 #L11 R11: UPPER SPEAKER SYSTEM
 
 Channel: L1 R1
-Preamp: -1dB
+Preamp: 3.7dB
 
 Copy: L99=L1 R99=R1
 Channel: L99 R99
-GraphicEQ: 1 18; 160 18; 250 -6; 2500 -6
-Delay: 0ms
+GraphicEQ: 1 12; 160 12; 250 6; 2500 -6
+Delay: 0.5ms
 #
 # LEVEL 1: 83/17
 # LEVEL 2: 80/20
 # LEVEL 3: 75/25
 # LEVEL 4: 67/33
-Copy: L1=0.67*L1+0.33*L99 R1=0.67*R1+0.33*R99
+Copy: L1=0.83*L1+0.17*L99 R1=0.83*R1+0.17*R99
 Copy: L11=L1 R11=R1
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

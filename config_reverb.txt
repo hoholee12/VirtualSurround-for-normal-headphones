@@ -1,5 +1,5 @@
 
-#REVERB 3
+#REVERB
 
 Preamp: 0dB
 
@@ -20,7 +20,7 @@ Device: all
 #L11 R11: UPPER SPEAKER SYSTEM
 
 Channel: L1 R1
-Preamp: 7dB
+Preamp: 6.5dB
 
 Copy: L99=L1 R99=R1
 Channel: L99 R99
@@ -31,7 +31,7 @@ Delay: 5ms
 # LEVEL 2: 80/20
 # LEVEL 3: 75/25
 # LEVEL 4: 67/33
-Copy: L1=0.75*L1+0.25*L99 R1=0.75*R1+0.25*R99
+Copy: L1=0.67*L1+0.33*L99 R1=0.67*R1+0.33*R99
 Copy: L11=L1 R11=R1
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
