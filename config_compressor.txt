@@ -20,7 +20,7 @@ Device: all
 #L11 R11: UPPER SPEAKER SYSTEM
 
 Channel: L1 R1
-Preamp: 4.4dB
+Preamp: 2.5dB
 
 Copy: L99=L1 R99=R1
 Channel: L99 R99
