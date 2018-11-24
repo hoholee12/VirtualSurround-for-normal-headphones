@@ -59,7 +59,7 @@ Channel: R12 R2
 Delay: 20ms
 
 #first reverb
-Copy: L3=R2 R3=L2 L13=R12 R13=L12
+Copy: R3=R2 L3=L2 R13=R12 L13=L12
 Channel: L3 R3
 #GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57
 Delay: 320ms
