@@ -5,7 +5,7 @@
     Public Shared echo_ex_texts = New String() {"REVERB EX 3", "REVERB EX 2", "REVERB EX 1", "ECHO EX 1", "ECHO EX 2", "ECHO EX 3", "ECHO EX 4"}
     Public Shared compressor_texts = New String() {"COMPRESSOR"}
     Public Shared chorus_texts = New String() {"FLANGER 3", "FLANGER 2", "FLANGER 1", "CHORUS 1", "CHORUS 2", "CHORUS 3", "CHORUS 4"}
-    Public Shared distortion_texts = New String() {"GARGLE 3", "GARGLE 2", "GARGLE 1", "DISTORTION 1", "DISTORTION 2", "DISTORTION 3", "DISTORTION 4"}
+    Public Shared eq_only_texts = New String() {"EQ ONLY"}
     Public Shared effector_slider As Integer = 3
     Public Shared loweq_slider As Integer = 3
     Public Shared hieq_slider As Integer = 3
@@ -13,6 +13,7 @@
     Public Shared vol_slider As Integer = 3
 
     Public Shared temp_file = New String() {}
+    Public Shared eq_only_file(124) As String
     Public Shared echo_file = New String() {
     "",
 "#ECHO",
@@ -404,6 +405,8 @@
                 Case 3
                     EFFECTOR_TEXT.Text = echo_ex_texts(effector_slider)
                 Case 4
+                    EFFECTOR_TEXT.Text = eq_only_texts(0)
+                Case 5
                     effector_num = 1
                     EFFECTOR_TEXT.Text = compressor_texts(0)
             End Select
@@ -421,10 +424,10 @@
 
                 Case 2
                     temp_file = echo_file
-                    temp_file(100) = "Preamp: " & (slider - 3) * -2 & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(102) = "Preamp: " & slider * 2 & "dB		#set -57 to kill ECHO		12dB maximum"
-                    temp_file(107) = "Preamp: " & (slider - 3) * -2 & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(109) = "Preamp: " & slider * 2 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(100) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(102) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(107) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(109) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) & "dB		#set -57 to kill ECHO		12dB maximum"
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO"
                         temp_file(22) = "Preamp: 3dB"
@@ -434,10 +437,10 @@
                     End If
                 Case 3
                     temp_file = echo_ex_file
-                    temp_file(101) = "Preamp: " & (slider - 3) * -2 & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(103) = "Preamp: " & slider * 2 - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
-                    temp_file(108) = "Preamp: " & (slider - 3) * -2 & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(110) = "Preamp: " & slider * 2 - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 6 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 6 & "dB		#set -57 to kill ECHO		12dB maximum"
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
                         temp_file(22) = "Preamp: 3dB"
@@ -445,14 +448,16 @@
                         temp_file(1) = "#REVERB EX"
                         temp_file(22) = "Preamp: 0dB"
                     End If
+                Case 4
+                    temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
                 temp_file(3) = "Preamp: " & slider5 - 3 & "dB"
             Else
-                temp_file(3) = "Preamp: " & slider5 * 10 - 30 & "dB"
+                temp_file(3) = "Preamp: " & slider5 * 6 - 18 & "dB"
             End If
 
-            temp_file(5) = "GraphicEQ: 1 " & If(slider2 >= 3, slider2 - 3, slider2 * 10 - 30) & "; 160 " & If(slider4 >= 3, slider4 - 3, slider4 * 10 - 30) & "; 250 0; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 10 - 30)
+            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 - 3, slider4 * 6 - 18) & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 250 0; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18)
 
             System.IO.File.WriteAllLines("config.txt", temp_file)
         End If
