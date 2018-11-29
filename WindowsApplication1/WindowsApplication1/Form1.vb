@@ -41,7 +41,7 @@
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
-"GraphicEQ: 1 0; 160 0; 250 0; 2500 -6",
+"GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
 "Delay: 5ms",
 "#",
 "# LEVEL 1: 83/17",
@@ -167,7 +167,7 @@
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
-"GraphicEQ: 1 0; 160 0; 250 0; 2500 -6",
+"GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
 "Delay: 0.5ms",
 "#",
 "# LEVEL 1: 83/17",
@@ -294,7 +294,7 @@
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
-"GraphicEQ: 1 0; 160 0; 250 0; 2500 -6",
+"GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
 "Delay: 0.5ms",
 "#",
 "# LEVEL 1: 83/17",
@@ -477,7 +477,7 @@
                 temp_file(3) = "Preamp: " & slider5 * 6 - 18 & "dB"
             End If
 
-            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) & "; 250 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 3 & "; 250 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
 
             System.IO.File.WriteAllLines("config.txt", temp_file)
         End If
