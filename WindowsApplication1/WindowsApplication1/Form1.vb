@@ -447,19 +447,27 @@
                     temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
                         temp_file(22) = "Preamp: 3dB"
-
-                        temp_file(27) = "Delay: 0.5ms"
-                        temp_file(33) = "Copy: L1=0.83*L1+0.17*L99 R1=0.83*R1+0.17*R99"
                     Else
                         temp_file(1) = "#REVERB EX"
                         temp_file(22) = "Preamp: 0dB"
-
-                        temp_file(27) = "Delay: 5ms"
-                        temp_file(33) = "Copy: L1=0.75*L1+0.25*L99 R1=0.75*R1+0.25*R99"
                     End If
+
+                    temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(68) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+
+                    temp_file(73) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(76) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+
+                    temp_file(81) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(84) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+
+                    temp_file(89) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+
                 Case 4
                     temp_file = eq_only_file
             End Select
