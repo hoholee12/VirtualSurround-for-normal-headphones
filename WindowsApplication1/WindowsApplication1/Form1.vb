@@ -472,12 +472,12 @@
                     temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
-                temp_file(3) = "Preamp: " & slider5 - 3 & "dB"
+                temp_file(3) = "Preamp: " & slider5 - 6 & "dB"
             Else
-                temp_file(3) = "Preamp: " & slider5 * 6 - 18 & "dB"
+                temp_file(3) = "Preamp: " & slider5 * 2 - 9 & "dB"
             End If
 
-            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 3 & "; 250 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 6 & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
 
             System.IO.File.WriteAllLines("config.txt", temp_file)
         End If
