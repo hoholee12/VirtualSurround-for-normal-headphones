@@ -12,8 +12,136 @@
     Public Shared filter_slider As Integer = 3
     Public Shared vol_slider As Integer = 3
 
+    Public Shared temp_thread As System.Threading.Thread
     Public Shared temp_file() As String
     Public Shared eq_only_file(124) As String
+    Public Shared chorus_file = New String() {
+        "",
+"#CHORUS",
+"",
+"Preamp: 3dB",
+"",
+"",
+"",
+"Device: all",
+"Copy: L1=L R1=R",
+"",
+"",
+"Device: 스피커; speaker",
+"Copy: L1=L+RL R1=R+RR",
+"",
+"",
+"",
+"Device: all",
+"#DELAY SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"#L1 R1: BASS SPEAKER SYSTEM",
+"#L11 R11: UPPER SPEAKER SYSTEM",
+"",
+"Channel: L1 R1",
+"Preamp: 0dB",
+"",
+"Copy: L99=L1 R99=R1",
+"Channel: L99 R99",
+"#GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
+"Delay: 0.99ms",
+"#",
+"# LEVEL 1: 83/17",
+"# LEVEL 2: 80/20",
+"# LEVEL 3: 75/25",
+"# LEVEL 4: 67/33",
+"Copy: L1=0.67*L1+0.33*L99 R1=0.67*R1+0.33*R99",
+"Copy: L11=L1 R11=R1",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#SURROUND SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"Channel: L1 R1",
+"GraphicEQ: 1 0; 250 0; 251 -57; 40000 -57",
+"Delay: 0ms",
+"Preamp: -0dB",
+"Channel: L11 R11",
+"GraphicEQ: 1 -57; 250 -57; 251 0; 40000 0",
+"Delay: 0ms",
+"Preamp: -0dB",
+"",
+"#reverb source",
+"Copy: L2=R1 R2=L1 L12=R11 R12=L11",
+"Channel: L2 R2",
+"Delay: 20ms",
+"Preamp: -6dB",
+"Channel: L12 R12",
+"Delay: 20ms",
+"Preamp: -6dB",
+"",
+"#reverb only delay",
+"Channel: R12 R2",
+"Delay: 20ms",
+"",
+"#first reverb",
+"Copy: R3=R2 L3=L2 R13=R12 L13=L12",
+"Channel: L3 R3",
+"#GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57",
+"Delay: 320ms",
+"Preamp: -9dB",
+"Channel: L13 R13",
+"#GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57",
+"Delay: 320ms",
+"Preamp: -9dB",
+"",
+"Copy: L4=R3 R4=L3 L14=R13 R14=L13",
+"Channel: L4 R4",
+"Delay: 320ms",
+"Preamp: -12dB",
+"Channel: L14 R14",
+"Delay: 320ms",
+"Preamp: -12dB",
+"",
+"Copy: L5=R4 R5=L4 L15=R14 R15=L14",
+"Channel: L5 R5",
+"Delay: 320ms",
+"Preamp: -15dB",
+"Channel: L15 R15",
+"Delay: 320ms",
+"Preamp: -15dB",
+"",
+"Copy: L6=R5 R6=L5 L16=R15 R16=L15",
+"Channel: L6 R6",
+"Delay: 320ms",
+"Preamp: -18dB",
+"Channel: L16 R16",
+"Delay: 320ms",
+"Preamp: -18dB",
+"",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#MIXER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#upper speaker system",
+"Channel: L12 R12",
+"Preamp: 6dB		#set -57 to kill REVERB		12dB maximum",
+"Channel: L13 L14 L15 L16 R13 R14 R15 R16",
+"Preamp: -57dB		#set -57 to kill ECHO		12dB maximum",
+"Copy: L19=L11+L12+L13+L14+L15+L16 R19=R11+R12+R13+R14+R15+R16",
+"",
+"#bass speaker system",
+"Channel: L2 R2",
+"Preamp: 6dB		#set -57 to kill REVERB		12dB maximum",
+"Channel: L3 L4 L5 L6 R3 R4 R5 R6",
+"Preamp: -57dB		#set -57 to kill ECHO		12dB maximum",
+"Copy: L9=L1+L2+L3+L4+L5+L6 R9=R1+R2+R3+R4+R5+R6",
+"",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"",
+"",
+"Device: all",
+"Copy: L=L19+L9 R=R19+R9",
+"",
+"",
+"Device: 스피커; speaker",
+"Copy: RL=L19+L9 RR=R19+R9",
+"",
+"",
+""}
     Public Shared echo_file = New String() {
     "",
 "#ECHO",
@@ -394,6 +522,10 @@
 ""}
 
     Public Sub rerun()
+        Try
+            temp_thread.Abort()
+        Catch e As Exception
+        End Try
         If effector_on = 0 Then
             EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Else
@@ -405,8 +537,10 @@
                 Case 3
                     EFFECTOR_TEXT.Text = echo_ex_texts(effector_slider)
                 Case 4
-                    EFFECTOR_TEXT.Text = eq_only_texts(0)
+                    EFFECTOR_TEXT.Text = chorus_texts(effector_slider)
                 Case 5
+                    EFFECTOR_TEXT.Text = eq_only_texts(0)
+                Case 6
                     effector_num = 1
                     EFFECTOR_TEXT.Text = compressor_texts(0)
             End Select
@@ -469,6 +603,25 @@
                     temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
                 Case 4
+                    temp_file = chorus_file
+                    
+                    If slider >= 3 Then
+                        temp_file(1) = "#CHORUS"
+                        temp_file(22) = "Preamp: 0dB"
+                    Else
+                        temp_file(1) = "#FLANGER"
+                        temp_file(22) = "Preamp: 3dB"
+                    End If
+
+                    temp_file(101) = "Preamp: " & If(slider >= 3, 6, -6) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(108) = "Preamp: " & If(slider >= 3, 6, -6) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
+                    Try
+                        temp_thread.Start()
+                    Catch x As Exception
+                    End Try
+
+                Case 5
                     temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
@@ -483,8 +636,44 @@
         End If
     End Sub
 
+    Private Sub chorus_thread()
+        Dim count As Integer = 99
+        Dim flag As Integer = 0
+        While True
+            If count <= 50 Then
+                flag = 1
+            ElseIf count >= 99 Then
+                flag = 0
+            End If
+            If flag = 1 Then
+                count += 1
+            Else
+                count -= 1
+            End If
+            Try
+                If temp_file(1) = "#FLANGER" Then
+                    temp_file(27) = "Delay: 0." & count & "ms"
+                    System.IO.File.WriteAllLines("config.txt", temp_file)
+                Else
+                    Exit Sub
+                End If
+            Catch x As Exception
+            End Try
+
+            System.Threading.Thread.Sleep(40)
+        End While
+    End Sub
+
+    Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        
+    End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim test = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
+        Try
+            test(1).Kill()
+        Catch x As Exception
+        End Try
         writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider)
     End Sub
 
