@@ -43,7 +43,7 @@
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
 "#GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
-"Delay: 0.99ms",
+"Delay: 1ms",
 "#",
 "# LEVEL 1: 83/17",
 "# LEVEL 2: 80/20",
@@ -291,7 +291,7 @@
 "#L11 R11: UPPER SPEAKER SYSTEM",
 "",
 "Channel: L1 R1",
-"Preamp: 3dB",
+"Preamp: 0dB",
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
@@ -567,13 +567,13 @@
                         temp_file(22) = "Preamp: 3dB"
 
                         temp_file(27) = "Delay: 5ms"
-                        temp_file(33) = "Copy: L1=0.75*L1+0.25*L99 R1=0.75*R1+0.25*R99"
+                        temp_file(33) = "Copy: L1=0.66*L1+0.33*L99 R1=0.66*R1+0.33*R99"
                     Else
                         temp_file(1) = "#REVERB"
                         temp_file(22) = "Preamp: 0dB"
 
                         temp_file(27) = "Delay: 0.5ms"
-                        temp_file(33) = "Copy: L1=0.83*L1+0.17*L99 R1=0.83*R1+0.17*R99"
+                        temp_file(33) = "Copy: L1=0.83*L1+0.16*L99 R1=0.83*R1+0.16*R99"
                     End If
                 Case 3
                     temp_file = echo_ex_file
@@ -607,14 +607,23 @@
                     
                     If slider >= 3 Then
                         temp_file(1) = "#CHORUS"
-                        temp_file(22) = "Preamp: 0dB"
                     Else
                         temp_file(1) = "#FLANGER"
-                        temp_file(22) = "Preamp: 3dB"
+
                     End If
 
-                    temp_file(101) = "Preamp: " & If(slider >= 3, 6, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(108) = "Preamp: " & If(slider >= 3, 6, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    If slider >= 3 Then
+                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
+                        temp_file(22) = "Preamp: " & slider - 3 & "dB"
+                    Else
+                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
+                        temp_file(22) = "Preamp: " & 6 - slider & "dB"
+                    End If
+
+                    temp_file(27) = "Delay: 1ms"
+
+                    temp_file(101) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(108) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
                     Try
                         temp_thread.Start()
