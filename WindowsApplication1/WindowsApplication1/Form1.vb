@@ -550,7 +550,10 @@
     End Sub
 
     Public Sub writetostuff(num As Integer, slider As Integer, slider2 As Integer, slider3 As Integer, slider4 As Integer, slider5 As Integer)
-        System.IO.File.Create("config.txt").Dispose()
+        Try
+            System.IO.File.Create("config.txt").Dispose()
+        Catch x As Exception
+        End Try
         If effector_on <> 0 Then
             Select Case num
                 Case 1
@@ -604,7 +607,7 @@
 
                 Case 4
                     temp_file = chorus_file
-                    
+
                     If slider >= 3 Then
                         temp_file(1) = "#CHORUS"
                     Else
