@@ -631,8 +631,11 @@
             End If
 
             temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 6 & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+            Try
+                System.IO.File.WriteAllLines("config.txt", temp_file)
+            Catch x As Exception
+            End Try
 
-            System.IO.File.WriteAllLines("config.txt", temp_file)
         End If
     End Sub
 
