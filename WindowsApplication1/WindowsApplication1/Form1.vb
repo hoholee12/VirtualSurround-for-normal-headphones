@@ -684,9 +684,14 @@
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim test = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
+        Dim processNames() As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
+        Dim thisId As Integer = System.Diagnostics.Process.GetCurrentProcess.Id
         Try
-            test(1).Kill()
+            For Each p As System.Diagnostics.Process In processNames
+                If p.Id <> thisId Then
+                    p.Kill()
+                End If
+            Next
         Catch x As Exception
         End Try
         writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider)
