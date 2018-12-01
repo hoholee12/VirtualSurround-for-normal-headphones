@@ -613,8 +613,8 @@
                         temp_file(22) = "Preamp: 3dB"
                     End If
 
-                    temp_file(101) = "Preamp: " & If(slider >= 3, 6, -6) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(108) = "Preamp: " & If(slider >= 3, 6, -6) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(101) = "Preamp: " & If(slider >= 3, 6, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(108) = "Preamp: " & If(slider >= 3, 6, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
                     Try
                         temp_thread.Start()
