@@ -19,7 +19,7 @@
         "",
 "#CHORUS",
 "",
-"Preamp: 3dB",
+"Preamp: 0dB",
 "",
 "",
 "",
@@ -165,7 +165,7 @@
 "#L11 R11: UPPER SPEAKER SYSTEM",
 "",
 "Channel: L1 R1",
-"Preamp: 3dB",
+"Preamp: 0dB",
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
@@ -418,7 +418,7 @@
 "#L11 R11: UPPER SPEAKER SYSTEM",
 "",
 "Channel: L1 R1",
-"Preamp: 3dB",
+"Preamp: 0dB",
 "",
 "Copy: L99=L1 R99=R1",
 "Channel: L99 R99",
@@ -581,16 +581,16 @@
                 Case 3
                     temp_file = echo_ex_file
                     temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
 
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
-                        temp_file(22) = "Preamp: 3dB"
+                        temp_file(22) = "Preamp: 0dB"
                     Else
                         temp_file(1) = "#REVERB EX"
-                        temp_file(22) = "Preamp: 0dB"
+                        temp_file(22) = "Preamp: -3dB"
                     End If
 
                     temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
@@ -617,10 +617,10 @@
 
                     If slider >= 3 Then
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
-                        temp_file(22) = "Preamp: " & slider - 3 & "dB"
+                        temp_file(22) = "Preamp: " & slider - 6 & "dB"
                     Else
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
-                        temp_file(22) = "Preamp: " & 6 - slider & "dB"
+                        temp_file(22) = "Preamp: " & 3 - slider & "dB"
                     End If
 
                     temp_file(27) = "Delay: 1ms"
@@ -641,8 +641,12 @@
             Else
                 temp_file(3) = "Preamp: " & slider5 * 2 - 9 & "dB"
             End If
-
-            temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 6 & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+            Select Case num
+                Case 2
+                    temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) - 6 & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) - 3 & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+                Case Else
+                    temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
+            End Select
             Try
                 System.IO.File.WriteAllLines("config.txt", temp_file)
             Catch x As Exception
