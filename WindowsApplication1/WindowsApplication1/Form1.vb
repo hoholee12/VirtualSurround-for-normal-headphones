@@ -5,8 +5,10 @@
     Public Shared echo_ex_texts = New String() {"REVERB EX 3", "REVERB EX 2", "REVERB EX 1", "ECHO EX 1", "ECHO EX 2", "ECHO EX 3", "ECHO EX 4"}
     Public Shared compressor_texts = New String() {"COMPRESSOR"}
     Public Shared chorus_texts = New String() {"FLANGER 3", "FLANGER 2", "FLANGER 1", "CHORUS 1", "CHORUS 2", "CHORUS 3", "CHORUS 4"}
+    Public Shared distortion_texts = New String() {"GARGLE 3", "GARGLE 2", "GARGLE 1", "DISTORTION 1", "DISTORTION 2", "DISTORTION 3", "DISTORTION4"}
     Public Shared eq_only_texts = New String() {"EQ ONLY"}
     Public Shared effector_slider As Integer = 3
+    Public Shared effector_lim As Boolean = False
     Public Shared loweq_slider As Integer = 3
     Public Shared hieq_slider As Integer = 3
     Public Shared filter_slider As Integer = 3
@@ -454,7 +456,7 @@
 "",
 "#reverb only delay",
 "Channel: R12 R2",
-"Delay: 20ms",
+"Delay: 0ms",
 "",
 "Copy: R3=R2 L3=L2 R13=R12 L13=L12",
 "Channel: L3 R3",
@@ -529,6 +531,17 @@
         If effector_on = 0 Then
             EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Else
+            Select Case effector_num
+                Case 2
+                    If effector_lim = True And effector_slider >= 5 Then
+                        effector_slider = 6
+                    Else
+                        effector_lim = False
+                    End If
+                Case Else
+                    effector_lim = If(effector_slider > 5 Or If(effector_slider = 5 And effector_lim = True, True, False), True, False)
+                    effector_slider = If(effector_slider > 5, 5, effector_slider)
+            End Select
             Select Case effector_num
                 Case 1
                     EFFECTOR_TEXT.Text = compressor_texts(0)
@@ -618,12 +631,14 @@
                     If slider >= 3 Then
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
                         temp_file(22) = "Preamp: " & slider - 6 & "dB"
+                        temp_file(58) = "Delay: 20ms"
                     Else
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
                         temp_file(22) = "Preamp: " & 3 - slider & "dB"
+                        temp_file(58) = "Delay: 0ms"
                     End If
 
-                    temp_file(27) = "Delay: 1ms"
+                    temp_file(27) = "Delay: 20ms"
 
                     temp_file(101) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
