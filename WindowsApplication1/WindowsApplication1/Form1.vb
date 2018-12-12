@@ -5,7 +5,7 @@
     Public Shared echo_ex_texts = New String() {"REVERB EX 3", "REVERB EX 2", "REVERB EX 1", "ECHO EX 1", "ECHO EX 2", "ECHO EX 3", "ECHO EX 4"}
     Public Shared compressor_texts = New String() {"COMPRESSOR"}
     Public Shared chorus_texts = New String() {"FLANGER 3", "FLANGER 2", "FLANGER 1", "CHORUS 1", "CHORUS 2", "CHORUS 3", "CHORUS 4"}
-    Public Shared distortion_texts = New String() {"GARGLE 3", "GARGLE 2", "GARGLE 1", "DISTORTION 1", "DISTORTION 2", "DISTORTION 3", "DISTORTION4"}
+    Public Shared distortion_texts = New String() {"GARGLE 3", "GARGLE 2", "GARGLE 1", "DISTORTION 1", "DISTORTION 2", "DISTORTION 3", "DISTORTION 4"}
     Public Shared eq_only_texts = New String() {"EQ ONLY"}
     Public Shared effector_slider As Integer = 3
     Public Shared effector_lim As Boolean = False
@@ -17,6 +17,7 @@
     Public Shared temp_thread As System.Threading.Thread
     Public Shared temp_file() As String
     Public Shared eq_only_file(124) As String
+    Public Shared distortion_file(124) As String
     Public Shared chorus_file = New String() {
         "",
 "#CHORUS",
@@ -119,14 +120,14 @@
 "",
 "#upper speaker system",
 "Channel: L12 R12",
-"Preamp: 6dB		#set -57 to kill REVERB		12dB maximum",
+"Preamp: 0dB		#set -57 to kill REVERB		12dB maximum",
 "Channel: L13 L14 L15 L16 R13 R14 R15 R16",
 "Preamp: -57dB		#set -57 to kill ECHO		12dB maximum",
 "Copy: L19=L11+L12+L13+L14+L15+L16 R19=R11+R12+R13+R14+R15+R16",
 "",
 "#bass speaker system",
 "Channel: L2 R2",
-"Preamp: 6dB		#set -57 to kill REVERB		12dB maximum",
+"Preamp: 0dB		#set -57 to kill REVERB		12dB maximum",
 "Channel: L3 L4 L5 L6 R3 R4 R5 R6",
 "Preamp: -57dB		#set -57 to kill ECHO		12dB maximum",
 "Copy: L9=L1+L2+L3+L4+L5+L6 R9=R1+R2+R3+R4+R5+R6",
@@ -532,7 +533,7 @@
             EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Else
             Select Case effector_num
-                Case 2
+                Case 2, 5
                     If effector_lim = True And effector_slider >= 5 Then
                         effector_slider = 6
                     Else
@@ -544,6 +545,7 @@
             End Select
             Select Case effector_num
                 Case 1
+START_OF_EFFECTOR_NUM:
                     EFFECTOR_TEXT.Text = compressor_texts(0)
                 Case 2
                     EFFECTOR_TEXT.Text = echo_texts(effector_slider)
@@ -552,10 +554,12 @@
                 Case 4
                     EFFECTOR_TEXT.Text = chorus_texts(effector_slider)
                 Case 5
-                    EFFECTOR_TEXT.Text = eq_only_texts(0)
+                    EFFECTOR_TEXT.Text = distortion_texts(effector_slider)
                 Case 6
+                    EFFECTOR_TEXT.Text = eq_only_texts(0)
+                Case 7
                     effector_num = 1
-                    EFFECTOR_TEXT.Text = compressor_texts(0)
+                    GoTo START_OF_EFFECTOR_NUM
             End Select
         End If
 
@@ -649,6 +653,21 @@
                     End Try
 
                 Case 5
+                    temp_file = distortion_file
+                    If slider >= 3 Then
+                        temp_file(1) = "#DISTORTION"
+                        temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + ((6 - slider) * 1833) & " 0; 8000 -57"
+                    Else
+                        temp_file(1) = "#GARGLE"
+                        temp_file(7) = ""
+                    End If
+                    temp_thread = New System.Threading.Thread(AddressOf distortion_thread)
+                    Try
+                        temp_thread.Start()
+                    Catch x As Exception
+                    End Try
+
+                Case 6
                     temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
@@ -670,16 +689,49 @@
         End If
     End Sub
 
+    Private Sub distortion_thread()
+        Dim count As Integer = 3
+        Dim flag As Boolean = False
+        While True
+            If count = 27 Then
+                count = 3
+            End If
+            count += 1
+            If (count Mod (effector_slider + 1)) = 0 Then
+                If flag = True Then
+                    flag = False
+                Else
+                    flag = True
+                End If
+            End If
+            Try
+                If temp_file(1) = "#GARGLE" Then
+                    If flag = True Then
+                        temp_file(7) = "Preamp: -16dB"
+                    Else
+                        temp_file(7) = ""
+                    End If
+                    System.IO.File.WriteAllLines("config.txt", temp_file)
+                Else
+                    Exit Sub
+                End If
+            Catch x As Exception
+            End Try
+
+            System.Threading.Thread.Sleep(40)
+        End While
+    End Sub
+
     Private Sub chorus_thread()
         Dim count As Integer = 99
-        Dim flag As Integer = 0
+        Dim flag As Boolean = False
         While True
             If count <= 50 Then
-                flag = 1
+                flag = True
             ElseIf count >= 99 Then
-                flag = 0
+                flag = False
             End If
-            If flag = 1 Then
+            If flag = True Then
                 count += 1
             Else
                 count -= 1
