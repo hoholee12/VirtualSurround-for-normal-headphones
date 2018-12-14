@@ -3,7 +3,7 @@
 
 Preamp: -3dB
 
-GraphicEQ: 1 -6; 160 -3; 2500 0; 16000 0
+GraphicEQ: 1 0; 160 0; 2500 0; 16000 0
 
 Device: all
 Copy: L1=L R1=R
@@ -20,7 +20,7 @@ Device: all
 #L11 R11: UPPER SPEAKER SYSTEM
 
 Channel: L1 R1
-Preamp: 3dB
+Preamp: 2dB
 
 Copy: L99=L1 R99=R1
 Channel: L99 R99
@@ -31,7 +31,7 @@ Delay: 0.5ms
 # LEVEL 2: 80/20
 # LEVEL 3: 75/25
 # LEVEL 4: 67/33
-Copy: L1=0.83*L1+0.17*L99 R1=0.83*R1+0.17*R99
+Copy: L1=0.66*L1+0.33*L99 R1=0.66*R1+0.33*R99
 Copy: L11=L1 R11=R1
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -56,7 +56,7 @@ Preamp: -6dB
 
 #reverb only delay
 Channel: R12 R2
-Delay: 20ms
+Delay: 0ms
 
 Copy: R3=R2 L3=L2 R13=R12 L13=L12
 Channel: L3 R3

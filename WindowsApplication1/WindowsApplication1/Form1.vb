@@ -604,10 +604,10 @@ START_OF_EFFECTOR_NUM:
 
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
-                        temp_file(22) = "Preamp: -3dB"
+                        temp_file(22) = "Preamp: " & slider - 6 & "dB"
                     Else
                         temp_file(1) = "#REVERB EX"
-                        temp_file(22) = "Preamp: 0dB"
+                        temp_file(22) = "Preamp: " & 0 - slider & "dB"
                     End If
 
                     temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
