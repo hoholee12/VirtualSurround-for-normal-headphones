@@ -334,7 +334,7 @@
 "#first reverb",
 "Copy: R3=R2 L3=L2 R13=R12 L13=L12",
 "Channel: L3 R3",
-"#GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57",
+"GraphicEQ: 1 0; 160 0; 161 -57; 40000 -57",
 "Delay: 320ms",
 "Preamp: -9dB",
 "Channel: L13 R13",
@@ -598,9 +598,9 @@ START_OF_EFFECTOR_NUM:
                 Case 3
                     temp_file = echo_ex_file
                     temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 12 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
 
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
