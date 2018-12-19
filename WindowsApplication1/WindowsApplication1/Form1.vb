@@ -635,14 +635,14 @@ START_OF_EFFECTOR_NUM:
                     If slider >= 3 Then
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
                         temp_file(22) = "Preamp: " & slider - 3 & "dB"
-                        temp_file(58) = "Delay: 40ms"
+                        temp_file(58) = "Delay: 33ms"
                     Else
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
                         temp_file(22) = "Preamp: " & 3 - slider & "dB"
                         temp_file(58) = "Delay: 0ms"
                     End If
 
-                    temp_file(27) = "Delay: 40ms"
+                    temp_file(27) = "Delay: 33ms"
 
                     temp_file(101) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
@@ -718,7 +718,7 @@ START_OF_EFFECTOR_NUM:
             Catch x As Exception
             End Try
 
-            System.Threading.Thread.Sleep(40)
+            System.Threading.Thread.Sleep(33)
         End While
     End Sub
 
@@ -726,7 +726,7 @@ START_OF_EFFECTOR_NUM:
         Dim count As Integer = 99
         Dim flag As Boolean = False
         While True
-            If count <= 50 Then
+            If count <= 33 Then
                 flag = True
             ElseIf count >= 99 Then
                 flag = False
@@ -746,7 +746,7 @@ START_OF_EFFECTOR_NUM:
             Catch x As Exception
             End Try
 
-            System.Threading.Thread.Sleep(40)
+            System.Threading.Thread.Sleep(33)
         End While
     End Sub
 
