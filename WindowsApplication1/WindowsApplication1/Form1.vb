@@ -1,4 +1,6 @@
-﻿Public Class Form1
+﻿Imports System.Text.RegularExpressions
+
+Public Class Form1
     Public Shared effector_num As Integer = 1
     Public Shared effector_on As Integer = 0
     Public Shared echo_texts = New String() {"REVERB 3", "REVERB 2", "REVERB 1", "ECHO 1", "ECHO 2", "ECHO 3", "ECHO 4"}
@@ -12,6 +14,7 @@
     Public Shared hieq_slider As Integer = 3
     Public Shared filter_slider As Integer = 3
     Public Shared vol_slider As Integer = 3
+    Public Shared check_flag As Boolean = False
 
     Public Shared temp_thread As System.Threading.Thread
     Public Shared temp_file() As String
@@ -485,6 +488,25 @@
 "",
 ""}
 
+    Public Sub check_config()
+        Try
+            Dim check_count As Integer = 0
+            check_flag = False
+            temp_file = System.IO.File.ReadAllLines("config.txt")
+            For Each s In temp_file
+                check_count += 1
+                check_flag = String.Equals(Regex.Replace(s, "\s+", String.Empty), Regex.Replace("Include: vefx.txt", "\s+", String.Empty))
+            Next
+            If check_flag = False Then
+                Array.Resize(temp_file, temp_file.Length + 2)
+                temp_file(check_count) = "Device: all"
+                temp_file(check_count + 1) = "Include: vefx.txt"
+                System.IO.File.WriteAllLines("config.txt", temp_file)
+            End If
+        Catch x As Exception
+        End Try
+    End Sub
+
     Public Sub rerun()
         Try
             temp_thread.Abort()
@@ -523,8 +545,9 @@ START_OF_EFFECTOR_NUM:
     End Sub
 
     Public Sub writetostuff(num As Integer, slider As Integer, slider2 As Integer, slider3 As Integer, slider4 As Integer, slider5 As Integer)
+        check_config()
         Try
-            System.IO.File.Create("config.txt").Dispose()
+            System.IO.File.Create("vefx.txt").Dispose()
         Catch x As Exception
         End Try
         If effector_on <> 0 Then
@@ -644,7 +667,7 @@ START_OF_EFFECTOR_NUM:
                     temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
             End Select
             Try
-                System.IO.File.WriteAllLines("config.txt", temp_file)
+                System.IO.File.WriteAllLines("vefx.txt", temp_file)
             Catch x As Exception
             End Try
 
@@ -673,7 +696,7 @@ START_OF_EFFECTOR_NUM:
                     Else
                         temp_file(7) = ""
                     End If
-                    System.IO.File.WriteAllLines("config.txt", temp_file)
+                    System.IO.File.WriteAllLines("vefx.txt", temp_file)
                 Else
                     Exit Sub
                 End If
@@ -701,7 +724,7 @@ START_OF_EFFECTOR_NUM:
             Try
                 If temp_file(1) = "#FLANGER" Then
                     temp_file(27) = "Delay: 0." & count & "ms"
-                    System.IO.File.WriteAllLines("config.txt", temp_file)
+                    System.IO.File.WriteAllLines("vefx.txt", temp_file)
                 Else
                     Exit Sub
                 End If
@@ -713,10 +736,12 @@ START_OF_EFFECTOR_NUM:
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-        
+
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        check_config()
+
         Dim processNames() As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
         Dim thisId As Integer = System.Diagnostics.Process.GetCurrentProcess.Id
         Try
