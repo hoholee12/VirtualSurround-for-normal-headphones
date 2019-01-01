@@ -572,7 +572,12 @@ START_OF_EFFECTOR_NUM:
                         temp_file(22) = "Preamp: 3dB"
 
                         temp_file(27) = "Delay: 5ms"
-                        temp_file(33) = "Copy: L1=0.66*L1+0.33*L99 R1=0.66*R1+0.33*R99"
+                        If slider = 6 Then
+                            temp_file(33) = "Copy: L1=0.66*L1+0.33*L99 R1=0.66*R1+0.33*R99"
+                        Else
+                            temp_file(33) = "Copy: L1=0.75*L1+0.25*L99 R1=0.75*R1+0.25*R99"
+                        End If
+
                     Else
                         temp_file(1) = "#REVERB"
                         temp_file(22) = "Preamp: 0dB"
@@ -581,79 +586,79 @@ START_OF_EFFECTOR_NUM:
                         temp_file(33) = "Copy: L1=0.83*L1+0.16*L99 R1=0.83*R1+0.16*R99"
                     End If
                 Case 3
-                    temp_file = echo_ex_file
-                    temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
-                    temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                        temp_file = echo_ex_file
+                        temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                        temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                        temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                        temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
 
-                    If slider >= 3 Then
-                        temp_file(1) = "#ECHO EX"
-                        temp_file(22) = "Preamp: " & slider - 6 & "dB"
-                    Else
-                        temp_file(1) = "#REVERB EX"
-                        temp_file(22) = "Preamp: " & 0 - slider & "dB"
-                    End If
+                        If slider >= 3 Then
+                            temp_file(1) = "#ECHO EX"
+                            temp_file(22) = "Preamp: " & slider - 6 & "dB"
+                        Else
+                            temp_file(1) = "#REVERB EX"
+                            temp_file(22) = "Preamp: " & 0 - slider & "dB"
+                        End If
 
-                    temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                    temp_file(68) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(68) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                    temp_file(73) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                    temp_file(76) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(73) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(76) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                    temp_file(81) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                    temp_file(84) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(81) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(84) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                    temp_file(89) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                    temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(89) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                        temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
                 Case 4
-                    temp_file = chorus_file
+                        temp_file = chorus_file
 
-                    If slider >= 3 Then
-                        temp_file(1) = "#CHORUS"
-                    Else
-                        temp_file(1) = "#FLANGER"
+                        If slider >= 3 Then
+                            temp_file(1) = "#CHORUS"
+                        Else
+                            temp_file(1) = "#FLANGER"
 
-                    End If
+                        End If
 
-                    If slider >= 3 Then
-                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
-                        temp_file(22) = "Preamp: " & slider - 3 & "dB"
-                        temp_file(58) = "Delay: 33ms"
-                    Else
-                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
-                        temp_file(22) = "Preamp: " & 3 - slider & "dB"
-                        temp_file(58) = "Delay: 0ms"
-                    End If
+                        If slider >= 3 Then
+                            temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
+                            temp_file(22) = "Preamp: " & slider - 3 & "dB"
+                            temp_file(58) = "Delay: 33ms"
+                        Else
+                            temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
+                            temp_file(22) = "Preamp: " & 3 - slider & "dB"
+                            temp_file(58) = "Delay: 0ms"
+                        End If
 
-                    temp_file(27) = "Delay: 33ms"
+                        temp_file(27) = "Delay: 33ms"
 
-                    temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
-                    Try
-                        temp_thread.Start()
-                    Catch x As Exception
-                    End Try
+                        temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                        temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                        temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
+                        Try
+                            temp_thread.Start()
+                        Catch x As Exception
+                        End Try
 
                 Case 5
-                    temp_file = gargle_file
-                    If slider >= 4 Then
-                        temp_file(1) = "#GARGLE"
-                        temp_file(7) = ""
-                    Else
-                        temp_file(1) = "#DISTORTION"
-                        temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + (slider * 1833) & " 0; 8000 -57"
-                    End If
-                    temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
-                    Try
-                        temp_thread.Start()
-                    Catch x As Exception
-                    End Try
+                        temp_file = gargle_file
+                        If slider >= 4 Then
+                            temp_file(1) = "#GARGLE"
+                            temp_file(7) = ""
+                        Else
+                            temp_file(1) = "#DISTORTION"
+                            temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + (slider * 1833) & " 0; 8000 -57"
+                        End If
+                        temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
+                        Try
+                            temp_thread.Start()
+                        Catch x As Exception
+                        End Try
 
                 Case 6
-                    temp_file = eq_only_file
+                        temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
                 temp_file(3) = "Preamp: " & slider5 - 6 & "dB"
