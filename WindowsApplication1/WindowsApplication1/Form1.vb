@@ -9,15 +9,31 @@ Public Class Form1
     Public Shared chorus_texts = New String() {"FLANGER 3", "FLANGER 2", "FLANGER 1", "CHORUS 1", "CHORUS 2", "CHORUS 3", "CHORUS 4"}
     Public Shared gargle_texts = New String() {"DISTORTION 4", "DISTORTION 3", "DISTORTION 2", "DISTORTION 1", "GARGLE 1", "GARGLE 2", "GARGLE 3"}
     Public Shared eq_only_texts = New String() {"EQ ONLY"}
+    Public Shared loweq_texts = New String() {"LOW EQ -3", "LOW EQ -2", "LOW EQ -1", "LOW EQ +0", "LOW EQ +1", "LOW EQ +2", "LOW EQ +3"}
+    Public Shared hieq_texts = New String() {"HI EQ -3", "HI EQ -2", "HI EQ -1", "HI EQ +0", "HI EQ +1", "HI EQ +2", "HI EQ +3"}
+    Public Shared filter_texts = New String() {"FILTER -3", "FILTER -2", "FILTER -1", "FILTER +0", "FILTER +1", "FILTER +2", "FILTER +3"}
+    Public Shared vol_texts = New String() {"VOL -3", "VOL -2", "VOL -1", "VOL +0", "VOL +1", "VOL +2", "VOL +3"}
+    Public Shared channel_texts = New String() {"MONO", "STEREO", "QUADRAPHONIC", "SURROUND", "5.1 SRND", "6.1 SRND", "7.1 SRND"}
     Public Shared effector_slider As Integer = 3
     Public Shared loweq_slider As Integer = 3
+    Public Shared prev_loweq As Integer = loweq_slider
     Public Shared hieq_slider As Integer = 3
+    Public Shared prev_hieq As Integer = hieq_slider
     Public Shared filter_slider As Integer = 3
+    Public Shared prev_filter As Integer = filter_slider
     Public Shared vol_slider As Integer = 3
+    Public Shared prev_vol As Integer = vol_slider
+    Public Shared channel_slider As Integer = 1
+    Public Shared prev_channel As Integer = channel_slider
     Public Shared check_flag As Boolean = False
 
+    Public Shared wait_for_thread As Boolean = False
+    Public Shared wait_for_thread2 As Boolean = False
+
     Public Shared temp_thread As System.Threading.Thread
+    Public Shared menu_thread As System.Threading.Thread
     Public Shared temp_file() As String
+    Public Shared temp_file2() As String
     Public Shared eq_only_file(124) As String
     Public Shared gargle_file(124) As String
     Public Shared chorus_file = New String() {
@@ -28,12 +44,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L1=L R1=R",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: L1=L+RL R1=R+RR",
+"",
+"",
+"",
+"",
 "",
 "",
 "",
@@ -99,12 +115,48 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L=L19+L9 R=R19+R9",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: RL=L19+L9 RR=R19+R9",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
 "",
 "",
 "",
@@ -117,12 +169,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L1=L R1=R",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: L1=L+RL R1=R+RR",
+"",
+"",
+"",
+"",
 "",
 "",
 "",
@@ -226,12 +278,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L=L19+L9 R=R19+R9",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: RL=L19+L9 RR=R19+R9",
+"",
+"",
+"",
+"",
 "",
 ""}
 
@@ -243,12 +295,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L1=L R1=R",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: L1=L+RL R1=R+RR",
+"",
+"",
+"",
+"",
 "",
 "",
 "",
@@ -353,12 +405,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L=L19+L9 R=R19+R9",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: RL=L19+L9 RR=R19+R9",
+"",
+"",
+"",
+"",
 "",
 ""}
 
@@ -370,12 +422,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L1=L R1=R",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: L1=L+RL R1=R+RR",
+"",
+"",
+"",
+"",
 "",
 "",
 "",
@@ -479,12 +531,12 @@ Public Class Form1
 "",
 "",
 "",
-"Device: all",
-"Copy: L=L19+L9 R=R19+R9",
 "",
 "",
-"Device: 스피커; speaker",
-"Copy: RL=L19+L9 RR=R19+R9",
+"",
+"",
+"",
+"",
 "",
 ""}
 
@@ -492,16 +544,16 @@ Public Class Form1
         Try
             Dim check_count As Integer = 0
             check_flag = False
-            temp_file = System.IO.File.ReadAllLines("config.txt")
-            For Each s In temp_file
+            temp_file2 = System.IO.File.ReadAllLines("config.txt")
+            For Each s In temp_file2
                 check_count += 1
                 check_flag = String.Equals(Regex.Replace(s, "\s+", String.Empty), Regex.Replace("Include: vefx.txt", "\s+", String.Empty))
             Next
             If check_flag = False Then
-                Array.Resize(temp_file, temp_file.Length + 2)
-                temp_file(check_count) = "Device: all"
-                temp_file(check_count + 1) = "Include: vefx.txt"
-                System.IO.File.WriteAllLines("config.txt", temp_file)
+                Array.Resize(temp_file2, temp_file2.Length + 2)
+                temp_file2(check_count) = "Device: all"
+                temp_file2(check_count + 1) = "Include: vefx.txt"
+                System.IO.File.WriteAllLines("config.txt", temp_file2)
             End If
         Catch x As Exception
         End Try
@@ -510,20 +562,74 @@ Public Class Form1
     Public Sub rerun()
         Try
             temp_thread.Abort()
+            wait_for_thread2 = False
         Catch e As Exception
         End Try
-        If effector_on = 0 Then
-            EFFECTOR_TEXT.Text = "EFFECTOR OFF"
-        Else
+
+        'write
+        If effector_on <> 0 Then
             Select Case effector_num
                 Case 2, 5
                     effector_slider = VEFX.Value
                 Case Else
                     effector_slider = If(effector_slider > 5, 5, effector_slider)
             End Select
+            If effector_num = 7 Then
+                effector_num = 1
+            End If
+        End If
+
+        writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider, channel_slider)
+
+        'display
+        menu_thread = New System.Threading.Thread(AddressOf writetext)
+        Try
+            menu_thread.Start()
+        Catch x As Exception
+
+        End Try
+
+    End Sub
+
+    Public Sub writetext()
+
+        If effector_on = 0 Then
+            EFFECTOR_TEXT.Text = "EFFECTOR OFF"
+        Else
+
+            If prev_loweq <> loweq_slider Then
+                EFFECTOR_TEXT.Text = loweq_texts(loweq_slider)
+                System.Threading.Thread.Sleep(2000)
+            End If
+            prev_loweq = loweq_slider
+
+            If prev_hieq <> hieq_slider Then
+                EFFECTOR_TEXT.Text = hieq_texts(hieq_slider)
+                System.Threading.Thread.Sleep(2000)
+            End If
+            prev_hieq = hieq_slider
+
+            If prev_filter <> filter_slider Then
+                EFFECTOR_TEXT.Text = filter_texts(filter_slider)
+                System.Threading.Thread.Sleep(2000)
+            End If
+            prev_filter = filter_slider
+
+            If prev_vol <> vol_slider Then
+                EFFECTOR_TEXT.Text = vol_texts(vol_slider)
+                System.Threading.Thread.Sleep(2000)
+            End If
+            prev_vol = vol_slider
+
+            If prev_channel <> channel_slider Then
+                EFFECTOR_TEXT.Text = channel_texts(channel_slider)
+                System.Threading.Thread.Sleep(2000)
+            End If
+            prev_channel = channel_slider
+
+
             Select Case effector_num
                 Case 1
-START_OF_EFFECTOR_NUM:
                     EFFECTOR_TEXT.Text = compressor_texts(effector_slider)
                 Case 2
                     EFFECTOR_TEXT.Text = echo_texts(effector_slider)
@@ -535,16 +641,15 @@ START_OF_EFFECTOR_NUM:
                     EFFECTOR_TEXT.Text = gargle_texts(effector_slider)
                 Case 6
                     EFFECTOR_TEXT.Text = eq_only_texts(0)
-                Case 7
-                    effector_num = 1
-                    GoTo START_OF_EFFECTOR_NUM
             End Select
         End If
 
-        writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider)
+
     End Sub
 
-    Public Sub writetostuff(num As Integer, slider As Integer, slider2 As Integer, slider3 As Integer, slider4 As Integer, slider5 As Integer)
+    Public Sub writetostuff(num As Integer, slider As Integer, slider2 As Integer, slider3 As Integer, slider4 As Integer, slider5 As Integer, slider6 As Integer)
+        temp_thread = Nothing
+
         check_config()
         Try
             System.IO.File.Create("vefx.txt").Dispose()
@@ -586,79 +691,72 @@ START_OF_EFFECTOR_NUM:
                         temp_file(33) = "Copy: L1=0.83*L1+0.16*L99 R1=0.83*R1+0.16*R99"
                     End If
                 Case 3
-                        temp_file = echo_ex_file
-                        temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                        temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
-                        temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                        temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file = echo_ex_file
+                    temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
 
-                        If slider >= 3 Then
-                            temp_file(1) = "#ECHO EX"
-                            temp_file(22) = "Preamp: " & slider - 6 & "dB"
-                        Else
-                            temp_file(1) = "#REVERB EX"
-                            temp_file(22) = "Preamp: " & 0 - slider & "dB"
-                        End If
+                    If slider >= 3 Then
+                        temp_file(1) = "#ECHO EX"
+                        temp_file(22) = "Preamp: " & slider - 6 & "dB"
+                    Else
+                        temp_file(1) = "#REVERB EX"
+                        temp_file(22) = "Preamp: " & 0 - slider & "dB"
+                    End If
 
-                        temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                        temp_file(68) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(64) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(68) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                        temp_file(73) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                        temp_file(76) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(73) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(76) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                        temp_file(81) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                        temp_file(84) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(81) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(84) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
-                        temp_file(89) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
-                        temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(89) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
+                    temp_file(92) = "Delay: " & Int(280 * slider / 6 + 40) & "ms"
 
                 Case 4
-                        temp_file = chorus_file
+                    temp_file = chorus_file
 
-                        If slider >= 3 Then
-                            temp_file(1) = "#CHORUS"
-                        Else
-                            temp_file(1) = "#FLANGER"
+                    If slider >= 3 Then
+                        temp_file(1) = "#CHORUS"
+                    Else
+                        temp_file(1) = "#FLANGER"
 
-                        End If
+                    End If
 
-                        If slider >= 3 Then
-                            temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
-                            temp_file(22) = "Preamp: " & slider - 3 & "dB"
-                            temp_file(58) = "Delay: 33ms"
-                        Else
-                            temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
-                            temp_file(22) = "Preamp: " & 3 - slider & "dB"
-                            temp_file(58) = "Delay: 0ms"
-                        End If
+                    If slider >= 3 Then
+                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*L1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*L99 R1=0." & Int(50 + 50 / 6 * (6 - slider)) & "*R1+0." & Int(50 - 50 / 6 * (6 - slider)) & "*R99"
+                        temp_file(22) = "Preamp: " & slider - 3 & "dB"
+                        temp_file(58) = "Delay: 33ms"
+                    Else
+                        temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
+                        temp_file(22) = "Preamp: " & 3 - slider & "dB"
+                        temp_file(58) = "Delay: 0ms"
+                    End If
 
-                        temp_file(27) = "Delay: 33ms"
+                    temp_file(27) = "Delay: 33ms"
 
-                        temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                        temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                        temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
-                        Try
-                            temp_thread.Start()
-                        Catch x As Exception
-                        End Try
+                    temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
+                    temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
+                    
 
                 Case 5
-                        temp_file = gargle_file
-                        If slider >= 4 Then
-                            temp_file(1) = "#GARGLE"
-                            temp_file(7) = ""
-                        Else
-                            temp_file(1) = "#DISTORTION"
-                            temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + (slider * 1833) & " 0; 8000 -57"
-                        End If
-                        temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
-                        Try
-                            temp_thread.Start()
-                        Catch x As Exception
-                        End Try
-
+                    temp_file = gargle_file
+                    If slider >= 4 Then
+                        temp_file(1) = "#GARGLE"
+                        temp_file(7) = ""
+                    Else
+                        temp_file(1) = "#DISTORTION"
+                        temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + (slider * 1833) & " 0; 8000 -57"
+                    End If
+                    temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
+                    
                 Case 6
-                        temp_file = eq_only_file
+                    temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
                 temp_file(3) = "Preamp: " & slider5 - 6 & "dB"
@@ -671,8 +769,65 @@ START_OF_EFFECTOR_NUM:
                 Case Else
                     temp_file(5) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
             End Select
+
+
+            Select Case num
+
+                Case 5, 6
+                Case Else
+
+                    temp_file(7) = "Device: all"
+                    temp_file(8) = ""
+                    temp_file(9) = ""
+                    temp_file(10) = ""
+                    temp_file(115) = "Device: all"
+                    temp_file(116) = ""
+                    temp_file(117) = ""
+                    Select Case slider6
+                        Case 0
+                            temp_file(8) = "Copy: L1=C R1=C" 'mono
+                            temp_file(116) = "Copy: C=0.25*L9+0.25*L19+0.25*R9+0.25*R19"
+                            temp_file(117) = "Preamp: 12dB"
+                        Case 1
+                            temp_file(8) = "Copy: L1=L R1=R" 'stereo
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19"
+                        Case 2
+                            temp_file(8) = "Copy: L1=0.5*L+0.5*RL R1=0.5*R+0.5*RR" 'quad
+                            temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 6dB"
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19 RL=L9+L19 RR=R9+R19"
+                        Case 3
+                            temp_file(8) = "Copy: L1=0.33*L+0.33*C+0.33*RC R1=0.33*R+0.33*C+0.33*RC" 'surround
+                            temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 9dB"
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 RC=L19+R19"
+                        Case 4
+                            temp_file(8) = "Copy: L1=0.25*L+0.25*C+0.25*SUB+0.25*SL R1=0.25*R+0.25*C+0.25*SUB+0.25*SR" '5.1
+                            temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 12dB"
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 SL=L9+L19 SR=R9+R19"
+                        Case 5
+                            temp_file(8) = "Copy: L1=0.25*L+0.25*C+0.25*SUB+0.25*RL R1=0.25*R+0.25*C+0.25*SUB+0.25*RR" '6.1
+                            temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 12dB"
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 RL=L9+L19 RR=R9+R19"
+                        Case 6
+                            temp_file(8) = "Copy: L1=0.2*L+0.2*C+0.2*SUB+0.2*SL+0.2*RL R1=0.2*R+0.2*C+0.2*SUB+0.2*SR+0.2*RR" '7.1
+                            temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 15dB"
+                            temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 SL=L9+L19 SR=R9+R19 RL=L9+L19 RR=R9+R19"
+                    End Select
+
+            End Select
+
+
+
             Try
                 System.IO.File.WriteAllLines("vefx.txt", temp_file)
+                While wait_for_thread2
+                    System.Threading.Thread.Sleep(33)
+                End While
+                temp_thread.Start()
             Catch x As Exception
             End Try
 
@@ -682,6 +837,8 @@ START_OF_EFFECTOR_NUM:
     Private Sub gargle_thread()
         Dim count As Integer = 3
         Dim flag As Boolean = False
+
+        wait_for_thread2 = True
         While True
             If count = 27 Then
                 count = 3
@@ -703,9 +860,12 @@ START_OF_EFFECTOR_NUM:
                     End If
                     System.IO.File.WriteAllLines("vefx.txt", temp_file)
                 Else
+                    wait_for_thread2 = False
                     Exit Sub
                 End If
             Catch x As Exception
+                wait_for_thread2 = False
+                Exit Sub
             End Try
 
             System.Threading.Thread.Sleep(33)
@@ -715,6 +875,7 @@ START_OF_EFFECTOR_NUM:
     Private Sub chorus_thread()
         Dim count As Integer = 99
         Dim flag As Boolean = False
+        wait_for_thread2 = True
         While True
             If count <= 33 Then
                 flag = True
@@ -731,9 +892,12 @@ START_OF_EFFECTOR_NUM:
                     temp_file(27) = "Delay: 0." & count & "ms"
                     System.IO.File.WriteAllLines("vefx.txt", temp_file)
                 Else
+                    wait_for_thread2 = False
                     Exit Sub
                 End If
             Catch x As Exception
+                wait_for_thread2 = False
+                Exit Sub
             End Try
 
             System.Threading.Thread.Sleep(33)
@@ -745,6 +909,8 @@ START_OF_EFFECTOR_NUM:
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = False
+
         check_config()
 
         Dim processNames() As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
@@ -757,15 +923,7 @@ START_OF_EFFECTOR_NUM:
             Next
         Catch x As Exception
         End Try
-        writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider)
-    End Sub
-
-    Private Sub TextBox2_TextChanged(sender As Object, e As EventArgs) Handles TextBox2.TextChanged
-
-    End Sub
-
-    Private Sub TextBox6_TextChanged(sender As Object, e As EventArgs) Handles TextBox6.TextChanged
-
+        writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider, channel_slider)
     End Sub
 
     Private Sub EFFECTOR_TEXT_TextChanged(sender As Object, e As EventArgs) Handles EFFECTOR_TEXT.TextChanged
@@ -779,6 +937,7 @@ START_OF_EFFECTOR_NUM:
             effector_on = 0
         End If
         rerun()
+
     End Sub
 
     Private Sub VEFX_CHANGE_Click(sender As Object, e As EventArgs) Handles VEFX_CHANGE.Click
@@ -798,20 +957,30 @@ START_OF_EFFECTOR_NUM:
     Private Sub VOLUME_Scroll(sender As Object, e As EventArgs) Handles VOLUME.Scroll
         vol_slider = VOLUME.Value
         rerun()
+
     End Sub
 
     Private Sub FILTER_Scroll(sender As Object, e As EventArgs) Handles FILTER.Scroll
         filter_slider = FILTER.Value
         rerun()
+
     End Sub
 
     Private Sub LOW_EQ_Scroll(sender As Object, e As EventArgs) Handles LOW_EQ.Scroll
         loweq_slider = LOW_EQ.Value
         rerun()
+
     End Sub
 
     Private Sub HIGH_EQ_Scroll(sender As Object, e As EventArgs) Handles HIGH_EQ.Scroll
         hieq_slider = HIGH_EQ.Value
         rerun()
+
+    End Sub
+
+    Private Sub CHANNEL_Scroll(sender As Object, e As EventArgs) Handles CHANNEL.Scroll
+        channel_slider = CHANNEL.Value
+        rerun()
+
     End Sub
 End Class
