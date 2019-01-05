@@ -592,10 +592,13 @@ Public Class Form1
     End Sub
 
     Public Sub writetext()
-
         If effector_on = 0 Then
+            While wait_for_thread
+                System.Threading.Thread.Sleep(33)
+            End While
             EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Else
+            wait_for_thread = True
 
             If prev_loweq <> loweq_slider Then
                 EFFECTOR_TEXT.Text = loweq_texts(loweq_slider)
@@ -642,8 +645,9 @@ Public Class Form1
                 Case 6
                     EFFECTOR_TEXT.Text = eq_only_texts(0)
             End Select
-        End If
+            wait_for_thread = False
 
+        End If
 
     End Sub
 
