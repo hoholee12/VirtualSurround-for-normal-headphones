@@ -709,17 +709,17 @@ Public Class Form1
                         temp_file(22) = "Preamp: " & 0 - slider & "dB"
                     End If
 
-                    temp_file(64) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
-                    temp_file(68) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
+                    temp_file(64) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
+                    temp_file(68) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
 
-                    temp_file(73) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
-                    temp_file(76) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
+                    temp_file(73) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
+                    temp_file(76) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
 
-                    temp_file(81) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
-                    temp_file(84) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
+                    temp_file(81) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
+                    temp_file(84) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
 
-                    temp_file(89) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
-                    temp_file(92) = "Delay: " & Int(240 * slider / 6 + 80) & "ms"
+                    temp_file(89) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
+                    temp_file(92) = "Delay: " & Int(160 * slider / 6 + 160) & "ms"
 
                 Case 4
                     temp_file = chorus_file
