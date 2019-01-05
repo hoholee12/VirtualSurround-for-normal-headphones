@@ -697,9 +697,9 @@ Public Class Form1
                 Case 3
                     temp_file = echo_ex_file
                     temp_file(101) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(103) = "Preamp: " & If(slider >= 3, (slider * 6) - 18, 18 - (slider * 6)) - 15 & "dB		#set -57 to kill ECHO		12dB maximum"
                     temp_file(108) = "Preamp: " & If(slider >= 3, -6, 0) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 4) - 12, 12 - (slider * 4)) - 9 & "dB		#set -57 to kill ECHO		12dB maximum"
+                    temp_file(110) = "Preamp: " & If(slider >= 3, (slider * 6) - 18, 18 - (slider * 6)) - 15 & "dB		#set -57 to kill ECHO		12dB maximum"
 
                     If slider >= 3 Then
                         temp_file(1) = "#ECHO EX"
