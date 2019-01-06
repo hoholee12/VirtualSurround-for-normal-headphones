@@ -879,7 +879,7 @@ Public Class Form1
                         temp_file(12) = ""
                     Else
                         temp_file(1) = "#DISTORTION"
-                        temp_file(12) = "GraphicEQ: 1 " & 12 - (slider * 3) & "; 160 " & 12 - (slider * 3) & "; " & 2500 + (slider * 1833) & " " & 12 - (slider * 3) & "; 8000 -57"
+                        temp_file(12) = "GraphicEQ: 1 " & 6 - (slider * 2) & "; 160 " & 6 - (slider * 2) & "; " & 2500 + (slider * 1833) & " " & 6 - (slider * 2) & "; 8000 -57"
                     End If
 
                     temp_file(22) = "Preamp: 0dB"
