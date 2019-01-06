@@ -861,7 +861,7 @@ Public Class Form1
                         temp_file(58) = "Delay: 33ms"
                     Else
                         temp_file(33) = "Copy: L1=0." & Int(50 + 50 / 6 * slider) & "*L1+0." & Int(50 - 50 / 6 * slider) & "*L99 R1=0." & Int(50 + 50 / 6 * slider) & "*R1+0." & Int(50 - 50 / 6 * slider) & "*R99"
-                        temp_file(22) = "Preamp: " & 3 - slider & "dB"
+                        temp_file(22) = "Preamp: " & 6 - (slider * 2) & "dB"
                         temp_file(58) = "Delay: 0ms"
                     End If
 
