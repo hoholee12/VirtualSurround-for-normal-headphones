@@ -35,7 +35,131 @@ Public Class Form1
     Public Shared temp_file() As String
     Public Shared temp_file2() As String
     Public Shared eq_only_file(124) As String
-    Public Shared gargle_file(124) As String
+    Public Shared gargle_file = New String() {
+"",
+"#GARGLE",
+"",
+"Preamp: 0dB",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"Device: all",
+"#DELAY SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"#L1 R1: BASS SPEAKER SYSTEM",
+"#L11 R11: UPPER SPEAKER SYSTEM",
+"",
+"Channel: L1 R1",
+"Preamp: 0dB",
+"",
+"Copy: L99=L1 R99=R1",
+"Channel: L99 R99",
+"#GraphicEQ: 1 12; 160 12; 250 6; 2500 -6",
+"Delay: 0ms",
+"#",
+"# LEVEL 1: 83/17",
+"# LEVEL 2: 80/20",
+"# LEVEL 3: 75/25",
+"# LEVEL 4: 67/33",
+"Copy: L1=0.58*L1+0.41*L99 R1=0.58*R1+0.41*R99",
+"Copy: L11=L1 R11=R1",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#SURROUND SYSTEM<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"Channel: L1 R1",
+"GraphicEQ: 1 0; 250 0; 251 -57; 40000 -57",
+"Delay: 0ms",
+"Preamp: -0dB",
+"Channel: L11 R11",
+"GraphicEQ: 1 -57; 250 -57; 251 0; 40000 0",
+"Delay: 0ms",
+"Preamp: -0dB",
+"",
+"#reverb source",
+"Copy: L2=R1 R2=L1 L12=R11 R12=L11",
+"Channel: L2 R2",
+"Delay: 20ms",
+"Preamp: -6dB",
+"Channel: L12 R12",
+"Delay: 20ms",
+"Preamp: -6dB",
+"",
+"#reverb only delay",
+"Channel: R12 R2",
+"Delay: 0ms",
+"",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#MIXER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"#upper speaker system",
+"Channel: L12 R12",
+"Preamp: -57dB		#set -57 to kill REVERB		12dB maximum",
+"Copy: L19=L11+L12 R19=R11+R12",
+"",
+"#bass speaker system",
+"Channel: L2 R2",
+"Preamp: -57dB		#set -57 to kill REVERB		12dB maximum",
+"Copy: L9=L1+L2 R9=R1+R2",
+"",
+"#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+""}
     Public Shared chorus_file = New String() {
 "",
 "#CHORUS",
@@ -752,11 +876,14 @@ Public Class Form1
                     temp_file = gargle_file
                     If slider >= 4 Then
                         temp_file(1) = "#GARGLE"
-                        temp_file(7) = ""
+                        temp_file(12) = ""
                     Else
                         temp_file(1) = "#DISTORTION"
-                        temp_file(7) = "GraphicEQ: 1 0; 160 0; " & 2500 + (slider * 1833) & " 0; 8000 -57"
+                        temp_file(12) = "GraphicEQ: 1 " & 12 - (slider * 3) & "; 160 " & 12 - (slider * 3) & "; " & 2500 + (slider * 1833) & " " & 12 - (slider * 3) & "; 8000 -57"
                     End If
+
+                    temp_file(22) = "Preamp: 0dB"
+
                     temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
                     
                 Case 6
@@ -777,7 +904,7 @@ Public Class Form1
 
             Select Case num
 
-                Case 5, 6
+                Case 6
                 Case Else
 
                     temp_file(7) = "Device: all"
@@ -790,10 +917,12 @@ Public Class Form1
                     Select Case slider6
                         Case 0
                             temp_file(8) = "Copy: L1=C R1=C" 'mono
+                            temp_file(9) = "Channel: L1 R1"
                             temp_file(116) = "Copy: C=0.25*L9+0.25*L19+0.25*R9+0.25*R19"
                             temp_file(117) = "Preamp: 12dB"
                         Case 1
                             temp_file(8) = "Copy: L1=L R1=R" 'stereo
+                            temp_file(9) = "Channel: L1 R1"
                             temp_file(116) = "Copy: L=L9+L19 R=R9+R19"
                         Case 2
                             temp_file(8) = "Copy: L1=0.5*L+0.5*RL R1=0.5*R+0.5*RR" 'quad
@@ -858,9 +987,9 @@ Public Class Form1
             Try
                 If temp_file(1) = "#GARGLE" Then
                     If flag = True Then
-                        temp_file(7) = "Preamp: -18dB"
+                        temp_file(22) = "Preamp: -18dB"
                     Else
-                        temp_file(7) = ""
+                        temp_file(22) = "Preamp: 0dB"
                     End If
                     System.IO.File.WriteAllLines("vefx.txt", temp_file)
                 Else
