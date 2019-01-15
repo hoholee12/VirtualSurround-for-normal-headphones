@@ -479,7 +479,7 @@ Public Class Form1
 "Delay: 320ms",
 "Preamp: -9dB",
 "Channel: L13 R13",
-"#GraphicEQ: 1 0; 400 0; 401 -57; 40000 -57",
+"GraphicEQ: 1 -57; 400 -57; 401 0; 40000 0",
 "Delay: 320ms",
 "Preamp: -9dB",
 "",
