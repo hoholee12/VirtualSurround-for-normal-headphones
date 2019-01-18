@@ -8,4 +8,3 @@ C:\Users\hoholee12\documents\visual studio 2013\Projects\WindowsApplication1\Win
 C:\Users\hoholee12\documents\visual studio 2013\Projects\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.exe
 C:\Users\hoholee12\documents\visual studio 2013\Projects\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.xml
 C:\Users\hoholee12\documents\visual studio 2013\Projects\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.pdb
-C:\Users\hoholee12\documents\visual studio 2013\Projects\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbprojResolveAssemblyReference.cache
