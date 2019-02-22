@@ -918,8 +918,8 @@ Public Class Form1
                         Case 0
                             temp_file(8) = "Copy: L1=C R1=C" 'mono
                             temp_file(9) = "Channel: L1 R1"
+                            temp_file(10) = "Preamp: 6dB"
                             temp_file(116) = "Copy: C=0.25*L9+0.25*L19+0.25*R9+0.25*R19"
-                            temp_file(117) = "Preamp: 12dB"
                         Case 1
                             temp_file(8) = "Copy: L1=L R1=R" 'stereo
                             temp_file(9) = "Channel: L1 R1"
@@ -932,22 +932,22 @@ Public Class Form1
                         Case 3
                             temp_file(8) = "Copy: L1=0.33*L+0.33*C+0.33*RC R1=0.33*R+0.33*C+0.33*RC" 'surround
                             temp_file(9) = "Channel: L1 R1"
-                            temp_file(10) = "Preamp: 9dB"
+                            temp_file(10) = "Preamp: 6dB"
                             temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 RC=L19+R19"
                         Case 4
                             temp_file(8) = "Copy: L1=0.25*L+0.25*C+0.25*SUB+0.25*SL R1=0.25*R+0.25*C+0.25*SUB+0.25*SR" '5.1
                             temp_file(9) = "Channel: L1 R1"
-                            temp_file(10) = "Preamp: 12dB"
+                            temp_file(10) = "Preamp: 6dB"
                             temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 SL=L9+L19 SR=R9+R19"
                         Case 5
                             temp_file(8) = "Copy: L1=0.25*L+0.25*C+0.25*SUB+0.25*RL R1=0.25*R+0.25*C+0.25*SUB+0.25*RR" '6.1
                             temp_file(9) = "Channel: L1 R1"
-                            temp_file(10) = "Preamp: 12dB"
+                            temp_file(10) = "Preamp: 6dB"
                             temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 RL=L9+L19 RR=R9+R19"
                         Case 6
                             temp_file(8) = "Copy: L1=0.2*L+0.2*C+0.2*SUB+0.2*SL+0.2*RL R1=0.2*R+0.2*C+0.2*SUB+0.2*SR+0.2*RR" '7.1
                             temp_file(9) = "Channel: L1 R1"
-                            temp_file(10) = "Preamp: 15dB"
+                            temp_file(10) = "Preamp: 6dB"
                             temp_file(116) = "Copy: L=L9+L19 R=R9+R19 C=L19+R19 SUB=L9+R9 SL=L9+L19 SR=R9+R19 RL=L9+L19 RR=R9+R19"
                     End Select
 
