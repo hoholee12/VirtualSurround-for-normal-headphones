@@ -1,7 +1,7 @@
 
 Device: 스피커; speaker
 Channel: L R RL RR
-GraphicEQ: 1 0; 160 -12; 250 0; 400 -12; 2500 0; 40000 0
+GraphicEQ: 1 0; 250 -9; 2500 0; 40000 0
 
 Device: all
 Include: vefx.txt
