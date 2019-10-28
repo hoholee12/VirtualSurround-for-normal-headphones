@@ -2,6 +2,7 @@
 no more surround sound gaming headphones needed, all you need is a EqualizerAPO(https://sourceforge.net/projects/equalizerapo/) and this config.txt! <br/>
  <br/>
 all handtuned by myself for hours.. <br/>
+equalizerAPO version 1.1.2 is compatible with newer windows builds(newer versions start crashing)<br/>
  <br/>
 you can test if this virtual surround works with these links:  
 https://www.youtube.com/watch?v=PqVCPE8_ntE - dolby 5.1 video  <br/>
