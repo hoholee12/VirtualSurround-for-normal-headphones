@@ -686,7 +686,7 @@ Public Class Form1
     End Sub
 
     Public Sub firstrun()
-        temp_file = IO.File.ReadAllLines("vefx.txt")
+        temp_file = IO.File.ReadAllLines("C:\Program Files\EqualizerAPO\config\vefx.txt")
         Try
             If temp_file(0) <> "" Then
                 effector_on = 1
