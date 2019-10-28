@@ -1,6 +1,9 @@
 # VirtualSurround-for-normal-headphones
 no more surround sound gaming headphones needed, all you need is a EqualizerAPO(https://sourceforge.net/projects/equalizerapo/) and this config.txt! <br/>
+ (only 1.1.2 seems to work on newer windows versions...)<br/>
  <br/>
+ 
+ 
 all handtuned by myself for hours.. <br/>
  <br/>
 you can test if this virtual surround works with these links:  

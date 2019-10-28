@@ -30,6 +30,10 @@ Public Class Form1
     Public Shared wait_for_thread As Boolean = False
     Public Shared wait_for_thread2 As Boolean = False
 
+    Public Shared bgfx_offb As Boolean = False
+    Public Shared resetb As Boolean = False
+    Public Shared temp_config() As String
+
     Public Shared temp_thread As System.Threading.Thread
     Public Shared menu_thread As System.Threading.Thread
     Public Shared temp_file() As String
@@ -780,6 +784,7 @@ Public Class Form1
 
         check_config()
         Try
+            System.IO.File.Create("sliders.txt").Dispose()
             System.IO.File.Create("vefx.txt").Dispose()
         Catch x As Exception
         End Try
@@ -953,10 +958,11 @@ Public Class Form1
 
             End Select
 
-
+            temp_config(0) = num + "" + slider + "" + slider2 + "" + slider3 + "" + slider4 + "" + slider5 + "" + slider6
 
             Try
                 System.IO.File.WriteAllLines("vefx.txt", temp_file)
+                System.IO.File.WriteAllLines("sliders.txt", temp_config)
                 While wait_for_thread2
                     System.Threading.Thread.Sleep(33)
                 End While
@@ -1114,6 +1120,14 @@ Public Class Form1
     Private Sub CHANNEL_Scroll(sender As Object, e As EventArgs) Handles CHANNEL.Scroll
         channel_slider = CHANNEL.Value
         rerun()
+
+    End Sub
+
+    Private Sub bgfx_off_Click(sender As Object, e As EventArgs) Handles bgfx_off.Click
+
+    End Sub
+
+    Private Sub reset_Click(sender As Object, e As EventArgs) Handles reset.Click
 
     End Sub
 End Class
