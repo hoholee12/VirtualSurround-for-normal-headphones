@@ -30,6 +30,8 @@ Public Class Form1
     Public Shared wait_for_thread As Boolean = False
     Public Shared wait_for_thread2 As Boolean = False
 
+    Public Shared bgfx_toggleb As Boolean = True
+
     Public Shared temp_thread As System.Threading.Thread
     Public Shared menu_thread As System.Threading.Thread
     Public Shared temp_file() As String
@@ -691,15 +693,33 @@ Public Class Form1
         End Try
 
         'write
-        If effector_on <> 0 Then
-            Select Case effector_num
-                Case 2, 5
-                    effector_slider = VEFX.Value
-                Case Else
-                    effector_slider = If(effector_slider > 5, 5, effector_slider)
-            End Select
-            If effector_num = 7 Then
-                effector_num = 1
+        If bgfx_toggleb = True Then
+            If effector_on <> 0 Then
+                Select Case effector_num
+                    Case 2, 5
+                        effector_slider = VEFX.Value
+                    Case Else
+                        effector_slider = If(effector_slider > 5, 5, effector_slider)
+                End Select
+                If effector_num >= 7 Then
+                    effector_num = 1
+                End If
+            End If
+        Else        'no bgfx version
+            If effector_on <> 0 Then
+                Select Case effector_num
+                    Case 4, 5
+                        effector_num = 6
+                End Select
+                Select Case effector_num
+                    Case 2, 5
+                        effector_slider = VEFX.Value
+                    Case Else
+                        effector_slider = If(effector_slider > 5, 5, effector_slider)
+                End Select
+                If effector_num >= 7 Then
+                    effector_num = 1
+                End If
             End If
         End If
 
@@ -1115,5 +1135,17 @@ Public Class Form1
         channel_slider = CHANNEL.Value
         rerun()
 
+    End Sub
+
+    Private Sub bgfx_toggle_Click(sender As Object, e As EventArgs) Handles bgfx_toggle.Click
+        If bgfx_toggleb Then    'bgfx on
+            bgfx_toggle.Text = "BGFX off"
+            bgfx_toggleb = False
+        Else                    'bgfx off
+            bgfx_toggle.Text = "BGFX on"
+            bgfx_toggleb = True
+        End If
+
+        rerun()
     End Sub
 End Class
