@@ -30,7 +30,7 @@ Public Class Form1
     Public Shared wait_for_thread As Boolean = False
     Public Shared wait_for_thread2 As Boolean = False
 
-    Public Shared bgfx_toggleb As Boolean = True
+    Public Shared bgfx_toggleb As Integer = 1
 
     Public Shared temp_thread As System.Threading.Thread
     Public Shared menu_thread As System.Threading.Thread
@@ -685,6 +685,40 @@ Public Class Form1
         End Try
     End Sub
 
+    Public Sub firstrun()
+        temp_file = IO.File.ReadAllLines("vefx.txt")
+        Try
+            If temp_file(0) <> "" Then
+                effector_on = 1
+                effector_num = Val(temp_file(0)(1))
+                effector_slider = Val(temp_file(0)(3))
+                loweq_slider = Val(temp_file(0)(5))
+                hieq_slider = Val(temp_file(0)(7))
+                filter_slider = Val(temp_file(0)(9))
+                vol_slider = Val(temp_file(0)(11))
+                channel_slider = Val(temp_file(0)(13))
+                bgfx_toggleb = Val(temp_file(0)(15))
+            End If
+
+        Catch ex As Exception
+
+        End Try
+        
+        VEFX.Value = effector_slider
+        LOW_EQ.Value = loweq_slider
+        HIGH_EQ.Value = hieq_slider
+        FILTER.Value = filter_slider
+        VOLUME.Value = vol_slider
+        CHANNEL.Value = channel_slider
+        If bgfx_toggleb = 1 Then
+            bgfx_toggle.Text = "BGFX on"
+        Else
+            bgfx_toggle.Text = "BGFX off"
+        End If
+
+        rerun()
+    End Sub
+
     Public Sub rerun()
         Try
             temp_thread.Abort()
@@ -693,7 +727,7 @@ Public Class Form1
         End Try
 
         'write
-        If bgfx_toggleb = True Then
+        If bgfx_toggleb = 1 Then
             If effector_on <> 0 Then
                 Select Case effector_num
                     Case 2, 5
@@ -973,7 +1007,8 @@ Public Class Form1
 
             End Select
 
-
+            'save previous settings on top of vefx file
+            temp_file(0) = " " & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
 
             Try
                 System.IO.File.WriteAllLines("vefx.txt", temp_file)
@@ -1076,7 +1111,7 @@ Public Class Form1
             Next
         Catch x As Exception
         End Try
-        writetostuff(effector_num, effector_slider, loweq_slider, hieq_slider, filter_slider, vol_slider, channel_slider)
+        firstrun()
     End Sub
 
     Private Sub EFFECTOR_TEXT_TextChanged(sender As Object, e As EventArgs) Handles EFFECTOR_TEXT.TextChanged
@@ -1138,12 +1173,12 @@ Public Class Form1
     End Sub
 
     Private Sub bgfx_toggle_Click(sender As Object, e As EventArgs) Handles bgfx_toggle.Click
-        If bgfx_toggleb Then    'bgfx on
+        If bgfx_toggleb = 1 Then    'bgfx on
             bgfx_toggle.Text = "BGFX off"
-            bgfx_toggleb = False
+            bgfx_toggleb = 0
         Else                    'bgfx off
             bgfx_toggle.Text = "BGFX on"
-            bgfx_toggleb = True
+            bgfx_toggleb = 1
         End If
 
         rerun()
