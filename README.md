@@ -32,15 +32,19 @@ low/hi eq slider controls low/hi eq lel
 filter slider controls far side low/hi eq
 volume slider controls volume
 
+
 channel slider controls speaker channel mode (mono ~ 7.1 surround)
 bgfx button disables background running effects.
+
 
 sound profile will stay working even when program is closed. click OFF button to reset.
 have fun!
 
+##
 demo:
 https://youtu.be/iw7D7177-xE
 
+##
 my personal preference is: reverb 3 or ex3, loweq +3, hieq +3, filter -3, vol +3
 
 this seems to do really good on turning mono into a lifelike stereo..
