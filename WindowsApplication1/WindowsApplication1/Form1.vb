@@ -666,11 +666,15 @@ Public Class Form1
 "",
 ""}
 
+    Dim config_file_name As String = "C:\Program Files\EqualizerAPO\config\config.txt"
+    Dim vefx_file_name As String = "C:\Program Files\EqualizerAPO\config\vefx.txt"
+
+
     Public Sub check_config()
         Try
             Dim check_count As Integer = 0
             check_flag = False
-            temp_file2 = System.IO.File.ReadAllLines("config.txt")
+            temp_file2 = System.IO.File.ReadAllLines(config_file_name)
             For Each s In temp_file2
                 check_count += 1
                 check_flag = String.Equals(Regex.Replace(s, "\s+", String.Empty), Regex.Replace("Include: vefx.txt", "\s+", String.Empty))
@@ -679,14 +683,14 @@ Public Class Form1
                 Array.Resize(temp_file2, temp_file2.Length + 2)
                 temp_file2(check_count) = "Device: all"
                 temp_file2(check_count + 1) = "Include: vefx.txt"
-                System.IO.File.WriteAllLines("config.txt", temp_file2)
+                System.IO.File.WriteAllLines(config_file_name, temp_file2)
             End If
         Catch x As Exception
         End Try
     End Sub
 
     Public Sub firstrun()
-        temp_file = IO.File.ReadAllLines("C:\Program Files\EqualizerAPO\config\vefx.txt")
+        temp_file = IO.File.ReadAllLines(vefx_file_name)
         Try
             If temp_file(0) <> "" Then
                 effector_on = 1
@@ -834,7 +838,7 @@ Public Class Form1
 
         check_config()
         Try
-            System.IO.File.Create("vefx.txt").Dispose()
+            System.IO.File.Create(vefx_file_name).Dispose()
         Catch x As Exception
         End Try
         If effector_on <> 0 Then
@@ -1011,7 +1015,7 @@ Public Class Form1
             temp_file(0) = " " & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
 
             Try
-                System.IO.File.WriteAllLines("vefx.txt", temp_file)
+                System.IO.File.WriteAllLines(vefx_file_name, temp_file)
                 While wait_for_thread2
                     System.Threading.Thread.Sleep(33)
                 End While
@@ -1046,7 +1050,7 @@ Public Class Form1
                     Else
                         temp_file(22) = "Preamp: 0dB"
                     End If
-                    System.IO.File.WriteAllLines("vefx.txt", temp_file)
+                    System.IO.File.WriteAllLines(vefx_file_name, temp_file)
                 Else
                     wait_for_thread2 = False
                     Exit Sub
