@@ -365,6 +365,7 @@ Partial Class Form1
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Margin = New System.Windows.Forms.Padding(2)
+        Me.MaximizeBox = False
         Me.Name = "Form1"
         Me.Text = "VEFX Slider"
         CType(Me.VEFX, System.ComponentModel.ISupportInitialize).EndInit()
