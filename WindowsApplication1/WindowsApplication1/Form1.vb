@@ -1202,6 +1202,6 @@ Public Class Form1
     End Sub
 
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        MsgBox("Made by hoholee12@naver.com", MsgBoxStyle.OkOnly)
+        MsgBox("Made by hoholee12@naver.com" & vbCrLf & "This application requires EqualizerAPO", MsgBoxStyle.OkOnly)
     End Sub
 End Class
