@@ -1082,7 +1082,7 @@ Public Class Form1
             Try
                 If temp_file(1) = "#FLANGER" Then
                     temp_file(27) = "Delay: 0." & count & "ms"
-                    System.IO.File.WriteAllLines("vefx.txt", temp_file)
+                    System.IO.File.WriteAllLines(vefx_file_name, temp_file)
                 Else
                     wait_for_thread2 = False
                     Exit Sub
