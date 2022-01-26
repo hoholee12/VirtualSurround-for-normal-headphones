@@ -1183,4 +1183,25 @@ Public Class Form1
 
         rerun()
     End Sub
+
+    Private Sub ResetAudiosrvToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetAudiosrvToolStripMenuItem.Click
+        Dim result = MsgBox("Are you sure?", MsgBoxStyle.OkCancel, "Reset Audiosrv")
+        If result <> MsgBoxResult.Cancel Then
+            Dim process As New Process()
+            process.StartInfo.FileName = "net.exe"
+            process.StartInfo.Verb = "runas"
+            process.StartInfo.Arguments = "stop audiosrv"
+            process.StartInfo.UseShellExecute = True
+            process.Start()
+            process.WaitForExit()
+            process.StartInfo.Arguments = "start audiosrv"
+            process.Start()
+            process.WaitForExit()
+            MsgBox("Done. Try restarting audio applications.", MsgBoxStyle.OkOnly, "Reset Audiosrv")
+        End If
+    End Sub
+
+    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        MsgBox("Made by hoholee12@naver.com", MsgBoxStyle.OkOnly)
+    End Sub
 End Class
