@@ -1210,6 +1210,8 @@ Public Class Form1
     End Sub
 
     Private Sub TunnelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TunnelToolStripMenuItem.Click
+        effector_on = 1
+        effector_num = 2
         VEFX.Value = 6
         VOLUME.Value = 6
         FILTER.Value = 5
@@ -1224,6 +1226,8 @@ Public Class Form1
     End Sub
 
     Private Sub MildEchoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MildEchoToolStripMenuItem.Click
+        effector_on = 1
+        effector_num = 2
         VEFX.Value = 3
         VOLUME.Value = 6
         FILTER.Value = 5
@@ -1238,6 +1242,8 @@ Public Class Form1
     End Sub
 
     Private Sub DancefloorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DancefloorToolStripMenuItem.Click
+        effector_on = 1
+        effector_num = 2
         VEFX.Value = 2
         VOLUME.Value = 6
         FILTER.Value = 5
