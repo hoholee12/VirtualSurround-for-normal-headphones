@@ -1208,4 +1208,46 @@ Public Class Form1
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
         MsgBox("Made by hoholee12@naver.com" & vbCrLf & "This application requires EqualizerAPO", MsgBoxStyle.OkOnly)
     End Sub
+
+    Private Sub TunnelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TunnelToolStripMenuItem.Click
+        VEFX.Value = 6
+        VOLUME.Value = 6
+        FILTER.Value = 5
+        HIGH_EQ.Value = 4
+        LOW_EQ.Value = 3
+        effector_slider = VEFX.Value
+        vol_slider = VOLUME.Value
+        filter_slider = FILTER.Value
+        loweq_slider = LOW_EQ.Value
+        hieq_slider = HIGH_EQ.Value
+        rerun()
+    End Sub
+
+    Private Sub MildEchoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MildEchoToolStripMenuItem.Click
+        VEFX.Value = 3
+        VOLUME.Value = 6
+        FILTER.Value = 5
+        HIGH_EQ.Value = 4
+        LOW_EQ.Value = 3
+        effector_slider = VEFX.Value
+        vol_slider = VOLUME.Value
+        filter_slider = FILTER.Value
+        loweq_slider = LOW_EQ.Value
+        hieq_slider = HIGH_EQ.Value
+        rerun()
+    End Sub
+
+    Private Sub DancefloorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DancefloorToolStripMenuItem.Click
+        VEFX.Value = 2
+        VOLUME.Value = 6
+        FILTER.Value = 5
+        HIGH_EQ.Value = 4
+        LOW_EQ.Value = 3
+        effector_slider = VEFX.Value
+        vol_slider = VOLUME.Value
+        filter_slider = FILTER.Value
+        loweq_slider = LOW_EQ.Value
+        hieq_slider = HIGH_EQ.Value
+        rerun()
+    End Sub
 End Class
