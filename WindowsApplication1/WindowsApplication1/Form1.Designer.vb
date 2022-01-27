@@ -51,6 +51,7 @@ Partial Class Form1
         Me.DancefloorToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MildEchoToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TunnelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenEAPOConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.VEFX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LOW_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.HIGH_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -293,7 +294,7 @@ Partial Class Form1
         '
         'HelpToolStripMenuItem
         '
-        Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ResetAudiosrvToolStripMenuItem, Me.AboutToolStripMenuItem})
+        Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ResetAudiosrvToolStripMenuItem, Me.OpenEAPOConfigToolStripMenuItem, Me.AboutToolStripMenuItem})
         Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
         Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
         Me.HelpToolStripMenuItem.Text = "Help"
@@ -301,13 +302,13 @@ Partial Class Form1
         'ResetAudiosrvToolStripMenuItem
         '
         Me.ResetAudiosrvToolStripMenuItem.Name = "ResetAudiosrvToolStripMenuItem"
-        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.ResetAudiosrvToolStripMenuItem.Text = "Reset Audiosrv"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.AboutToolStripMenuItem.Text = "About"
         '
         'PresetsToolStripMenuItem
@@ -334,6 +335,12 @@ Partial Class Form1
         Me.TunnelToolStripMenuItem.Name = "TunnelToolStripMenuItem"
         Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(133, 22)
         Me.TunnelToolStripMenuItem.Text = "Tunnel"
+        '
+        'OpenEAPOConfigToolStripMenuItem
+        '
+        Me.OpenEAPOConfigToolStripMenuItem.Name = "OpenEAPOConfigToolStripMenuItem"
+        Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.OpenEAPOConfigToolStripMenuItem.Text = "Open EAPO Config"
         '
         'Form1
         '
@@ -408,4 +415,5 @@ Partial Class Form1
     Friend WithEvents DancefloorToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents MildEchoToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TunnelToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OpenEAPOConfigToolStripMenuItem As ToolStripMenuItem
 End Class

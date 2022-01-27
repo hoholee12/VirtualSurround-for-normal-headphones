@@ -1256,4 +1256,14 @@ Public Class Form1
         hieq_slider = HIGH_EQ.Value
         rerun()
     End Sub
+
+    Private Sub OpenEAPOConfigToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenEAPOConfigToolStripMenuItem.Click
+        Dim result = MsgBox("BTW, there is no need to reboot your system. Just click cancel after setup, and use 'Reset Audiosrv'!", MsgBoxStyle.OkOnly, "Open EAPO Config")
+        Dim process As New Process()
+        process.StartInfo.FileName = "C:\Program Files\EqualizerAPO\Configurator.exe"
+        process.StartInfo.Verb = "runas"
+        process.StartInfo.UseShellExecute = True
+        process.Start()
+        process.WaitForExit()
+    End Sub
 End Class
