@@ -24,7 +24,6 @@ C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\Window
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.pdb
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.xml
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.AssemblyReference.cache
-C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.SuggestedBindingRedirects.cache
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.Form1.resources
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.Resources.resources
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.GenerateResource.cache

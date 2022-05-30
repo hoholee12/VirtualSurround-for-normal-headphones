@@ -1266,4 +1266,20 @@ Public Class Form1
         process.Start()
         process.WaitForExit()
     End Sub
+
+    Private Sub TheaterToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TheaterToolStripMenuItem.Click
+        effector_on = 1
+        effector_num = 2
+        VEFX.Value = 2
+        VOLUME.Value = 6
+        FILTER.Value = 5
+        HIGH_EQ.Value = 4
+        LOW_EQ.Value = 6
+        effector_slider = VEFX.Value
+        vol_slider = VOLUME.Value
+        filter_slider = FILTER.Value
+        loweq_slider = LOW_EQ.Value
+        hieq_slider = HIGH_EQ.Value
+        rerun()
+    End Sub
 End Class

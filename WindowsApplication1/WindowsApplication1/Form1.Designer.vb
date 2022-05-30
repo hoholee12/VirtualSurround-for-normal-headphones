@@ -46,12 +46,13 @@ Partial Class Form1
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ResetAudiosrvToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenEAPOConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PresetsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DancefloorToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MildEchoToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TunnelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.OpenEAPOConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TheaterToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.VEFX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LOW_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.HIGH_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -64,187 +65,187 @@ Partial Class Form1
         'VEFX
         '
         Me.VEFX.LargeChange = 1
-        Me.VEFX.Location = New System.Drawing.Point(168, 67)
+        Me.VEFX.Location = New System.Drawing.Point(192, 84)
         Me.VEFX.Margin = New System.Windows.Forms.Padding(2)
         Me.VEFX.Maximum = 6
         Me.VEFX.Name = "VEFX"
         Me.VEFX.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.VEFX.Size = New System.Drawing.Size(45, 120)
+        Me.VEFX.Size = New System.Drawing.Size(56, 150)
         Me.VEFX.TabIndex = 0
         Me.VEFX.Value = 3
         '
         'LOW_EQ
         '
         Me.LOW_EQ.LargeChange = 1
-        Me.LOW_EQ.Location = New System.Drawing.Point(231, 67)
+        Me.LOW_EQ.Location = New System.Drawing.Point(264, 84)
         Me.LOW_EQ.Margin = New System.Windows.Forms.Padding(2)
         Me.LOW_EQ.Maximum = 6
         Me.LOW_EQ.Name = "LOW_EQ"
         Me.LOW_EQ.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.LOW_EQ.Size = New System.Drawing.Size(45, 120)
+        Me.LOW_EQ.Size = New System.Drawing.Size(56, 150)
         Me.LOW_EQ.TabIndex = 1
         Me.LOW_EQ.Value = 3
         '
         'HIGH_EQ
         '
         Me.HIGH_EQ.LargeChange = 1
-        Me.HIGH_EQ.Location = New System.Drawing.Point(295, 67)
+        Me.HIGH_EQ.Location = New System.Drawing.Point(337, 84)
         Me.HIGH_EQ.Margin = New System.Windows.Forms.Padding(2)
         Me.HIGH_EQ.Maximum = 6
         Me.HIGH_EQ.Name = "HIGH_EQ"
         Me.HIGH_EQ.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.HIGH_EQ.Size = New System.Drawing.Size(45, 120)
+        Me.HIGH_EQ.Size = New System.Drawing.Size(56, 150)
         Me.HIGH_EQ.TabIndex = 2
         Me.HIGH_EQ.Value = 3
         '
         'FILTER
         '
         Me.FILTER.LargeChange = 1
-        Me.FILTER.Location = New System.Drawing.Point(361, 67)
+        Me.FILTER.Location = New System.Drawing.Point(413, 84)
         Me.FILTER.Margin = New System.Windows.Forms.Padding(2)
         Me.FILTER.Maximum = 6
         Me.FILTER.Name = "FILTER"
         Me.FILTER.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.FILTER.Size = New System.Drawing.Size(45, 120)
+        Me.FILTER.Size = New System.Drawing.Size(56, 150)
         Me.FILTER.TabIndex = 3
         Me.FILTER.Value = 3
         '
         'VOLUME
         '
         Me.VOLUME.LargeChange = 1
-        Me.VOLUME.Location = New System.Drawing.Point(426, 67)
+        Me.VOLUME.Location = New System.Drawing.Point(487, 84)
         Me.VOLUME.Margin = New System.Windows.Forms.Padding(2)
         Me.VOLUME.Maximum = 6
         Me.VOLUME.Name = "VOLUME"
         Me.VOLUME.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.VOLUME.Size = New System.Drawing.Size(45, 120)
+        Me.VOLUME.Size = New System.Drawing.Size(56, 150)
         Me.VOLUME.TabIndex = 4
         Me.VOLUME.Value = 3
         '
         'EFFECT_ON_OFF
         '
-        Me.EFFECT_ON_OFF.Location = New System.Drawing.Point(60, 67)
+        Me.EFFECT_ON_OFF.Location = New System.Drawing.Point(69, 84)
         Me.EFFECT_ON_OFF.Margin = New System.Windows.Forms.Padding(2)
         Me.EFFECT_ON_OFF.Name = "EFFECT_ON_OFF"
-        Me.EFFECT_ON_OFF.Size = New System.Drawing.Size(55, 45)
+        Me.EFFECT_ON_OFF.Size = New System.Drawing.Size(63, 56)
         Me.EFFECT_ON_OFF.TabIndex = 5
         Me.EFFECT_ON_OFF.UseVisualStyleBackColor = True
         '
         'VEFX_CHANGE
         '
-        Me.VEFX_CHANGE.Location = New System.Drawing.Point(60, 166)
+        Me.VEFX_CHANGE.Location = New System.Drawing.Point(69, 208)
         Me.VEFX_CHANGE.Margin = New System.Windows.Forms.Padding(2)
         Me.VEFX_CHANGE.Name = "VEFX_CHANGE"
-        Me.VEFX_CHANGE.Size = New System.Drawing.Size(55, 45)
+        Me.VEFX_CHANGE.Size = New System.Drawing.Size(63, 56)
         Me.VEFX_CHANGE.TabIndex = 6
         Me.VEFX_CHANGE.UseVisualStyleBackColor = True
         '
         'TextBox1
         '
         Me.TextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox1.Location = New System.Drawing.Point(60, 26)
+        Me.TextBox1.Location = New System.Drawing.Point(69, 32)
         Me.TextBox1.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.ReadOnly = True
-        Me.TextBox1.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox1.Size = New System.Drawing.Size(63, 18)
         Me.TextBox1.TabIndex = 7
         Me.TextBox1.Text = "effect"
         '
         'TextBox2
         '
         Me.TextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox2.Location = New System.Drawing.Point(60, 46)
+        Me.TextBox2.Location = New System.Drawing.Point(69, 58)
         Me.TextBox2.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox2.Name = "TextBox2"
         Me.TextBox2.ReadOnly = True
-        Me.TextBox2.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox2.Size = New System.Drawing.Size(63, 18)
         Me.TextBox2.TabIndex = 8
         Me.TextBox2.Text = "on/off"
         '
         'TextBox3
         '
         Me.TextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox3.Location = New System.Drawing.Point(60, 126)
+        Me.TextBox3.Location = New System.Drawing.Point(69, 158)
         Me.TextBox3.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox3.Name = "TextBox3"
         Me.TextBox3.ReadOnly = True
-        Me.TextBox3.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox3.Size = New System.Drawing.Size(63, 18)
         Me.TextBox3.TabIndex = 9
         Me.TextBox3.Text = "VEFX"
         '
         'TextBox4
         '
         Me.TextBox4.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox4.Location = New System.Drawing.Point(60, 146)
+        Me.TextBox4.Location = New System.Drawing.Point(69, 182)
         Me.TextBox4.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox4.Name = "TextBox4"
         Me.TextBox4.ReadOnly = True
-        Me.TextBox4.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox4.Size = New System.Drawing.Size(63, 18)
         Me.TextBox4.TabIndex = 10
         Me.TextBox4.Text = "change"
         '
         'TextBox5
         '
         Me.TextBox5.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox5.Location = New System.Drawing.Point(161, 46)
+        Me.TextBox5.Location = New System.Drawing.Point(184, 58)
         Me.TextBox5.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox5.Name = "TextBox5"
         Me.TextBox5.ReadOnly = True
-        Me.TextBox5.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox5.Size = New System.Drawing.Size(63, 18)
         Me.TextBox5.TabIndex = 11
         Me.TextBox5.Text = "VEFX"
         '
         'TextBox6
         '
         Me.TextBox6.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox6.Location = New System.Drawing.Point(224, 46)
+        Me.TextBox6.Location = New System.Drawing.Point(256, 58)
         Me.TextBox6.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox6.Name = "TextBox6"
         Me.TextBox6.ReadOnly = True
-        Me.TextBox6.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox6.Size = New System.Drawing.Size(63, 18)
         Me.TextBox6.TabIndex = 12
         Me.TextBox6.Text = "low-EQ"
         '
         'TextBox7
         '
         Me.TextBox7.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox7.Location = New System.Drawing.Point(288, 46)
+        Me.TextBox7.Location = New System.Drawing.Point(329, 58)
         Me.TextBox7.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox7.Name = "TextBox7"
         Me.TextBox7.ReadOnly = True
-        Me.TextBox7.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox7.Size = New System.Drawing.Size(63, 18)
         Me.TextBox7.TabIndex = 13
         Me.TextBox7.Text = "hi-EQ"
         '
         'TextBox8
         '
         Me.TextBox8.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox8.Location = New System.Drawing.Point(354, 46)
+        Me.TextBox8.Location = New System.Drawing.Point(405, 58)
         Me.TextBox8.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox8.Name = "TextBox8"
         Me.TextBox8.ReadOnly = True
-        Me.TextBox8.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox8.Size = New System.Drawing.Size(63, 18)
         Me.TextBox8.TabIndex = 14
         Me.TextBox8.Text = "filter"
         '
         'TextBox9
         '
         Me.TextBox9.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox9.Location = New System.Drawing.Point(419, 46)
+        Me.TextBox9.Location = New System.Drawing.Point(479, 58)
         Me.TextBox9.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox9.Name = "TextBox9"
         Me.TextBox9.ReadOnly = True
-        Me.TextBox9.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox9.Size = New System.Drawing.Size(63, 18)
         Me.TextBox9.TabIndex = 15
         Me.TextBox9.Text = "volume"
         '
         'EFFECTOR_TEXT
         '
-        Me.EFFECTOR_TEXT.Location = New System.Drawing.Point(231, 210)
+        Me.EFFECTOR_TEXT.Location = New System.Drawing.Point(264, 262)
         Me.EFFECTOR_TEXT.Margin = New System.Windows.Forms.Padding(2)
         Me.EFFECTOR_TEXT.Name = "EFFECTOR_TEXT"
         Me.EFFECTOR_TEXT.ReadOnly = True
-        Me.EFFECTOR_TEXT.Size = New System.Drawing.Size(143, 21)
+        Me.EFFECTOR_TEXT.Size = New System.Drawing.Size(163, 25)
         Me.EFFECTOR_TEXT.TabIndex = 16
         Me.EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Me.EFFECTOR_TEXT.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -252,31 +253,32 @@ Partial Class Form1
         'CHANNEL
         '
         Me.CHANNEL.LargeChange = 1
-        Me.CHANNEL.Location = New System.Drawing.Point(548, 67)
+        Me.CHANNEL.Location = New System.Drawing.Point(626, 84)
         Me.CHANNEL.Margin = New System.Windows.Forms.Padding(2)
         Me.CHANNEL.Maximum = 6
         Me.CHANNEL.Name = "CHANNEL"
         Me.CHANNEL.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.CHANNEL.Size = New System.Drawing.Size(45, 120)
+        Me.CHANNEL.Size = New System.Drawing.Size(56, 150)
         Me.CHANNEL.TabIndex = 17
         Me.CHANNEL.Value = 1
         '
         'TextBox10
         '
         Me.TextBox10.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBox10.Location = New System.Drawing.Point(533, 46)
+        Me.TextBox10.Location = New System.Drawing.Point(609, 58)
         Me.TextBox10.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox10.Name = "TextBox10"
         Me.TextBox10.ReadOnly = True
-        Me.TextBox10.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox10.Size = New System.Drawing.Size(63, 18)
         Me.TextBox10.TabIndex = 18
         Me.TextBox10.Text = "channel"
         '
         'bgfx_toggle
         '
-        Me.bgfx_toggle.Location = New System.Drawing.Point(518, 208)
+        Me.bgfx_toggle.Location = New System.Drawing.Point(592, 260)
+        Me.bgfx_toggle.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.bgfx_toggle.Name = "bgfx_toggle"
-        Me.bgfx_toggle.Size = New System.Drawing.Size(75, 23)
+        Me.bgfx_toggle.Size = New System.Drawing.Size(86, 29)
         Me.bgfx_toggle.TabIndex = 19
         Me.bgfx_toggle.Text = "BGFX on"
         Me.bgfx_toggle.UseVisualStyleBackColor = True
@@ -287,8 +289,8 @@ Partial Class Form1
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.HelpToolStripMenuItem, Me.PresetsToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(5, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(603, 24)
+        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(6, 2, 0, 2)
+        Me.MenuStrip1.Size = New System.Drawing.Size(689, 28)
         Me.MenuStrip1.TabIndex = 20
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -296,57 +298,63 @@ Partial Class Form1
         '
         Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ResetAudiosrvToolStripMenuItem, Me.OpenEAPOConfigToolStripMenuItem, Me.AboutToolStripMenuItem})
         Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
-        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
+        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(55, 24)
         Me.HelpToolStripMenuItem.Text = "Help"
         '
         'ResetAudiosrvToolStripMenuItem
         '
         Me.ResetAudiosrvToolStripMenuItem.Name = "ResetAudiosrvToolStripMenuItem"
-        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(225, 26)
         Me.ResetAudiosrvToolStripMenuItem.Text = "Reset Audiosrv"
+        '
+        'OpenEAPOConfigToolStripMenuItem
+        '
+        Me.OpenEAPOConfigToolStripMenuItem.Name = "OpenEAPOConfigToolStripMenuItem"
+        Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(225, 26)
+        Me.OpenEAPOConfigToolStripMenuItem.Text = "Open EAPO Config"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(225, 26)
         Me.AboutToolStripMenuItem.Text = "About"
         '
         'PresetsToolStripMenuItem
         '
-        Me.PresetsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DancefloorToolStripMenuItem, Me.MildEchoToolStripMenuItem, Me.TunnelToolStripMenuItem})
+        Me.PresetsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DancefloorToolStripMenuItem, Me.MildEchoToolStripMenuItem, Me.TunnelToolStripMenuItem, Me.TheaterToolStripMenuItem})
         Me.PresetsToolStripMenuItem.Name = "PresetsToolStripMenuItem"
-        Me.PresetsToolStripMenuItem.Size = New System.Drawing.Size(56, 20)
+        Me.PresetsToolStripMenuItem.Size = New System.Drawing.Size(70, 24)
         Me.PresetsToolStripMenuItem.Text = "Presets"
         '
         'DancefloorToolStripMenuItem
         '
         Me.DancefloorToolStripMenuItem.Name = "DancefloorToolStripMenuItem"
-        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(133, 22)
+        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(224, 26)
         Me.DancefloorToolStripMenuItem.Text = "Dancefloor"
         '
         'MildEchoToolStripMenuItem
         '
         Me.MildEchoToolStripMenuItem.Name = "MildEchoToolStripMenuItem"
-        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(133, 22)
+        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(224, 26)
         Me.MildEchoToolStripMenuItem.Text = "MildEcho"
         '
         'TunnelToolStripMenuItem
         '
         Me.TunnelToolStripMenuItem.Name = "TunnelToolStripMenuItem"
-        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(133, 22)
+        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(224, 26)
         Me.TunnelToolStripMenuItem.Text = "Tunnel"
         '
-        'OpenEAPOConfigToolStripMenuItem
+        'TheaterToolStripMenuItem
         '
-        Me.OpenEAPOConfigToolStripMenuItem.Name = "OpenEAPOConfigToolStripMenuItem"
-        Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.OpenEAPOConfigToolStripMenuItem.Text = "Open EAPO Config"
+        Me.TheaterToolStripMenuItem.Name = "TheaterToolStripMenuItem"
+        Me.TheaterToolStripMenuItem.Size = New System.Drawing.Size(224, 26)
+        Me.TheaterToolStripMenuItem.Text = "Theater"
         '
         'Form1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(603, 233)
+        Me.ClientSize = New System.Drawing.Size(689, 291)
         Me.Controls.Add(Me.bgfx_toggle)
         Me.Controls.Add(Me.TextBox10)
         Me.Controls.Add(Me.CHANNEL)
@@ -416,4 +424,5 @@ Partial Class Form1
     Friend WithEvents MildEchoToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TunnelToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OpenEAPOConfigToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TheaterToolStripMenuItem As ToolStripMenuItem
 End Class
