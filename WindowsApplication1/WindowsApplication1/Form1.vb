@@ -1213,7 +1213,7 @@ Public Class Form1
         effector_on = 1
         effector_num = 2
         VEFX.Value = 6
-        VOLUME.Value = 6
+        VOLUME.Value = 3
         FILTER.Value = 5
         HIGH_EQ.Value = 4
         LOW_EQ.Value = 3
@@ -1229,7 +1229,7 @@ Public Class Form1
         effector_on = 1
         effector_num = 2
         VEFX.Value = 3
-        VOLUME.Value = 6
+        VOLUME.Value = 3
         FILTER.Value = 5
         HIGH_EQ.Value = 4
         LOW_EQ.Value = 3
@@ -1245,7 +1245,7 @@ Public Class Form1
         effector_on = 1
         effector_num = 2
         VEFX.Value = 2
-        VOLUME.Value = 6
+        VOLUME.Value = 3
         FILTER.Value = 5
         HIGH_EQ.Value = 4
         LOW_EQ.Value = 3
@@ -1271,7 +1271,7 @@ Public Class Form1
         effector_on = 1
         effector_num = 2
         VEFX.Value = 2
-        VOLUME.Value = 6
+        VOLUME.Value = 3
         FILTER.Value = 5
         HIGH_EQ.Value = 4
         LOW_EQ.Value = 6
