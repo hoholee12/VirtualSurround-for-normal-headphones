@@ -1282,4 +1282,20 @@ Public Class Form1
         hieq_slider = HIGH_EQ.Value
         rerun()
     End Sub
+
+    Private Sub DNRToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DNRToolStripMenuItem.Click
+        effector_on = 1
+        effector_num = 2
+        VEFX.Value = 2
+        VOLUME.Value = 4
+        FILTER.Value = 2
+        HIGH_EQ.Value = 4
+        LOW_EQ.Value = 3
+        effector_slider = VEFX.Value
+        vol_slider = VOLUME.Value
+        filter_slider = FILTER.Value
+        loweq_slider = LOW_EQ.Value
+        hieq_slider = HIGH_EQ.Value
+        rerun()
+    End Sub
 End Class
