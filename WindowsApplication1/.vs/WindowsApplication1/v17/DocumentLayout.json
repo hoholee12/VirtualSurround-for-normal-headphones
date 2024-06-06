@@ -1,0 +1,52 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\hoholee12\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5F34A0C0-02D0-450B-A402-B67E9C8284B6}|WindowsApplication1\\WindowsApplication1.vbproj|c:\\users\\hoholee12\\documents\\github\\virtualsurround-for-normal-headphones\\windowsapplication1\\windowsapplication1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
+      "RelativeMoniker": "D:0:0:{5F34A0C0-02D0-450B-A402-B67E9C8284B6}|WindowsApplication1\\WindowsApplication1.vbproj|solutionrelative:windowsapplication1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F34A0C0-02D0-450B-A402-B67E9C8284B6}|WindowsApplication1\\WindowsApplication1.vbproj|C:\\Users\\hoholee12\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\windowsapplication1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form",
+      "RelativeMoniker": "D:0:0:{5F34A0C0-02D0-450B-A402-B67E9C8284B6}|WindowsApplication1\\WindowsApplication1.vbproj|solutionrelative:windowsapplication1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.vb",
+              "DocumentMoniker": "C:\\Users\\hoholee12\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\WindowsApplication1\\Form1.vb",
+              "RelativeDocumentMoniker": "WindowsApplication1\\Form1.vb",
+              "ToolTip": "C:\\Users\\hoholee12\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\WindowsApplication1\\Form1.vb",
+              "RelativeToolTip": "WindowsApplication1\\Form1.vb",
+              "ViewState": "AQIAAOsDAAAAAAAAAAAAAPYDAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
+              "WhenOpened": "2024-06-06T15:23:06.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.vb [\uB514\uC790\uC778]",
+              "DocumentMoniker": "C:\\Users\\hoholee12\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\WindowsApplication1\\Form1.vb",
+              "RelativeDocumentMoniker": "WindowsApplication1\\Form1.vb",
+              "ToolTip": "C:\\Users\\User\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\WindowsApplication1\\Form1.vb [\uB514\uC790\uC778]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\User\\Documents\\GitHub\\VirtualSurround-for-normal-headphones\\WindowsApplication1\\WindowsApplication1\\Form1.vb [\uB514\uC790\uC778]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003525|",
+              "WhenOpened": "2024-06-06T15:23:06.724Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

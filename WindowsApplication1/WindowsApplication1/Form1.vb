@@ -1012,7 +1012,7 @@ Public Class Form1
             End Select
 
             'save previous settings on top of vefx file
-            temp_file(0) = " " & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
+            temp_file(0) = "#" & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
 
             Try
                 System.IO.File.WriteAllLines(vefx_file_name, temp_file)
