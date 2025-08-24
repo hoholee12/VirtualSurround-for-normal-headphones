@@ -948,10 +948,10 @@ Public Class Form1
                     temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
-                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 - 6) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3), 0) & " ReferenceOffset 10 Attenuation 1.0"
+                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 - 6) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3) * 2, 0) & " ReferenceOffset 10 Attenuation 1.0"
                 temp_file(13) = "Preamp: " & slider5 - 6 & "dB"
             Else
-                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 * 2 - 9) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3), 0) & " ReferenceOffset 10 Attenuation 1.0"
+                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 * 2 - 9) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3) * 2, 0) & " ReferenceOffset 10 Attenuation 1.0"
                 temp_file(13) = "Preamp: " & slider5 * 2 - 9 & "dB"
             End If
             Select Case num
