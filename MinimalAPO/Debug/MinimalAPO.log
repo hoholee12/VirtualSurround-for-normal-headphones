@@ -1,0 +1,22 @@
+﻿Build started 2024-08-25 오후 6:18:37.
+     1>Project "C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\MinimalAPO.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D MINIMALAPO_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\MinimalAPO.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D MINIMALAPO_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\MinimalAPO.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ClassFactory.cpp DllMain.cpp MinimalAPO.cpp
+         MinimalAPO.cpp
+         DllMain.cpp
+         ClassFactory.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.dll" /INCREMENTAL /NOLOGO AudioBaseProcessingObject.lib audiomediatypecrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:"MinimalAPO.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.lib" /MACHINE:X86 /DLL Debug\ClassFactory.obj
+         Debug\DllMain.obj
+         Debug\MinimalAPO.obj
+         Debug\stdafx.obj
+            Creating library C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.lib and object C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.exp
+         MinimalAPO.vcxproj -> C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\Debug\MinimalAPO.dll
+     1>Done Building Project "C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\MinimalAPO\MinimalAPO.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.21

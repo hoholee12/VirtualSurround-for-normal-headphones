@@ -948,8 +948,10 @@ Public Class Form1
                     temp_file = eq_only_file
             End Select
             If slider5 >= 3 Then
+                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 - 6) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3), 0) & " ReferenceOffset 10 Attenuation 1.0"
                 temp_file(13) = "Preamp: " & slider5 - 6 & "dB"
             Else
+                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 * 2 - 9) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3), 0) & " ReferenceOffset 10 Attenuation 1.0"
                 temp_file(13) = "Preamp: " & slider5 * 2 - 9 & "dB"
             End If
             Select Case num
@@ -1285,11 +1287,11 @@ Public Class Form1
 
     Private Sub DNRToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DNRToolStripMenuItem.Click
         effector_on = 1
-        effector_num = 2
-        VEFX.Value = 2
-        VOLUME.Value = 4
+        effector_num = 1
+        VEFX.Value = 4
+        VOLUME.Value = 6
         FILTER.Value = 2
-        HIGH_EQ.Value = 4
+        HIGH_EQ.Value = 5
         LOW_EQ.Value = 3
         effector_slider = VEFX.Value
         vol_slider = VOLUME.Value
