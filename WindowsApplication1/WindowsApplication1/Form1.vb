@@ -954,6 +954,9 @@ Public Class Form1
                 temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 * 2 - 9) * -1 - 12 - If(num > 1 And num <= 3, Math.Abs(slider - 3) * 2, 0) & " ReferenceOffset 10 Attenuation 1.0"
                 temp_file(13) = "Preamp: " & slider5 * 2 - 9 & "dB"
             End If
+            If num = 1 Then
+                temp_file(11) = "LoudnessCorrection: State 1 ReferenceLevel " & (slider5 - 6) * -1 - 15 & " ReferenceOffset 10 Attenuation 1.0"
+            End If
             Select Case num
                 Case 1, 2
                     temp_file(14) = "GraphicEQ: 1 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18) & "; 160 " & If(slider2 >= 3, slider2 - 3, slider2 * 6 - 18) & "; 2500 " & If(slider3 >= 3, slider3 - 3, slider3 * 6 - 18) & "; 16000 " & If(slider4 >= 3, slider4 * 2 - 6, slider4 * 6 - 18)
