@@ -54,6 +54,8 @@ Partial Class Form1
         Me.TunnelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TheaterToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DNRToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.AddPresetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.VEFX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LOW_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.HIGH_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -321,7 +323,7 @@ Partial Class Form1
         '
         'PresetsToolStripMenuItem
         '
-        Me.PresetsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DancefloorToolStripMenuItem, Me.MildEchoToolStripMenuItem, Me.TunnelToolStripMenuItem, Me.TheaterToolStripMenuItem, Me.DNRToolStripMenuItem})
+        Me.PresetsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DancefloorToolStripMenuItem, Me.MildEchoToolStripMenuItem, Me.TunnelToolStripMenuItem, Me.TheaterToolStripMenuItem, Me.DNRToolStripMenuItem, Me.ToolStripSeparator1, Me.AddPresetToolStripMenuItem})
         Me.PresetsToolStripMenuItem.Name = "PresetsToolStripMenuItem"
         Me.PresetsToolStripMenuItem.Size = New System.Drawing.Size(56, 20)
         Me.PresetsToolStripMenuItem.Text = "Presets"
@@ -355,6 +357,17 @@ Partial Class Form1
         Me.DNRToolStripMenuItem.Name = "DNRToolStripMenuItem"
         Me.DNRToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.DNRToolStripMenuItem.Text = "DNR"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        '
+        'AddPresetToolStripMenuItem
+        '
+        Me.AddPresetToolStripMenuItem.Name = "AddPresetToolStripMenuItem"
+        Me.AddPresetToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AddPresetToolStripMenuItem.Text = "Add Preset..."
         '
         'Form1
         '
@@ -432,4 +445,6 @@ Partial Class Form1
     Friend WithEvents OpenEAPOConfigToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TheaterToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents DNRToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents AddPresetToolStripMenuItem As ToolStripMenuItem
 End Class

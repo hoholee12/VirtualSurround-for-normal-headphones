@@ -32,6 +32,27 @@ Public Class Form1
 
     Public Shared bgfx_toggleb As Integer = 1
 
+    ' Thread synchronization for effect threads
+    Private Shared effectThreadAbort As Boolean = False
+    Private Shared ReadOnly effectThreadLock As New Object()
+
+    ' Preset management variables
+    Private Shared customPresets As New Dictionary(Of String, PresetData)
+    Private Shared ReadOnly presetsFilePath As String = System.IO.Path.Combine(Application.StartupPath, "custom_presets.txt")
+
+    ' Structure to hold preset data
+    Public Structure PresetData
+        Public EffectorOn As Integer
+        Public EffectorNum As Integer
+        Public VEFXValue As Integer
+        Public VolumeValue As Integer
+        Public FilterValue As Integer
+        Public HighEQValue As Integer
+        Public LowEQValue As Integer
+        Public ChannelValue As Integer
+        Public BgfxValue As Integer
+    End Structure
+
     Public Shared temp_thread As System.Threading.Thread
     Public Shared menu_thread As System.Threading.Thread
     Public Shared temp_file() As String
@@ -1020,10 +1041,16 @@ Public Class Form1
             temp_file(0) = "#" & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
 
             Try
-                System.IO.File.WriteAllLines(vefx_file_name, temp_file)
+                ' Signal any running effect thread to stop
+                effectThreadAbort = True
                 While wait_for_thread2
                     System.Threading.Thread.Sleep(33)
                 End While
+                
+                System.IO.File.WriteAllLines(vefx_file_name, temp_file)
+                
+                ' Reset abort flag and start new thread
+                effectThreadAbort = False
                 temp_thread.Start()
             Catch x As Exception
             End Try
@@ -1036,7 +1063,7 @@ Public Class Form1
         Dim flag As Boolean = False
 
         wait_for_thread2 = True
-        While True
+        While Not effectThreadAbort
             If count = 27 Then
                 count = 3
             End If
@@ -1049,31 +1076,33 @@ Public Class Form1
                 End If
             End If
             Try
-                If temp_file(1) = "#GARGLE" Then
-                    If flag = True Then
-                        temp_file(22) = "Preamp: -18dB"
+                SyncLock effectThreadLock
+                    If effectThreadAbort Then Exit While
+                    If temp_file(1) = "#GARGLE" Then
+                        If flag = True Then
+                            temp_file(22) = "Preamp: -18dB"
+                        Else
+                            temp_file(22) = "Preamp: 0dB"
+                        End If
+                        System.IO.File.WriteAllLines(vefx_file_name, temp_file)
                     Else
-                        temp_file(22) = "Preamp: 0dB"
+                        Exit While
                     End If
-                    System.IO.File.WriteAllLines(vefx_file_name, temp_file)
-                Else
-                    wait_for_thread2 = False
-                    Exit Sub
-                End If
+                End SyncLock
             Catch x As Exception
-                wait_for_thread2 = False
-                Exit Sub
+                Exit While
             End Try
 
             System.Threading.Thread.Sleep(33)
         End While
+        wait_for_thread2 = False
     End Sub
 
     Private Sub chorus_thread()
         Dim count As Integer = 99
         Dim flag As Boolean = False
         wait_for_thread2 = True
-        While True
+        While Not effectThreadAbort
             If count <= 33 Then
                 flag = True
             ElseIf count >= 99 Then
@@ -1085,20 +1114,22 @@ Public Class Form1
                 count -= 1
             End If
             Try
-                If temp_file(1) = "#FLANGER" Then
-                    temp_file(27) = "Delay: 0." & count & "ms"
-                    System.IO.File.WriteAllLines(vefx_file_name, temp_file)
-                Else
-                    wait_for_thread2 = False
-                    Exit Sub
-                End If
+                SyncLock effectThreadLock
+                    If effectThreadAbort Then Exit While
+                    If temp_file(1) = "#FLANGER" Then
+                        temp_file(27) = "Delay: 0." & count & "ms"
+                        System.IO.File.WriteAllLines(vefx_file_name, temp_file)
+                    Else
+                        Exit While
+                    End If
+                End SyncLock
             Catch x As Exception
-                wait_for_thread2 = False
-                Exit Sub
+                Exit While
             End Try
 
             System.Threading.Thread.Sleep(33)
         End While
+        wait_for_thread2 = False
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
@@ -1121,6 +1152,9 @@ Public Class Form1
         Catch x As Exception
         End Try
         firstrun()
+        
+        ' Load custom presets on startup
+        LoadCustomPresets()
     End Sub
 
     Private Sub EFFECTOR_TEXT_TextChanged(sender As Object, e As EventArgs) Handles EFFECTOR_TEXT.TextChanged
@@ -1302,5 +1336,157 @@ Public Class Form1
         loweq_slider = LOW_EQ.Value
         hieq_slider = HIGH_EQ.Value
         rerun()
+    End Sub
+
+    Private Sub AddPresetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddPresetToolStripMenuItem.Click
+        ' Prompt user for preset name
+        Dim presetName As String = InputBox("Enter a name for this preset:", "Add Custom Preset", "")
+
+        ' Validate input
+        If String.IsNullOrWhiteSpace(presetName) Then
+            Return ' User cancelled or entered empty name
+        End If
+
+        ' Check if preset already exists
+        If customPresets.ContainsKey(presetName) Then
+            Dim result = MsgBox("A preset with this name already exists. Overwrite?", MsgBoxStyle.YesNo, "Preset Exists")
+            If result = MsgBoxResult.No Then
+                Return
+            End If
+        End If
+
+        ' Save current slider values
+        Dim preset As New PresetData With {
+            .EffectorOn = effector_on,
+            .EffectorNum = effector_num,
+            .VEFXValue = VEFX.Value,
+            .VolumeValue = VOLUME.Value,
+            .FilterValue = FILTER.Value,
+            .HighEQValue = HIGH_EQ.Value,
+            .LowEQValue = LOW_EQ.Value,
+            .ChannelValue = CHANNEL.Value,
+            .BgfxValue = bgfx_toggleb
+        }
+
+        ' Add or update preset
+        If customPresets.ContainsKey(presetName) Then
+            customPresets(presetName) = preset
+        Else
+            customPresets.Add(presetName, preset)
+        End If
+
+        ' Save to file
+        SaveCustomPresets()
+
+        ' Refresh the menu
+        LoadCustomPresets()
+
+        MsgBox("Preset '" & presetName & "' saved successfully!", MsgBoxStyle.OkOnly, "Preset Saved")
+    End Sub
+
+    Private Sub SaveCustomPresets()
+        Try
+            Using writer As New System.IO.StreamWriter(presetsFilePath, False)
+                For Each kvp In customPresets
+                    ' Format: PresetName|EffectorOn|EffectorNum|VEFX|Volume|Filter|HighEQ|LowEQ|Channel|Bgfx
+                    writer.WriteLine(String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+                                                  kvp.Key,
+                                                  kvp.Value.EffectorOn,
+                                                  kvp.Value.EffectorNum,
+                                                  kvp.Value.VEFXValue,
+                                                  kvp.Value.VolumeValue,
+                                                  kvp.Value.FilterValue,
+                                                  kvp.Value.HighEQValue,
+                                                  kvp.Value.LowEQValue,
+                                                  kvp.Value.ChannelValue,
+                                                  kvp.Value.BgfxValue))
+                Next
+            End Using
+        Catch ex As Exception
+            MsgBox("Error saving presets: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
+    End Sub
+
+    Private Sub LoadCustomPresets()
+        ' Clear existing custom preset menu items (items after the separator)
+        Dim separatorIndex As Integer = -1
+        For i As Integer = 0 To PresetsToolStripMenuItem.DropDownItems.Count - 1
+            If TypeOf PresetsToolStripMenuItem.DropDownItems(i) Is ToolStripSeparator Then
+                separatorIndex = i
+                Exit For
+            End If
+        Next
+
+        If separatorIndex >= 0 Then
+            ' Remove all items after "Add Preset..."
+            For i As Integer = PresetsToolStripMenuItem.DropDownItems.Count - 1 To separatorIndex + 2 Step -1
+                PresetsToolStripMenuItem.DropDownItems.RemoveAt(i)
+            Next
+        End If
+
+        ' Load presets from file if it exists
+        If System.IO.File.Exists(presetsFilePath) Then
+            Try
+                customPresets.Clear()
+                Using reader As New System.IO.StreamReader(presetsFilePath)
+                    While Not reader.EndOfStream
+                        Dim line As String = reader.ReadLine()
+                        Dim parts() As String = line.Split("|"c)
+                        If parts.Length >= 9 Then
+                            Dim presetName As String = parts(0)
+                            Dim preset As New PresetData With {
+                                .EffectorOn = Integer.Parse(parts(1)),
+                                .EffectorNum = Integer.Parse(parts(2)),
+                                .VEFXValue = Integer.Parse(parts(3)),
+                                .VolumeValue = Integer.Parse(parts(4)),
+                                .FilterValue = Integer.Parse(parts(5)),
+                                .HighEQValue = Integer.Parse(parts(6)),
+                                .LowEQValue = Integer.Parse(parts(7)),
+                                .ChannelValue = Integer.Parse(parts(8)),
+                                .BgfxValue = If(parts.Length >= 10, Integer.Parse(parts(9)), 0)
+                            }
+                            customPresets.Add(presetName, preset)
+
+                            ' Add menu item for this preset
+                            Dim menuItem As New ToolStripMenuItem(presetName)
+                            AddHandler menuItem.Click, Sub(s, ev) ApplyCustomPreset(presetName)
+                            PresetsToolStripMenuItem.DropDownItems.Add(menuItem)
+                        End If
+                    End While
+                End Using
+            Catch ex As Exception
+                MsgBox("Error loading presets: " & ex.Message, MsgBoxStyle.Exclamation, "Error")
+            End Try
+        End If
+    End Sub
+
+    Private Sub ApplyCustomPreset(presetName As String)
+        If customPresets.ContainsKey(presetName) Then
+            Dim preset As PresetData = customPresets(presetName)
+            effector_on = preset.EffectorOn
+            effector_num = preset.EffectorNum
+            VEFX.Value = preset.VEFXValue
+            VOLUME.Value = preset.VolumeValue
+            FILTER.Value = preset.FilterValue
+            HIGH_EQ.Value = preset.HighEQValue
+            LOW_EQ.Value = preset.LowEQValue
+            CHANNEL.Value = preset.ChannelValue
+            bgfx_toggleb = preset.BgfxValue
+            effector_slider = VEFX.Value
+            vol_slider = VOLUME.Value
+            filter_slider = FILTER.Value
+            loweq_slider = LOW_EQ.Value
+            hieq_slider = HIGH_EQ.Value
+            channel_slider = CHANNEL.Value
+            
+            ' Update bgfx button text
+            If bgfx_toggleb = 1 Then
+                bgfx_toggle.Text = "BGFX on"
+            Else
+                bgfx_toggle.Text = "BGFX off"
+            End If
+            
+            rerun()
+        End If
     End Sub
 End Class
