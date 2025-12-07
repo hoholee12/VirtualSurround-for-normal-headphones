@@ -835,42 +835,57 @@ Public Class Form1
     End Sub
 
     Public Sub firstrun()
-        ' Create empty connector-specific vefx file if it doesn't exist
-        If Not System.IO.File.Exists(GetVefxFileName()) Then
-            System.IO.File.WriteAllText(GetVefxFileName(), "")
-        End If
-
-        temp_file = IO.File.ReadAllLines(GetVefxFileName())
-        Try
-            If temp_file(0) <> "" Then
-                effector_on = 1
-                effector_num = Val(temp_file(0)(1))
-                effector_slider = Val(temp_file(0)(3))
-                loweq_slider = Val(temp_file(0)(5))
-                hieq_slider = Val(temp_file(0)(7))
-                filter_slider = Val(temp_file(0)(9))
-                vol_slider = Val(temp_file(0)(11))
-                channel_slider = Val(temp_file(0)(13))
-                bgfx_toggleb = Val(temp_file(0)(15))
+        ' Load settings for all connectors
+        For i As Integer = 0 To connector_names.Count - 1
+            Dim connectorName As String = connector_names(i)
+            Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+            Dim vefxFilePath As String = "C:\Program Files\EqualizerAPO\config\vefx_" & fileNameSafe & ".txt"
+            
+            ' Create empty connector-specific vefx file if it doesn't exist
+            If Not System.IO.File.Exists(vefxFilePath) Then
+                System.IO.File.WriteAllText(vefxFilePath, "")
             End If
 
-        Catch ex As Exception
-
-        End Try
-
-        VEFX.Value = effector_slider
-        LOW_EQ.Value = loweq_slider
-        HIGH_EQ.Value = hieq_slider
-        FILTER.Value = filter_slider
-        VOLUME.Value = vol_slider
-        CHANNEL.Value = channel_slider
-        If bgfx_toggleb = 1 Then
-            bgfx_toggle.Text = "BGFX on"
-        Else
-            bgfx_toggle.Text = "BGFX off"
+            Dim tempFileLines = IO.File.ReadAllLines(vefxFilePath)
+            Dim settings As New ConnectorSettings With {
+                .EffectorOn = 0,
+                .EffectorNum = 1,
+                .EffectorSlider = 3,
+                .LowEQSlider = 3,
+                .HighEQSlider = 3,
+                .FilterSlider = 3,
+                .VolSlider = 3,
+                .ChannelSlider = 1,
+                .BgfxToggle = 1
+            }
+            
+            Try
+                If tempFileLines.Length > 0 AndAlso tempFileLines(0) <> "" Then
+                    settings.EffectorOn = 1
+                    settings.EffectorNum = Val(tempFileLines(0)(1))
+                    settings.EffectorSlider = Val(tempFileLines(0)(3))
+                    settings.LowEQSlider = Val(tempFileLines(0)(5))
+                    settings.HighEQSlider = Val(tempFileLines(0)(7))
+                    settings.FilterSlider = Val(tempFileLines(0)(9))
+                    settings.VolSlider = Val(tempFileLines(0)(11))
+                    settings.ChannelSlider = Val(tempFileLines(0)(13))
+                    settings.BgfxToggle = Val(tempFileLines(0)(15))
+                End If
+            Catch ex As Exception
+            End Try
+            
+            ' Store settings for this connector
+            If connector_settings.ContainsKey(connectorName) Then
+                connector_settings(connectorName) = settings
+            Else
+                connector_settings.Add(connectorName, settings)
+            End If
+        Next
+        
+        ' Load first connector settings to UI
+        If connector_names.Count > 0 Then
+            LoadCurrentConnectorSettings()
         End If
-
-        rerun()
     End Sub
 
     Public Sub rerun()
