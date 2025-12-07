@@ -43,6 +43,7 @@ Partial Class Form1
         Me.CHANNEL = New System.Windows.Forms.TrackBar()
         Me.TextBox10 = New System.Windows.Forms.TextBox()
         Me.bgfx_toggle = New System.Windows.Forms.Button()
+        Me.connector_selector = New System.Windows.Forms.ComboBox()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ResetAudiosrvToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -285,6 +286,15 @@ Partial Class Form1
         Me.bgfx_toggle.Text = "BGFX on"
         Me.bgfx_toggle.UseVisualStyleBackColor = True
         '
+        'connector_selector
+        '
+        Me.connector_selector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.connector_selector.FormattingEnabled = True
+        Me.connector_selector.Location = New System.Drawing.Point(360, 208)
+        Me.connector_selector.Name = "connector_selector"
+        Me.connector_selector.Size = New System.Drawing.Size(150, 20)
+        Me.connector_selector.TabIndex = 20
+        '
         'MenuStrip1
         '
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
@@ -374,6 +384,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(603, 233)
+        Me.Controls.Add(Me.connector_selector)
         Me.Controls.Add(Me.bgfx_toggle)
         Me.Controls.Add(Me.TextBox10)
         Me.Controls.Add(Me.CHANNEL)
@@ -434,6 +445,7 @@ Partial Class Form1
     Friend WithEvents CHANNEL As System.Windows.Forms.TrackBar
     Friend WithEvents TextBox10 As System.Windows.Forms.TextBox
     Friend WithEvents bgfx_toggle As System.Windows.Forms.Button
+    Friend WithEvents connector_selector As System.Windows.Forms.ComboBox
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ResetAudiosrvToolStripMenuItem As ToolStripMenuItem

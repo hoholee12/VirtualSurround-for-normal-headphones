@@ -1,4 +1,6 @@
 ﻿Imports System.Text.RegularExpressions
+Imports System.Management.Automation
+Imports System.Management.Automation.Runspaces
 
 Public Class Form1
     Public Shared effector_num As Integer = 1
@@ -31,6 +33,24 @@ Public Class Form1
     Public Shared wait_for_thread2 As Boolean = False
 
     Public Shared bgfx_toggleb As Integer = 1
+
+    ' Connector management
+    Public Shared connector_names As New List(Of String)
+    Public Shared current_connector_index As Integer = 0
+    Public Shared connector_settings As New Dictionary(Of String, ConnectorSettings)
+
+    ' Structure to hold connector-specific settings
+    Public Structure ConnectorSettings
+        Public EffectorOn As Integer
+        Public EffectorNum As Integer
+        Public EffectorSlider As Integer
+        Public LowEQSlider As Integer
+        Public HighEQSlider As Integer
+        Public FilterSlider As Integer
+        Public VolSlider As Integer
+        Public ChannelSlider As Integer
+        Public BgfxToggle As Integer
+    End Structure
 
     ' Thread synchronization for effect threads
     Private Shared effectThreadAbort As Boolean = False
@@ -701,7 +721,63 @@ Public Class Form1
 ""}
 
     Dim config_file_name As String = "C:\Program Files\EqualizerAPO\config\config.txt"
-    Dim vefx_file_name As String = "C:\Program Files\EqualizerAPO\config\vefx.txt"
+
+    ' Function to get connector-specific vefx filename
+    Public Function GetVefxFileName() As String
+        Dim connectorName As String = connector_names(current_connector_index).ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+        Return "C:\Program Files\EqualizerAPO\config\vefx_" & connectorName & ".txt"
+    End Function
+
+    ' Load audio devices from system using AudioDeviceCmdlets
+    Private Sub LoadAudioDevices()
+        connector_names.Clear()
+
+        ' Check if AudioDeviceCmdlets.dll exists
+        Dim dllPath As String = System.IO.Path.Combine(Application.StartupPath, "AudioDeviceCmdlets.dll")
+        If Not System.IO.File.Exists(dllPath) Then
+            MsgBox("AudioDeviceCmdlets.dll not found in application directory." & vbCrLf & vbCrLf & "Please ensure AudioDeviceCmdlets.dll is in the same folder as the application.", MsgBoxStyle.Critical, "Missing DLL")
+            Application.Exit()
+            Return
+        End If
+
+        Try
+            ' Create PowerShell runspace with the AudioDeviceCmdlets module
+            Dim initialSessionState As InitialSessionState = InitialSessionState.CreateDefault()
+            initialSessionState.ImportPSModule(New String() {dllPath})
+            
+            Using runspace As Runspace = RunspaceFactory.CreateRunspace(initialSessionState)
+                runspace.Open()
+                
+                Using pipeline As Pipeline = runspace.CreatePipeline()
+                    pipeline.Commands.AddScript("Get-AudioDevice -List | Where-Object { $_.Type -eq 'Playback' } | Select-Object -ExpandProperty Name")
+                    
+                    Dim results = pipeline.Invoke()
+                    
+                    For Each result In results
+                        Dim deviceName As String = result.ToString()
+                        If Not String.IsNullOrEmpty(deviceName) Then
+                            ' Extract connector name (part before the parenthesis)
+                            Dim parenIndex As Integer = deviceName.IndexOf("("c)
+                            If parenIndex > 0 Then
+                                deviceName = deviceName.Substring(0, parenIndex).Trim()
+                            End If
+                            connector_names.Add(deviceName)
+                        End If
+                    Next
+                End Using
+            End Using
+        Catch ex As Exception
+            ' Show error and exit
+            MsgBox("Error loading audio devices: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Application.Exit()
+            Return
+        End Try
+
+        ' Ensure we have at least one device
+        If connector_names.Count = 0 Then
+            connector_names.Add("Speakers")
+        End If
+    End Sub
 
 
     Public Sub check_config()
@@ -710,31 +786,61 @@ Public Class Form1
             If Not System.IO.File.Exists(config_file_name) Then
                 System.IO.File.WriteAllText(config_file_name, "")
             End If
-            
-            Dim check_count As Integer = 0
-            check_flag = False
+
             temp_file2 = System.IO.File.ReadAllLines(config_file_name)
-            For Each s In temp_file2
-                check_count += 1
-                check_flag = String.Equals(Regex.Replace(s, "\s+", String.Empty), Regex.Replace("Include: vefx.txt", "\s+", String.Empty))
+            Dim needsUpdate As Boolean = False
+
+            ' Check if each connector's include directive exists
+            For Each connectorName In connector_names
+                Dim deviceLine As String = "Device: " & connectorName
+                Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+                Dim includeLine As String = "Include: vefx_" & fileNameSafe & ".txt"
+                Dim foundConnector As Boolean = False
+
+                For i As Integer = 0 To temp_file2.Length - 2
+                    If temp_file2(i).Trim() = deviceLine AndAlso temp_file2(i + 1).Trim() = includeLine Then
+                        foundConnector = True
+                        Exit For
+                    End If
+                Next
+
+                If Not foundConnector Then
+                    needsUpdate = True
+                    Exit For
+                End If
             Next
-            If check_flag = False Then
-                Array.Resize(temp_file2, temp_file2.Length + 2)
-                temp_file2(check_count) = "Device: all"
-                temp_file2(check_count + 1) = "Include: vefx.txt"
-                System.IO.File.WriteAllLines(config_file_name, temp_file2)
+
+            ' If update needed, rebuild config file with all connectors
+            If needsUpdate Then
+                Dim newConfig As New List(Of String)
+
+                ' Add any existing content that's not Device: or Include: lines
+                For Each line In temp_file2
+                    If Not line.Trim().StartsWith("Device:") AndAlso Not line.Trim().StartsWith("Include: vefx_") Then
+                        newConfig.Add(line)
+                    End If
+                Next
+
+                ' Add all connector device blocks
+                For Each connectorName In connector_names
+                    Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+                    newConfig.Add("Device: " & connectorName)
+                    newConfig.Add("Include: vefx_" & fileNameSafe & ".txt")
+                Next
+
+                System.IO.File.WriteAllLines(config_file_name, newConfig.ToArray())
             End If
         Catch x As Exception
         End Try
     End Sub
 
     Public Sub firstrun()
-        ' Create empty vefx.txt if it doesn't exist
-        If Not System.IO.File.Exists(vefx_file_name) Then
-            System.IO.File.WriteAllText(vefx_file_name, "")
+        ' Create empty connector-specific vefx file if it doesn't exist
+        If Not System.IO.File.Exists(GetVefxFileName()) Then
+            System.IO.File.WriteAllText(GetVefxFileName(), "")
         End If
-        
-        temp_file = IO.File.ReadAllLines(vefx_file_name)
+
+        temp_file = IO.File.ReadAllLines(GetVefxFileName())
         Try
             If temp_file(0) <> "" Then
                 effector_on = 1
@@ -751,7 +857,7 @@ Public Class Form1
         Catch ex As Exception
 
         End Try
-        
+
         VEFX.Value = effector_slider
         LOW_EQ.Value = loweq_slider
         HIGH_EQ.Value = hieq_slider
@@ -882,7 +988,7 @@ Public Class Form1
 
         check_config()
         Try
-            System.IO.File.Create(vefx_file_name).Dispose()
+            System.IO.File.Create(GetVefxFileName()).Dispose()
         Catch x As Exception
         End Try
         If effector_on <> 0 Then
@@ -972,7 +1078,7 @@ Public Class Form1
                     temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
-                    
+
 
                 Case 5
                     temp_file = gargle_file
@@ -987,7 +1093,7 @@ Public Class Form1
                     temp_file(22) = "Preamp: 0dB"
 
                     temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
-                    
+
                 Case 6
                     temp_file = eq_only_file
             End Select
@@ -1069,9 +1175,9 @@ Public Class Form1
                 While wait_for_thread2
                     System.Threading.Thread.Sleep(33)
                 End While
-                
-                System.IO.File.WriteAllLines(vefx_file_name, temp_file)
-                
+
+                System.IO.File.WriteAllLines(GetVefxFileName(), temp_file)
+
                 ' Reset abort flag and start new thread
                 effectThreadAbort = False
                 temp_thread.Start()
@@ -1107,7 +1213,7 @@ Public Class Form1
                         Else
                             temp_file(22) = "Preamp: 0dB"
                         End If
-                        WriteAllLinesBuffered(vefx_file_name, temp_file)
+                        WriteAllLinesBuffered(GetVefxFileName(), temp_file)
                     Else
                         Exit While
                     End If
@@ -1141,7 +1247,7 @@ Public Class Form1
                     If effectThreadAbort Then Exit While
                     If temp_file(1) = "#FLANGER" Then
                         temp_file(27) = "Delay: 0." & count & "ms"
-                        WriteAllLinesBuffered(vefx_file_name, temp_file)
+                        WriteAllLinesBuffered(GetVefxFileName(), temp_file)
                     Else
                         Exit While
                     End If
@@ -1162,6 +1268,36 @@ Public Class Form1
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = False
 
+        ' Load audio devices from system
+        LoadAudioDevices()
+
+        ' Initialize connector selector
+        connector_selector.Items.Clear()
+        For Each connectorName In connector_names
+            connector_selector.Items.Add(connectorName)
+        Next
+        If connector_names.Count > 0 Then
+            connector_selector.SelectedIndex = 0
+            current_connector_index = 0
+        End If
+
+        ' Initialize connector settings dictionary
+        For Each connectorName In connector_names
+            If Not connector_settings.ContainsKey(connectorName) Then
+                connector_settings.Add(connectorName, New ConnectorSettings With {
+                    .EffectorOn = 0,
+                    .EffectorNum = 1,
+                    .EffectorSlider = 3,
+                    .LowEQSlider = 3,
+                    .HighEQSlider = 3,
+                    .FilterSlider = 3,
+                    .VolSlider = 3,
+                    .ChannelSlider = 1,
+                    .BgfxToggle = 1
+                })
+            End If
+        Next
+
         check_config()
 
         Dim processNames() As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessesByName("VEFX Slider")
@@ -1178,6 +1314,68 @@ Public Class Form1
         
         ' Load custom presets on startup
         LoadCustomPresets()
+    End Sub
+
+    ' Save current UI values to connector settings
+    Private Sub SaveCurrentConnectorSettings()
+        Dim connectorName As String = connector_names(current_connector_index)
+        If connector_settings.ContainsKey(connectorName) Then
+            Dim settings As ConnectorSettings = connector_settings(connectorName)
+            settings.EffectorOn = effector_on
+            settings.EffectorNum = effector_num
+            settings.EffectorSlider = effector_slider
+            settings.LowEQSlider = loweq_slider
+            settings.HighEQSlider = hieq_slider
+            settings.FilterSlider = filter_slider
+            settings.VolSlider = vol_slider
+            settings.ChannelSlider = channel_slider
+            settings.BgfxToggle = bgfx_toggleb
+            connector_settings(connectorName) = settings
+        End If
+    End Sub
+
+    ' Load connector settings to UI
+    Private Sub LoadCurrentConnectorSettings()
+        Dim connectorName As String = connector_names(current_connector_index)
+        If connector_settings.ContainsKey(connectorName) Then
+            Dim settings As ConnectorSettings = connector_settings(connectorName)
+            effector_on = settings.EffectorOn
+            effector_num = settings.EffectorNum
+            effector_slider = settings.EffectorSlider
+            loweq_slider = settings.LowEQSlider
+            hieq_slider = settings.HighEQSlider
+            filter_slider = settings.FilterSlider
+            vol_slider = settings.VolSlider
+            channel_slider = settings.ChannelSlider
+            bgfx_toggleb = settings.BgfxToggle
+            
+            ' Update UI controls
+            VEFX.Value = effector_slider
+            LOW_EQ.Value = loweq_slider
+            HIGH_EQ.Value = hieq_slider
+            FILTER.Value = filter_slider
+            VOLUME.Value = vol_slider
+            CHANNEL.Value = channel_slider
+            
+            If bgfx_toggleb = 1 Then
+                bgfx_toggle.Text = "BGFX on"
+            Else
+                bgfx_toggle.Text = "BGFX off"
+            End If
+            
+            rerun()
+        End If
+    End Sub
+
+    Private Sub connector_selector_SelectedIndexChanged(sender As Object, e As EventArgs) Handles connector_selector.SelectedIndexChanged
+        ' Save current connector settings before switching
+        SaveCurrentConnectorSettings()
+        
+        ' Update current connector index
+        current_connector_index = connector_selector.SelectedIndex
+        
+        ' Load new connector settings
+        LoadCurrentConnectorSettings()
     End Sub
 
     Private Sub EFFECTOR_TEXT_TextChanged(sender As Object, e As EventArgs) Handles EFFECTOR_TEXT.TextChanged
@@ -1379,6 +1577,7 @@ Public Class Form1
         End If
 
         ' Save current slider values
+        ' Save current slider values
         Dim preset As New PresetData With {
             .EffectorOn = effector_on,
             .EffectorNum = effector_num,
@@ -1390,7 +1589,6 @@ Public Class Form1
             .ChannelValue = CHANNEL.Value,
             .BgfxValue = bgfx_toggleb
         }
-
         ' Add or update preset
         If customPresets.ContainsKey(presetName) Then
             customPresets(presetName) = preset
@@ -1429,7 +1627,6 @@ Public Class Form1
             MsgBox("Error saving presets: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
-
     Private Sub LoadCustomPresets()
         ' Clear existing custom preset menu items (items after the separator)
         Dim separatorIndex As Integer = -1
@@ -1469,8 +1666,6 @@ Public Class Form1
                                 .BgfxValue = If(parts.Length >= 10, Integer.Parse(parts(9)), 0)
                             }
                             customPresets.Add(presetName, preset)
-
-                            ' Add menu item for this preset
                             Dim menuItem As New ToolStripMenuItem(presetName)
                             AddHandler menuItem.Click, Sub(s, ev) ApplyCustomPreset(presetName)
                             PresetsToolStripMenuItem.DropDownItems.Add(menuItem)
