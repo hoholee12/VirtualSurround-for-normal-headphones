@@ -53,6 +53,19 @@ Public Class Form1
         Public BgfxValue As Integer
     End Structure
 
+    ' Helper method to write file with buffered I/O (reduces physical disk writes)
+    ' Uses FileShare.Read to allow other programs to read while we write
+    ' Closes file after write to ensure other programs see changes
+    Private Shared Sub WriteAllLinesBuffered(fileName As String, contents As String())
+        Using fs As New System.IO.FileStream(fileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read, 4096, System.IO.FileOptions.None)
+            Using writer As New System.IO.StreamWriter(fs, System.Text.Encoding.UTF8)
+                For Each line As String In contents
+                    writer.WriteLine(line)
+                Next
+            End Using
+        End Using
+    End Sub
+
     Public Shared temp_thread As System.Threading.Thread
     Public Shared menu_thread As System.Threading.Thread
     Public Shared temp_file() As String
@@ -1094,7 +1107,7 @@ Public Class Form1
                         Else
                             temp_file(22) = "Preamp: 0dB"
                         End If
-                        System.IO.File.WriteAllLines(vefx_file_name, temp_file)
+                        WriteAllLinesBuffered(vefx_file_name, temp_file)
                     Else
                         Exit While
                     End If
@@ -1128,7 +1141,7 @@ Public Class Form1
                     If effectThreadAbort Then Exit While
                     If temp_file(1) = "#FLANGER" Then
                         temp_file(27) = "Delay: 0." & count & "ms"
-                        System.IO.File.WriteAllLines(vefx_file_name, temp_file)
+                        WriteAllLinesBuffered(vefx_file_name, temp_file)
                     Else
                         Exit While
                     End If
