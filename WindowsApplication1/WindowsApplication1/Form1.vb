@@ -693,6 +693,11 @@ Public Class Form1
 
     Public Sub check_config()
         Try
+            ' Create empty config.txt if it doesn't exist
+            If Not System.IO.File.Exists(config_file_name) Then
+                System.IO.File.WriteAllText(config_file_name, "")
+            End If
+            
             Dim check_count As Integer = 0
             check_flag = False
             temp_file2 = System.IO.File.ReadAllLines(config_file_name)
@@ -711,6 +716,11 @@ Public Class Form1
     End Sub
 
     Public Sub firstrun()
+        ' Create empty vefx.txt if it doesn't exist
+        If Not System.IO.File.Exists(vefx_file_name) Then
+            System.IO.File.WriteAllText(vefx_file_name, "")
+        End If
+        
         temp_file = IO.File.ReadAllLines(vefx_file_name)
         Try
             If temp_file(0) <> "" Then
