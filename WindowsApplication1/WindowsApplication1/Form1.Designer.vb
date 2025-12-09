@@ -290,9 +290,9 @@ Partial Class Form1
         '
         Me.connector_selector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.connector_selector.FormattingEnabled = True
-        Me.connector_selector.Location = New System.Drawing.Point(360, 208)
+        Me.connector_selector.Location = New System.Drawing.Point(412, 210)
         Me.connector_selector.Name = "connector_selector"
-        Me.connector_selector.Size = New System.Drawing.Size(150, 20)
+        Me.connector_selector.Size = New System.Drawing.Size(100, 20)
         Me.connector_selector.TabIndex = 20
         '
         'MenuStrip1
@@ -341,42 +341,42 @@ Partial Class Form1
         'DancefloorToolStripMenuItem
         '
         Me.DancefloorToolStripMenuItem.Name = "DancefloorToolStripMenuItem"
-        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.DancefloorToolStripMenuItem.Text = "Dancefloor"
         '
         'MildEchoToolStripMenuItem
         '
         Me.MildEchoToolStripMenuItem.Name = "MildEchoToolStripMenuItem"
-        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.MildEchoToolStripMenuItem.Text = "MildEcho"
         '
         'TunnelToolStripMenuItem
         '
         Me.TunnelToolStripMenuItem.Name = "TunnelToolStripMenuItem"
-        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.TunnelToolStripMenuItem.Text = "Tunnel"
         '
         'TheaterToolStripMenuItem
         '
         Me.TheaterToolStripMenuItem.Name = "TheaterToolStripMenuItem"
-        Me.TheaterToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.TheaterToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.TheaterToolStripMenuItem.Text = "Theater"
         '
         'DNRToolStripMenuItem
         '
         Me.DNRToolStripMenuItem.Name = "DNRToolStripMenuItem"
-        Me.DNRToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.DNRToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.DNRToolStripMenuItem.Text = "DNR"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(138, 6)
         '
         'AddPresetToolStripMenuItem
         '
         Me.AddPresetToolStripMenuItem.Name = "AddPresetToolStripMenuItem"
-        Me.AddPresetToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AddPresetToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
         Me.AddPresetToolStripMenuItem.Text = "Add Preset..."
         '
         'Form1

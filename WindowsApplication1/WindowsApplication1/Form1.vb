@@ -1,6 +1,7 @@
 ﻿Imports System.Text.RegularExpressions
 Imports System.Management.Automation
 Imports System.Management.Automation.Runspaces
+Imports System.Web.Script.Serialization
 
 Public Class Form1
     Public Shared effector_num As Integer = 1
@@ -58,7 +59,7 @@ Public Class Form1
 
     ' Preset management variables
     Private Shared customPresets As New Dictionary(Of String, PresetData)
-    Private Shared ReadOnly presetsFilePath As String = System.IO.Path.Combine(Application.StartupPath, "custom_presets.txt")
+    Private Shared ReadOnly configFilePath As String = System.IO.Path.Combine(Application.StartupPath, "config.json")
 
     ' Structure to hold preset data
     Public Structure PresetData
@@ -72,6 +73,17 @@ Public Class Form1
         Public ChannelValue As Integer
         Public BgfxValue As Integer
     End Structure
+
+    ' Structure to hold config data (for JSON serialization)
+    Public Class ConfigData
+        Public Property LastConnectorIndex As Integer
+        Public Property CustomPresets As Dictionary(Of String, PresetData)
+        
+        Public Sub New()
+            LastConnectorIndex = 0
+            CustomPresets = New Dictionary(Of String, PresetData)()
+        End Sub
+    End Class
 
     ' Helper method to write file with buffered I/O (reduces physical disk writes)
     ' Uses FileShare.Read to allow other programs to read while we write
@@ -1286,14 +1298,22 @@ Public Class Form1
         ' Load audio devices from system
         LoadAudioDevices()
 
+        ' Load configuration from config.json (includes last connector and presets)
+        LoadConfig()
+
         ' Initialize connector selector
         connector_selector.Items.Clear()
         For Each connectorName In connector_names
             connector_selector.Items.Add(connectorName)
         Next
         If connector_names.Count > 0 Then
-            connector_selector.SelectedIndex = 0
-            current_connector_index = 0
+            ' Set to last used connector from config, or default to 0
+            If current_connector_index >= 0 AndAlso current_connector_index < connector_names.Count Then
+                connector_selector.SelectedIndex = current_connector_index
+            Else
+                connector_selector.SelectedIndex = 0
+                current_connector_index = 0
+            End If
         End If
 
         ' Initialize connector settings dictionary
@@ -1388,6 +1408,9 @@ Public Class Form1
         
         ' Update current connector index
         current_connector_index = connector_selector.SelectedIndex
+        
+        ' Save config with new connector selection
+        SaveConfig()
         
         ' Load new connector settings
         LoadCurrentConnectorSettings()
@@ -1620,27 +1643,48 @@ Public Class Form1
         MsgBox("Preset '" & presetName & "' saved successfully!", MsgBoxStyle.OkOnly, "Preset Saved")
     End Sub
 
-    Private Sub SaveCustomPresets()
+    ' Save configuration to config.json
+    Private Sub SaveConfig()
         Try
-            Using writer As New System.IO.StreamWriter(presetsFilePath, False)
-                For Each kvp In customPresets
-                    ' Format: PresetName|EffectorOn|EffectorNum|VEFX|Volume|Filter|HighEQ|LowEQ|Channel|Bgfx
-                    writer.WriteLine(String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
-                                                  kvp.Key,
-                                                  kvp.Value.EffectorOn,
-                                                  kvp.Value.EffectorNum,
-                                                  kvp.Value.VEFXValue,
-                                                  kvp.Value.VolumeValue,
-                                                  kvp.Value.FilterValue,
-                                                  kvp.Value.HighEQValue,
-                                                  kvp.Value.LowEQValue,
-                                                  kvp.Value.ChannelValue,
-                                                  kvp.Value.BgfxValue))
-                Next
-            End Using
+            Dim config As New ConfigData With {
+                .LastConnectorIndex = current_connector_index,
+                .CustomPresets = customPresets
+            }
+            
+            Dim serializer As New JavaScriptSerializer()
+            Dim json As String = serializer.Serialize(config)
+            System.IO.File.WriteAllText(configFilePath, json, System.Text.Encoding.UTF8)
         Catch ex As Exception
-            MsgBox("Error saving presets: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox("Error saving config: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
+    End Sub
+
+    ' Load configuration from config.json
+    Private Sub LoadConfig()
+        Try
+            If System.IO.File.Exists(configFilePath) Then
+                Dim json As String = System.IO.File.ReadAllText(configFilePath, System.Text.Encoding.UTF8)
+                Dim serializer As New JavaScriptSerializer()
+                Dim config As ConfigData = serializer.Deserialize(Of ConfigData)(json)
+                
+                ' Load last connector index
+                If config.LastConnectorIndex >= 0 AndAlso config.LastConnectorIndex < connector_names.Count Then
+                    current_connector_index = config.LastConnectorIndex
+                End If
+                
+                ' Load custom presets
+                If config.CustomPresets IsNot Nothing Then
+                    customPresets = config.CustomPresets
+                End If
+            End If
+        Catch ex As Exception
+            MsgBox("Error loading config: " & ex.Message, MsgBoxStyle.Exclamation, "Error")
+        End Try
+    End Sub
+
+    Private Sub SaveCustomPresets()
+        ' Now uses config.json instead
+        SaveConfig()
     End Sub
     Private Sub LoadCustomPresets()
         ' Clear existing custom preset menu items (items after the separator)
@@ -1659,38 +1703,16 @@ Public Class Form1
             Next
         End If
 
-        ' Load presets from file if it exists
-        If System.IO.File.Exists(presetsFilePath) Then
-            Try
-                customPresets.Clear()
-                Using reader As New System.IO.StreamReader(presetsFilePath)
-                    While Not reader.EndOfStream
-                        Dim line As String = reader.ReadLine()
-                        Dim parts() As String = line.Split("|"c)
-                        If parts.Length >= 9 Then
-                            Dim presetName As String = parts(0)
-                            Dim preset As New PresetData With {
-                                .EffectorOn = Integer.Parse(parts(1)),
-                                .EffectorNum = Integer.Parse(parts(2)),
-                                .VEFXValue = Integer.Parse(parts(3)),
-                                .VolumeValue = Integer.Parse(parts(4)),
-                                .FilterValue = Integer.Parse(parts(5)),
-                                .HighEQValue = Integer.Parse(parts(6)),
-                                .LowEQValue = Integer.Parse(parts(7)),
-                                .ChannelValue = Integer.Parse(parts(8)),
-                                .BgfxValue = If(parts.Length >= 10, Integer.Parse(parts(9)), 0)
-                            }
-                            customPresets.Add(presetName, preset)
-                            Dim menuItem As New ToolStripMenuItem(presetName)
-                            AddHandler menuItem.Click, Sub(s, ev) ApplyCustomPreset(presetName)
-                            PresetsToolStripMenuItem.DropDownItems.Add(menuItem)
-                        End If
-                    End While
-                End Using
-            Catch ex As Exception
-                MsgBox("Error loading presets: " & ex.Message, MsgBoxStyle.Exclamation, "Error")
-            End Try
-        End If
+        ' Add menu items from loaded presets (already loaded from config.json in LoadConfig)
+        Try
+            For Each kvp In customPresets
+                Dim menuItem As New ToolStripMenuItem(kvp.Key)
+                AddHandler menuItem.Click, Sub(s, ev) ApplyCustomPreset(kvp.Key)
+                PresetsToolStripMenuItem.DropDownItems.Add(menuItem)
+            Next
+        Catch ex As Exception
+            MsgBox("Error loading preset menu items: " & ex.Message, MsgBoxStyle.Exclamation, "Error")
+        End Try
     End Sub
 
     Private Sub ApplyCustomPreset(presetName As String)
