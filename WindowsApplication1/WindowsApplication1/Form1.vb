@@ -1575,17 +1575,9 @@ Public Class Form1
     Private Sub ResetAudiosrvToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetAudiosrvToolStripMenuItem.Click
         Dim result = MsgBox("Are you sure?", MsgBoxStyle.OkCancel, "Reset Audiosrv")
         If result <> MsgBoxResult.Cancel Then
-            Dim process As New Process()
-            process.StartInfo.FileName = "net.exe"
-            process.StartInfo.Verb = "runas"
-            process.StartInfo.Arguments = "stop audiosrv"
-            process.StartInfo.UseShellExecute = True
-            process.Start()
-            process.WaitForExit()
-            process.StartInfo.Arguments = "start audiosrv"
-            process.Start()
-            process.WaitForExit()
-            MsgBox("Done. Try restarting audio applications.", MsgBoxStyle.OkOnly, "Reset Audiosrv")
+            If RestartAudioService() Then
+                MsgBox("Done. Try restarting audio applications.", MsgBoxStyle.OkOnly, "Reset Audiosrv")
+            End If
         End If
     End Sub
 
@@ -1674,29 +1666,27 @@ Public Class Form1
                     If UninstallAPOFromDevice(guid) Then successCount += 1
                 Next
 
-                MsgBox("APO uninstalled from " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "Restart audio service to apply changes.", MsgBoxStyle.Information, "Success")
-                If MsgBox("Restart audio service now?", MsgBoxStyle.YesNo Or MsgBoxStyle.Question) = MsgBoxResult.Yes Then
-                    RestartAudioService()
-                End If
+                MsgBox("APO uninstalled to " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Uninstallation Complete")
+                RestartAudioService()
             End If
             Return
         End If
 
-        ' Ask which mode to install
-        Dim modeResult As MsgBoxResult = MsgBox("Install EqualizerAPO to " & deviceGuids.Count & " device(s) with connector: " & currentConnector & vbCrLf & vbCrLf & "Use recommended mode (SFX/EFX)?", MsgBoxStyle.YesNoCancel Or MsgBoxStyle.Question, "APO Installation")
-        If modeResult = MsgBoxResult.Cancel Then Return
+        Dim installMode As Integer = 1 ' 2=SFX/EFX, 1=SFX/MFX
 
-        Dim installMode As Integer = If(modeResult = MsgBoxResult.Yes, 2, 1) ' 2=SFX/EFX, 1=SFX/MFX
+        ' Confirmation before installation
+        Dim confirmResult As MsgBoxResult = MsgBox("Install EqualizerAPO to " & deviceGuids.Count & " device(s) with connector: " & currentConnector & "?" & vbCrLf & vbCrLf & "Install Mode: SFX/MFX (Win 8.1+)", MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "Confirm APO Installation")
+        If confirmResult <> MsgBoxResult.Yes Then
+            Return
+        End If
 
         successCount = 0
         For Each guid As String In deviceGuids
             If InstallAPOToDevice(guid, installMode) Then successCount += 1
         Next
 
-        MsgBox("APO installed to " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "Restart audio service to apply changes.", MsgBoxStyle.Information, "Success")
-        If MsgBox("Restart audio service now?", MsgBoxStyle.YesNo Or MsgBoxStyle.Question) = MsgBoxResult.Yes Then
-            RestartAudioService()
-        End If
+        MsgBox("APO installed to " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
+        RestartAudioService()
     End Sub
 
     Private Sub TheaterToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TheaterToolStripMenuItem.Click
@@ -1974,143 +1964,28 @@ Public Class Form1
     Private Const EFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},7"
     Private Const PROCESSING_MODE As String = "{C18E2F7E-933D-4965-B7D1-1EEF228D2AF3}"
     Private Const CHILD_APO_PATH As String = "SOFTWARE\EqualizerAPO\Child APOs"
+    Private Const FX_TITLE_VALUE As String = "{b725f130-47ef-101a-a5f1-02608c9eebac},10"
+    Private Const PROTECTED_AUDIODG_PATH As String = "SOFTWARE\Microsoft\Windows\CurrentVersion\Audio"
+    Private Const APO_REGISTRATION_PATH As String = "SOFTWARE\Classes\AudioEngine\AudioProcessingObjects"
 
-    Private Sub ShowAPODeviceSelector()
-        Dim form As New Form()
-        form.Text = "APO Device Selector - EqualizerAPO"
-        form.Size = New Size(650, 480)
-        form.StartPosition = FormStartPosition.CenterParent
-        form.FormBorderStyle = FormBorderStyle.FixedDialog
-        form.MaximizeBox = False
+    Private Function CheckAndFixProtectedAudioDG() As Boolean
+        Try
+            Using key As RegistryKey = Registry.LocalMachine.OpenSubKey(PROTECTED_AUDIODG_PATH, True)
+                If key Is Nothing Then Return False
 
-        ' Status label
-        Dim lblStatus As New Label()
-        lblStatus.Location = New Point(10, 10)
-        lblStatus.Size = New Size(625, 40)
-        lblStatus.Text = "EqualizerAPO GUIDs:" & vbCrLf &
-                         "PreMix: " & EQUALIZERAPO_PRE_MIX_GUID & "  PostMix: " & EQUALIZERAPO_POST_MIX_GUID
-        lblStatus.ForeColor = Color.Green
-        form.Controls.Add(lblStatus)
-
-        ' Device list
-        Dim lstDevices As New ListBox()
-        lstDevices.Location = New Point(10, 60)
-        lstDevices.Size = New Size(625, 280)
-        lstDevices.DisplayMember = "Text"
-        form.Controls.Add(lstDevices)
-
-        ' Filter checkbox
-        Dim chkFilter As New CheckBox()
-        chkFilter.Text = "Show only devices without APO"
-        chkFilter.Location = New Point(10, 355)
-        chkFilter.AutoSize = True
-        form.Controls.Add(chkFilter)
-
-        ' Install mode combo
-        Dim lblMode As New Label()
-        lblMode.Text = "Install Mode:"
-        lblMode.Location = New Point(10, 385)
-        lblMode.AutoSize = True
-        form.Controls.Add(lblMode)
-
-        Dim cboMode As New ComboBox()
-        cboMode.DropDownStyle = ComboBoxStyle.DropDownList
-        cboMode.Items.AddRange(New String() {"LFX/GFX (Legacy)", "SFX/MFX (Win 8.1+)", "SFX/EFX (Win 8.1+, Recommended)"})
-        cboMode.SelectedIndex = 2
-        cboMode.Location = New Point(100, 382)
-        cboMode.Width = 220
-        form.Controls.Add(cboMode)
-
-        ' Buttons
-        Dim btnInstall As New Button()
-        btnInstall.Text = "Install APO"
-        btnInstall.Location = New Point(10, 420)
-        btnInstall.Size = New Size(100, 30)
-        form.Controls.Add(btnInstall)
-
-        Dim btnUninstall As New Button()
-        btnUninstall.Text = "Uninstall APO"
-        btnUninstall.Location = New Point(120, 420)
-        btnUninstall.Size = New Size(100, 30)
-        form.Controls.Add(btnUninstall)
-
-        Dim btnRestart As New Button()
-        btnRestart.Text = "Restart Audio"
-        btnRestart.Location = New Point(230, 420)
-        btnRestart.Size = New Size(100, 30)
-        form.Controls.Add(btnRestart)
-
-        Dim btnClose As New Button()
-        btnClose.Text = "Close"
-        btnClose.Location = New Point(535, 420)
-        btnClose.Size = New Size(100, 30)
-        btnClose.DialogResult = DialogResult.OK
-        form.Controls.Add(btnClose)
-
-        ' Load devices function
-        Dim LoadDevices As Action = Sub()
-                                        lstDevices.Items.Clear()
-                                        Try
-                                            Using key As RegistryKey = Registry.LocalMachine.OpenSubKey(RENDER_PATH)
-                                                If key IsNot Nothing Then
-                                                    For Each deviceGuid In key.GetSubKeyNames()
-                                                        Dim deviceName As String = GetDeviceName(deviceGuid)
-                                                        Dim hasAPO As Boolean = CheckAPOInstalled(deviceGuid)
-
-                                                        If Not chkFilter.Checked OrElse Not hasAPO Then
-                                                            Dim status As String = If(hasAPO, " [APO INSTALLED]", "")
-                                                            lstDevices.Items.Add(New With {
-                                                                 .Text = deviceName & status,
-                                                                 .Guid = deviceGuid,
-                                                                 .HasAPO = hasAPO
-                                                             })
-                                                        End If
-                                                    Next
-                                                End If
-                                            End Using
-                                        Catch ex As Exception
-                                            MsgBox("Error loading devices: " & ex.Message, MsgBoxStyle.Exclamation)
-                                        End Try
-                                    End Sub
-
-        ' Event handlers
-        AddHandler chkFilter.CheckedChanged, Sub() LoadDevices()
-
-        AddHandler btnInstall.Click, Sub()
-                                         If lstDevices.SelectedItem Is Nothing Then
-                                             MsgBox("Please select a device first.", MsgBoxStyle.Information)
-                                             Return
-                                         End If
-
-                                         Dim item = lstDevices.SelectedItem
-                                         If InstallAPOToDevice(item.Guid, cboMode.SelectedIndex) Then
-                                             MsgBox("APO installed! Restart audio service to apply changes.", MsgBoxStyle.Information)
-                                             LoadDevices()
-                                         End If
-                                     End Sub
-
-        AddHandler btnUninstall.Click, Sub()
-                                           If lstDevices.SelectedItem Is Nothing Then
-                                               MsgBox("Please select a device first.", MsgBoxStyle.Information)
-                                               Return
-                                           End If
-
-                                           Dim item = lstDevices.SelectedItem
-                                           If UninstallAPOFromDevice(item.Guid) Then
-                                               MsgBox("APO uninstalled! Restart audio service to apply changes.", MsgBoxStyle.Information)
-                                               LoadDevices()
-                                           End If
-                                       End Sub
-
-        AddHandler btnRestart.Click, Sub()
-                                         If RestartAudioService() Then
-                                             MsgBox("Audio service restarted successfully!", MsgBoxStyle.Information)
-                                         End If
-                                     End Sub
-
-        LoadDevices()
-        form.ShowDialog()
-    End Sub
+                Dim value As Object = key.GetValue("DisableProtectedAudioDG")
+                If value Is Nothing OrElse CInt(value) <> 1 Then
+                    ' Need to set the value
+                    key.SetValue("DisableProtectedAudioDG", 1, RegistryValueKind.DWord)
+                    Return True ' Indicates we changed it (reboot may be needed)
+                End If
+            End Using
+            Return False ' Already set correctly
+        Catch ex As Exception
+            MsgBox("Warning: Could not set DisableProtectedAudioDG." & vbCrLf & ex.Message, MsgBoxStyle.Exclamation)
+            Return False
+        End Try
+    End Function
 
     Private Function GetAllDeviceGuidsByName(deviceName As String) As List(Of String)
         ' Search for device GUID by matching device name
@@ -2234,83 +2109,183 @@ Public Class Form1
     Private Function InstallAPOToDevice(deviceGuid As String, mode As Integer) As Boolean
         Dim hKey As IntPtr = IntPtr.Zero
         Dim hChildKey As IntPtr = IntPtr.Zero
+        Dim fxPropertiesExisted As Boolean = False
+        
         Try
-            Dim fxPath As String = RENDER_PATH & "\" & deviceGuid & "\FxProperties"
+            Dim devicePath As String = RENDER_PATH & "\" & deviceGuid
+            Dim fxPath As String = devicePath & "\FxProperties"
             Dim childPath As String = CHILD_APO_PATH & "\" & deviceGuid
 
-            ' Create Child APO backup registry key first
-            Dim result As Integer = RegOpenKeyEx(HKEY_LOCAL_MACHINE, CHILD_APO_PATH, 0, KEY_CREATE_SUB_KEY Or KEY_WOW64_64KEY, hChildKey)
-            If result = ERROR_SUCCESS Then
-                Dim hDeviceKey As IntPtr = IntPtr.Zero
-                result = RegCreateKeyEx(hChildKey, deviceGuid, 0, Nothing, 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, IntPtr.Zero, hDeviceKey, IntPtr.Zero)
-                If hDeviceKey <> IntPtr.Zero Then RegCloseKey(hDeviceKey)
-                RegCloseKey(hChildKey)
-                hChildKey = IntPtr.Zero
+            ' Check if FxProperties already exists
+            Dim hTestKey As IntPtr = IntPtr.Zero
+            Dim testResult As Integer = RegOpenKeyEx(HKEY_LOCAL_MACHINE, fxPath, 0, KEY_QUERY_VALUE Or KEY_WOW64_64KEY, hTestKey)
+            If testResult = ERROR_SUCCESS Then
+                fxPropertiesExisted = True
+                RegCloseKey(hTestKey)
             End If
 
-            ' Open FxProperties key
-            result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, fxPath, 0, KEY_SET_VALUE Or KEY_QUERY_VALUE Or KEY_WOW64_64KEY, hKey)
+            ' Create Child APO backup registry structure
+            Dim result As Integer = RegOpenKeyEx(HKEY_LOCAL_MACHINE, CHILD_APO_PATH, 0, KEY_CREATE_SUB_KEY Or KEY_WOW64_64KEY, hChildKey)
             If result <> ERROR_SUCCESS Then
-                MsgBox("Cannot open registry key for writing." & vbCrLf & "Error code: " & result & vbCrLf & vbCrLf & "Path: HKEY_LOCAL_MACHINE\" & fxPath, MsgBoxStyle.Critical, "Registry Access Error")
+                ' CHILD_APO_PATH doesn't exist, create it
+                result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, CHILD_APO_PATH, 0, Nothing, 0, KEY_CREATE_SUB_KEY Or KEY_WOW64_64KEY, IntPtr.Zero, hChildKey, IntPtr.Zero)
+                If result <> ERROR_SUCCESS Then
+                    MsgBox("Cannot create Child APO registry path." & vbCrLf & "Error: " & result, MsgBoxStyle.Critical)
+                    Return False
+                End If
+            End If
+            
+            Dim hDeviceKey As IntPtr = IntPtr.Zero
+            result = RegCreateKeyEx(hChildKey, deviceGuid, 0, Nothing, 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, IntPtr.Zero, hDeviceKey, IntPtr.Zero)
+            RegCloseKey(hChildKey)
+            hChildKey = hDeviceKey
+            
+            If result <> ERROR_SUCCESS Then
+                MsgBox("Cannot create device backup key.", MsgBoxStyle.Critical)
                 Return False
             End If
 
-            ' Backup original APO GUIDs to Child APO registry before overwriting
-            result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, childPath, 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, hChildKey)
-            If result = ERROR_SUCCESS Then
+            ' Try to open FxProperties, create if needed
+            result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, fxPath, 0, KEY_SET_VALUE Or KEY_QUERY_VALUE Or KEY_WOW64_64KEY, hKey)
+            If result <> ERROR_SUCCESS Then
+                ' FxProperties doesn't exist - try to create it
+                Dim hDevicePathKey As IntPtr = IntPtr.Zero
+                result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, devicePath, 0, KEY_CREATE_SUB_KEY Or KEY_WOW64_64KEY, hDevicePathKey)
+                If result <> ERROR_SUCCESS Then
+                    MsgBox("Cannot access device registry path. Try running as administrator.", MsgBoxStyle.Critical)
+                    Return False
+                End If
+                
+                Dim hNewFxKey As IntPtr = IntPtr.Zero
+                result = RegCreateKeyEx(hDevicePathKey, "FxProperties", 0, Nothing, 0, KEY_SET_VALUE Or KEY_QUERY_VALUE Or KEY_WOW64_64KEY, IntPtr.Zero, hNewFxKey, IntPtr.Zero)
+                RegCloseKey(hDevicePathKey)
+                
+                If result <> ERROR_SUCCESS Then
+                    MsgBox("Cannot create FxProperties key. Insufficient permissions." & vbCrLf & "Error: " & result, MsgBoxStyle.Critical)
+                    Return False
+                End If
+                
+                hKey = hNewFxKey
+                fxPropertiesExisted = False
+                
+                ' Set FxTitle for new FxProperties
+                Dim fxTitle As String = "Equalizer APO"
+                RegSetValueEx(hKey, FX_TITLE_VALUE, 0, REG_SZ, fxTitle, CUInt((fxTitle.Length + 1) * 2))
+            End If
+
+            ' Backup original APO GUIDs before modifying
+            If fxPropertiesExisted Then
                 For Each valueName In {LFX_GUID, GFX_GUID, SFX_GUID, MFX_GUID, EFX_GUID}
-                    ' Read original value from FxProperties
                     Dim buffer(512) As Byte
                     Dim bufferSize As UInteger = CUInt(buffer.Length)
                     Dim valueType As UInteger = 0
                     Dim readResult As Integer = RegQueryValueEx(hKey, valueName, IntPtr.Zero, valueType, buffer, bufferSize)
 
                     If readResult = ERROR_SUCCESS Then
-                        ' Save original GUID to Child APO registry
-                        RegSetValueEx(hChildKey, valueName, 0, valueType, buffer, bufferSize)
+                        ' Check if it's already our GUID - mark as !VALUE if so
+                        Dim existingGuid As String = System.Text.Encoding.Unicode.GetString(buffer, 0, CInt(bufferSize - 2))
+                        If existingGuid.Equals(EQUALIZERAPO_PRE_MIX_GUID, StringComparison.OrdinalIgnoreCase) OrElse _
+                           existingGuid.Equals(EQUALIZERAPO_POST_MIX_GUID, StringComparison.OrdinalIgnoreCase) Then
+                            Dim noValue As String = "!VALUE"
+                            RegSetValueEx(hChildKey, valueName, 0, REG_SZ, noValue, CUInt((noValue.Length + 1) * 2))
+                        Else
+                            ' Save original GUID
+                            RegSetValueEx(hChildKey, valueName, 0, valueType, buffer, bufferSize)
+                        End If
                     Else
-                        ' No original value exists - write empty marker
-                        Dim noValue As String = ""
-                        RegSetValueEx(hChildKey, valueName, 0, REG_SZ, noValue, 0)
+                        ' No original value - mark as !VALUE
+                        Dim noValue As String = "!VALUE"
+                        RegSetValueEx(hChildKey, valueName, 0, REG_SZ, noValue, CUInt((noValue.Length + 1) * 2))
                     End If
                 Next
-
-                ' Write version number
-                Dim versionStr As String = "2"
-                RegSetValueEx(hChildKey, "Version", 0, REG_SZ, versionStr, CUInt((versionStr.Length + 1) * 2))
-
-                RegCloseKey(hChildKey)
-                hChildKey = IntPtr.Zero
+            Else
+                ' FxProperties didn't exist - mark all as !KEY
+                For Each valueName In {LFX_GUID, GFX_GUID, SFX_GUID, MFX_GUID, EFX_GUID}
+                    Dim noKey As String = "!KEY"
+                    RegSetValueEx(hChildKey, valueName, 0, REG_SZ, noKey, CUInt((noKey.Length + 1) * 2))
+                Next
             End If
 
-            ' Clear old values
-            For Each valueName In {LFX_GUID, GFX_GUID, SFX_GUID, MFX_GUID, EFX_GUID}
-                RegDeleteValue(hKey, valueName) ' Ignore errors
-            Next
+            ' Write version number
+            Dim versionStr As String = "2"
+            RegSetValueEx(hChildKey, "Version", 0, REG_SZ, versionStr, CUInt((versionStr.Length + 1) * 2))
 
-            ' Install based on mode
+            ' Install based on mode - SELECTIVE deletion/setting
             Select Case mode
-                Case 0 ' LFX/GFX
+                Case 0 ' LFX/GFX mode
+                    ' Set LFX and GFX
                     RegSetValueEx(hKey, LFX_GUID, 0, REG_SZ, EQUALIZERAPO_PRE_MIX_GUID, CUInt((EQUALIZERAPO_PRE_MIX_GUID.Length + 1) * 2))
                     RegSetValueEx(hKey, GFX_GUID, 0, REG_SZ, EQUALIZERAPO_POST_MIX_GUID, CUInt((EQUALIZERAPO_POST_MIX_GUID.Length + 1) * 2))
-                Case 1 ' SFX/MFX
+                    ' Delete incompatible SFX/MFX/EFX
+                    RegDeleteValue(hKey, SFX_GUID)
+                    RegDeleteValue(hKey, MFX_GUID)
+                    RegDeleteValue(hKey, EFX_GUID)
+                    
+                Case 1 ' SFX/MFX mode
+                    ' Delete incompatible LFX/GFX
+                    RegDeleteValue(hKey, LFX_GUID)
+                    RegDeleteValue(hKey, GFX_GUID)
+                    ' Set SFX and MFX with processing modes
                     RegSetValueEx(hKey, SFX_GUID, 0, REG_SZ, EQUALIZERAPO_PRE_MIX_GUID, CUInt((EQUALIZERAPO_PRE_MIX_GUID.Length + 1) * 2))
                     RegSetValueEx(hKey, MFX_GUID, 0, REG_SZ, EQUALIZERAPO_POST_MIX_GUID, CUInt((EQUALIZERAPO_POST_MIX_GUID.Length + 1) * 2))
-                    Dim modes() As String = {PROCESSING_MODE & vbNullChar}
-                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, modes, CUInt((PROCESSING_MODE.Length + 2) * 2))
-                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},6", 0, REG_MULTI_SZ, modes, CUInt((PROCESSING_MODE.Length + 2) * 2))
-                Case 2 ' SFX/EFX
+                    ' Set processing modes with proper MULTI_SZ format (double null terminated)
+                    Dim processingModeBytes() As Byte = System.Text.Encoding.Unicode.GetBytes(PROCESSING_MODE & vbNullChar & vbNullChar)
+                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
+                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},6", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
+                    ' Don't touch EFX - leave it for driver if it exists
+                    
+                Case 2 ' SFX/EFX mode
+                    ' Delete incompatible LFX/GFX
+                    RegDeleteValue(hKey, LFX_GUID)
+                    RegDeleteValue(hKey, GFX_GUID)
+                    ' Set SFX and EFX with processing modes
                     RegSetValueEx(hKey, SFX_GUID, 0, REG_SZ, EQUALIZERAPO_PRE_MIX_GUID, CUInt((EQUALIZERAPO_PRE_MIX_GUID.Length + 1) * 2))
                     RegSetValueEx(hKey, EFX_GUID, 0, REG_SZ, EQUALIZERAPO_POST_MIX_GUID, CUInt((EQUALIZERAPO_POST_MIX_GUID.Length + 1) * 2))
-                    Dim modes() As String = {PROCESSING_MODE & vbNullChar}
-                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, modes, CUInt((PROCESSING_MODE.Length + 2) * 2))
-                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},7", 0, REG_MULTI_SZ, modes, CUInt((PROCESSING_MODE.Length + 2) * 2))
+                    ' Set processing modes with proper MULTI_SZ format (double null terminated)
+                    Dim processingModeBytes() As Byte = System.Text.Encoding.Unicode.GetBytes(PROCESSING_MODE & vbNullChar & vbNullChar)
+                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
+                    RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},7", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
+                    ' Don't touch MFX - leave it for driver if it exists
             End Select
 
-            ' Enable enhancements
+            ' Force enable audio enhancements (delete the disable flag)
             RegDeleteValue(hKey, "{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5")
 
+            RegCloseKey(hKey)
+            hKey = IntPtr.Zero
+            RegCloseKey(hChildKey)
+            hChildKey = IntPtr.Zero
+
+            ' Create backup .reg file
+            Try
+                Dim backupFileName As String = "backup_" & deviceGuid & "_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".reg"
+                Dim backupPath As String = System.IO.Path.Combine(Application.StartupPath, backupFileName)
+                
+                Using writer As New System.IO.StreamWriter(backupPath, False, System.Text.Encoding.Unicode)
+                    writer.WriteLine("Windows Registry Editor Version 5.00")
+                    writer.WriteLine()
+                    writer.WriteLine("[HKEY_LOCAL_MACHINE\" & childPath.Replace("\", "\\") & "]")
+                    writer.WriteLine("""Version""=""2""")
+                    
+                    ' Write backed up values
+                    Using backupKey As RegistryKey = Registry.LocalMachine.OpenSubKey(childPath, False)
+                        If backupKey IsNot Nothing Then
+                            For Each valueName In {LFX_GUID, GFX_GUID, SFX_GUID, MFX_GUID, EFX_GUID}
+                                Dim val As Object = backupKey.GetValue(valueName)
+                                If val IsNot Nothing Then
+                                    writer.WriteLine($"""{valueName}""=""{val.ToString()}""")
+                                End If
+                            Next
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                ' Backup file creation failed - not critical, continue
+                Debug.WriteLine("Backup file creation failed: " & ex.Message)
+            End Try
+
             Return True
+            
         Catch ex As Exception
             MsgBox("Install error: " & ex.GetType().Name & vbCrLf & vbCrLf & ex.Message & vbCrLf & vbCrLf & ex.StackTrace, MsgBoxStyle.Exclamation)
             Return False

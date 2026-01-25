@@ -323,7 +323,7 @@ Partial Class Form1
         '
         Me.OpenEAPOConfigToolStripMenuItem.Name = "OpenEAPOConfigToolStripMenuItem"
         Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(177, 22)
-        Me.OpenEAPOConfigToolStripMenuItem.Text = "Open EAPO Config"
+        Me.OpenEAPOConfigToolStripMenuItem.Text = "Install/Uninstall APO for Current Selection"
         '
         'AboutToolStripMenuItem
         '
