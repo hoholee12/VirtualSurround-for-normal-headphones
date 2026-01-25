@@ -49,6 +49,9 @@
   <PropertyGroup>
     <ApplicationIcon>avatar.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AudioDeviceCmdlets">
       <HintPath>AudioDeviceCmdlets.dll</HintPath>
@@ -127,6 +130,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="avatar.ico" />
