@@ -22,11 +22,5 @@ VEFX Slider
   재정의합니다.
 </summary>
 </member>
-<member name="M:WindowsApplication1.Form1.DetectBestInstallMode(System.String)">
- <summary>
- Auto-detects the best install mode for a device based on existing APO configuration.
- This matches the logic from EqualizerAPO's DeviceSelector.
- </summary>
-</member>
 </members>
 </doc>

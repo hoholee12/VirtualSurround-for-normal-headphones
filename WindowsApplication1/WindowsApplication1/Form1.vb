@@ -1764,13 +1764,17 @@ Public Class Form1
             Return
         End If
 
-        ' Auto-detect the best install mode for this device
-        Dim installMode As Integer = DetectBestInstallMode(deviceGuid)
+        ' Ask user to select install mode using custom dialog
+        Dim installMode As Integer = ShowInstallModeDialog()
+        If installMode = -1 Then
+            ' User cancelled
+            Return
+        End If
+
         Dim modeNames As String() = {"LFX/GFX (Legacy)", "SFX/MFX (Win 8.1+)", "SFX/EFX (Win 8.1+)"}
-        Dim modeName As String = If(installMode >= 0 AndAlso installMode < modeNames.Length, modeNames(installMode), "Unknown")
 
         ' Confirmation before installation
-        Dim confirmResult As MsgBoxResult = MsgBox("Install EqualizerAPO to device:" & vbCrLf & currentDeviceName & vbCrLf & vbCrLf & "Auto-detected Install Mode: " & modeName, MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "Confirm APO Installation")
+        Dim confirmResult As MsgBoxResult = MsgBox("Install EqualizerAPO to device:" & vbCrLf & currentDeviceName & vbCrLf & vbCrLf & "Selected Mode: " & modeNames(installMode), MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "Confirm APO Installation")
         If confirmResult <> MsgBoxResult.Yes Then
             Return
         End If
@@ -2218,60 +2222,6 @@ Public Class Form1
         Return ""
     End Function
 
-    ''' <summary>
-    ''' Auto-detects the best install mode for a device based on existing APO configuration.
-    ''' This matches the logic from EqualizerAPO's DeviceSelector.
-    ''' </summary>
-    Private Function DetectBestInstallMode(deviceGuid As String) As Integer
-        Try
-            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
-                Dim devicePath As String = RENDER_PATH & "\" & deviceGuid
-
-                ' Check if FxProperties exists
-                Using fxKey As RegistryKey = baseKey.OpenSubKey(devicePath & "\FxProperties")
-                    If fxKey Is Nothing Then
-                        ' No FxProperties - default to SFX/EFX for modern devices
-                        Return 2
-                    End If
-
-                    ' Check which APO GUIDs exist
-                    Dim hasLfx As Boolean = fxKey.GetValue(LFX_GUID) IsNot Nothing
-                    Dim hasGfx As Boolean = fxKey.GetValue(GFX_GUID) IsNot Nothing
-                    Dim hasSfx As Boolean = fxKey.GetValue(SFX_GUID) IsNot Nothing
-                    Dim hasMfx As Boolean = fxKey.GetValue(MFX_GUID) IsNot Nothing
-                    Dim hasEfx As Boolean = fxKey.GetValue(EFX_GUID) IsNot Nothing
-                    Dim hasMultiSfx As Boolean = fxKey.GetValue(MULTI_SFX_GUID) IsNot Nothing
-                    Dim hasMultiMfx As Boolean = fxKey.GetValue(MULTI_MFX_GUID) IsNot Nothing
-                    Dim hasMultiEfx As Boolean = fxKey.GetValue(MULTI_EFX_GUID) IsNot Nothing
-
-                    ' Logic from DeviceAPOInfo.cpp (lines 380-399):
-                    ' Only use LFX/GFX if the audio driver supplied only those APOs
-                    If (hasLfx OrElse hasGfx) AndAlso
-                       Not hasSfx AndAlso Not hasMfx AndAlso Not hasEfx AndAlso
-                       Not hasMultiSfx AndAlso Not hasMultiMfx AndAlso Not hasMultiEfx Then
-                        Return 0 ' LFX/GFX mode
-                    End If
-
-                    ' Check if device is combined (bluetooth devices in Windows 11)
-                    Using propsKey As RegistryKey = baseKey.OpenSubKey(devicePath & "\Properties")
-                        If propsKey IsNot Nothing Then
-                            If propsKey.GetValue(COMBINED_DEVICE_VALUE) IsNot Nothing Then
-                                ' Combined device - EFX will not work, use MFX
-                                Return 1 ' SFX/MFX mode
-                            End If
-                        End If
-                    End Using
-
-                    ' Default to SFX/EFX for modern devices (Windows 8.1+)
-                    Return 2
-                End Using
-            End Using
-        Catch ex As Exception
-            ' On error, default to SFX/EFX
-            Return 2
-        End Try
-    End Function
-
     Private Function CheckAPOInstalled(deviceGuid As String) As Boolean
         Try
             Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
@@ -2299,7 +2249,7 @@ Public Class Form1
         Dim hKey As IntPtr = IntPtr.Zero
         Dim hChildKey As IntPtr = IntPtr.Zero
         Dim fxPropertiesExisted As Boolean = False
-        
+
         Try
             Dim devicePath As String = RENDER_PATH & "\" & deviceGuid
             Dim fxPath As String = devicePath & "\FxProperties"
@@ -2323,12 +2273,12 @@ Public Class Form1
                     Return False
                 End If
             End If
-            
+
             Dim hDeviceKey As IntPtr = IntPtr.Zero
             result = RegCreateKeyEx(hChildKey, deviceGuid, 0, Nothing, 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, IntPtr.Zero, hDeviceKey, IntPtr.Zero)
             RegCloseKey(hChildKey)
             hChildKey = hDeviceKey
-            
+
             If result <> ERROR_SUCCESS Then
                 MsgBox("Cannot create device backup key.", MsgBoxStyle.Critical)
                 Return False
@@ -2344,19 +2294,19 @@ Public Class Form1
                     MsgBox("Cannot access device registry path. Try running as administrator.", MsgBoxStyle.Critical)
                     Return False
                 End If
-                
+
                 Dim hNewFxKey As IntPtr = IntPtr.Zero
                 result = RegCreateKeyEx(hDevicePathKey, "FxProperties", 0, Nothing, 0, KEY_SET_VALUE Or KEY_QUERY_VALUE Or KEY_WOW64_64KEY, IntPtr.Zero, hNewFxKey, IntPtr.Zero)
                 RegCloseKey(hDevicePathKey)
-                
+
                 If result <> ERROR_SUCCESS Then
                     MsgBox("Cannot create FxProperties key. Insufficient permissions." & vbCrLf & "Error: " & result, MsgBoxStyle.Critical)
                     Return False
                 End If
-                
+
                 hKey = hNewFxKey
                 fxPropertiesExisted = False
-                
+
                 ' Set FxTitle for new FxProperties
                 Dim fxTitle As String = "Equalizer APO"
                 RegSetValueEx(hKey, FX_TITLE_VALUE, 0, REG_SZ, fxTitle, CUInt((fxTitle.Length + 1) * 2))
@@ -2373,7 +2323,7 @@ Public Class Form1
                     If readResult = ERROR_SUCCESS Then
                         ' Check if it's already our GUID - mark as !VALUE if so
                         Dim existingGuid As String = System.Text.Encoding.Unicode.GetString(buffer, 0, CInt(bufferSize - 2))
-                        If existingGuid.Equals(EQUALIZERAPO_PRE_MIX_GUID, StringComparison.OrdinalIgnoreCase) OrElse _
+                        If existingGuid.Equals(EQUALIZERAPO_PRE_MIX_GUID, StringComparison.OrdinalIgnoreCase) OrElse
                            existingGuid.Equals(EQUALIZERAPO_POST_MIX_GUID, StringComparison.OrdinalIgnoreCase) Then
                             Dim noValue As String = "!VALUE"
                             RegSetValueEx(hChildKey, valueName, 0, REG_SZ, noValue, CUInt((noValue.Length + 1) * 2))
@@ -2409,7 +2359,7 @@ Public Class Form1
                     RegDeleteValue(hKey, SFX_GUID)
                     RegDeleteValue(hKey, MFX_GUID)
                     RegDeleteValue(hKey, EFX_GUID)
-                    
+
                 Case 1 ' SFX/MFX mode
                     ' Delete incompatible LFX/GFX
                     RegDeleteValue(hKey, LFX_GUID)
@@ -2422,7 +2372,7 @@ Public Class Form1
                     RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
                     RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},6", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
                     ' Don't touch EFX - leave it for driver if it exists
-                    
+
                 Case 2 ' SFX/EFX mode
                     ' Delete incompatible LFX/GFX
                     RegDeleteValue(hKey, LFX_GUID)
@@ -2449,13 +2399,13 @@ Public Class Form1
             Try
                 Dim backupFileName As String = "backup_" & deviceGuid & "_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".reg"
                 Dim backupPath As String = System.IO.Path.Combine(Application.StartupPath, backupFileName)
-                
+
                 Using writer As New System.IO.StreamWriter(backupPath, False, System.Text.Encoding.Unicode)
                     writer.WriteLine("Windows Registry Editor Version 5.00")
                     writer.WriteLine()
                     writer.WriteLine("[HKEY_LOCAL_MACHINE\" & childPath.Replace("\", "\\") & "]")
                     writer.WriteLine("""Version""=""2""")
-                    
+
                     ' Write backed up values
                     Using backupKey As RegistryKey = Registry.LocalMachine.OpenSubKey(childPath, False)
                         If backupKey IsNot Nothing Then
@@ -2474,7 +2424,7 @@ Public Class Form1
             End Try
 
             Return True
-            
+
         Catch ex As Exception
             MsgBox("Install error: " & ex.GetType().Name & vbCrLf & vbCrLf & ex.Message & vbCrLf & vbCrLf & ex.StackTrace, MsgBoxStyle.Exclamation)
             Return False
@@ -2607,5 +2557,69 @@ Public Class Form1
             Return False
         End Try
     End Function
+    Private Function ShowInstallModeDialog() As Integer
+        ' Create a simple dialog with radio buttons for install mode selection
+        Dim dialog As New Form()
+        dialog.Text = "Select APO Installation Mode"
+        dialog.Size = New Size(450, 220)
+        dialog.FormBorderStyle = FormBorderStyle.FixedDialog
+        dialog.StartPosition = FormStartPosition.CenterParent
+        dialog.MaximizeBox = False
+        dialog.MinimizeBox = False
+
+        Dim label As New Label()
+        label.Text = "Select the APO installation mode for this device:"
+        label.Location = New Point(10, 10)
+        label.Size = New Size(420, 20)
+        dialog.Controls.Add(label)
+
+        Dim radio0 As New RadioButton()
+        radio0.Text = "LFX/GFX (Legacy, Windows 7)"
+        radio0.Location = New Point(20, 40)
+        radio0.Size = New Size(400, 24)
+        radio0.Tag = 0
+        dialog.Controls.Add(radio0)
+
+        Dim radio1 As New RadioButton()
+        radio1.Text = "SFX/MFX (Windows 8.1+, recommended for Bluetooth)"
+        radio1.Location = New Point(20, 70)
+        radio1.Size = New Size(400, 24)
+        radio1.Tag = 1
+        dialog.Controls.Add(radio1)
+
+        Dim radio2 As New RadioButton()
+        radio2.Text = "SFX/EFX (Windows 8.1+, recommended for most devices)"
+        radio2.Location = New Point(20, 100)
+        radio2.Size = New Size(400, 24)
+        radio2.Tag = 2
+        radio2.Checked = True ' Default selection
+        dialog.Controls.Add(radio2)
+
+        Dim btnOK As New Button()
+        btnOK.Text = "OK"
+        btnOK.Location = New Point(260, 140)
+        btnOK.Size = New Size(80, 30)
+        btnOK.DialogResult = DialogResult.OK
+        dialog.Controls.Add(btnOK)
+        dialog.AcceptButton = btnOK
+
+        Dim btnCancel As New Button()
+        btnCancel.Text = "Cancel"
+        btnCancel.Location = New Point(350, 140)
+        btnCancel.Size = New Size(80, 30)
+        btnCancel.DialogResult = DialogResult.Cancel
+        dialog.Controls.Add(btnCancel)
+        dialog.CancelButton = btnCancel
+
+        ' Show dialog and return selected mode
+        If dialog.ShowDialog() = DialogResult.OK Then
+            If radio0.Checked Then Return 0
+            If radio1.Checked Then Return 1
+            If radio2.Checked Then Return 2
+        End If
+
+        Return -1 ' Cancelled
+    End Function
+
 #End Region
 End Class
