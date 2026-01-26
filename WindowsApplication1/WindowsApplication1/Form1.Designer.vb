@@ -44,6 +44,7 @@ Partial Class Form1
         Me.TextBox10 = New System.Windows.Forms.TextBox()
         Me.bgfx_toggle = New System.Windows.Forms.Button()
         Me.connector_selector = New System.Windows.Forms.ComboBox()
+        Me.apo_status_indicator = New System.Windows.Forms.Panel()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ResetAudiosrvToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -280,7 +281,7 @@ Partial Class Form1
         'bgfx_toggle
         '
         Me.bgfx_toggle.Location = New System.Drawing.Point(873, 364)
-        Me.bgfx_toggle.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.bgfx_toggle.Margin = New System.Windows.Forms.Padding(5)
         Me.bgfx_toggle.Name = "bgfx_toggle"
         Me.bgfx_toggle.Size = New System.Drawing.Size(118, 40)
         Me.bgfx_toggle.TabIndex = 19
@@ -292,10 +293,18 @@ Partial Class Form1
         Me.connector_selector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.connector_selector.FormattingEnabled = True
         Me.connector_selector.Location = New System.Drawing.Point(658, 368)
-        Me.connector_selector.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.connector_selector.Margin = New System.Windows.Forms.Padding(5)
         Me.connector_selector.Name = "connector_selector"
         Me.connector_selector.Size = New System.Drawing.Size(203, 29)
         Me.connector_selector.TabIndex = 20
+        '
+        'apo_status_indicator
+        '
+        Me.apo_status_indicator.BackColor = System.Drawing.Color.Red
+        Me.apo_status_indicator.Location = New System.Drawing.Point(33, 382)
+        Me.apo_status_indicator.Name = "apo_status_indicator"
+        Me.apo_status_indicator.Size = New System.Drawing.Size(15, 15)
+        Me.apo_status_indicator.TabIndex = 21
         '
         'MenuStrip1
         '
@@ -387,6 +396,7 @@ Partial Class Form1
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1006, 409)
         Me.Controls.Add(Me.connector_selector)
+        Me.Controls.Add(Me.apo_status_indicator)
         Me.Controls.Add(Me.bgfx_toggle)
         Me.Controls.Add(Me.TextBox10)
         Me.Controls.Add(Me.CHANNEL)
@@ -448,6 +458,7 @@ Partial Class Form1
     Friend WithEvents TextBox10 As System.Windows.Forms.TextBox
     Friend WithEvents bgfx_toggle As System.Windows.Forms.Button
     Friend WithEvents connector_selector As System.Windows.Forms.ComboBox
+    Friend WithEvents apo_status_indicator As System.Windows.Forms.Panel
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ResetAudiosrvToolStripMenuItem As ToolStripMenuItem

@@ -841,6 +841,20 @@ Public Class Form1
         End If
     End Sub
 
+    ' Update the APO status indicator based on current device
+    Private Sub UpdateAPOStatusIndicator()
+        If current_connector_index >= 0 AndAlso current_connector_index < device_guids.Count Then
+            Dim deviceGuid As String = device_guids(current_connector_index)
+            If Not String.IsNullOrEmpty(deviceGuid) AndAlso CheckAPOInstalled(deviceGuid) Then
+                apo_status_indicator.BackColor = Color.Lime
+            Else
+                apo_status_indicator.BackColor = Color.Red
+            End If
+        Else
+            apo_status_indicator.BackColor = Color.Gray
+        End If
+    End Sub
+
     ' Function to get connector-specific vefx filename
     Public Function GetVefxFileName() As String
         Dim connectorName As String = GetConnectorName(connector_names(current_connector_index)).ToLower().Replace(" ", "_")
@@ -1015,7 +1029,7 @@ Public Class Form1
             SyncLock effectThreadLock
                 effectThreadAbort = True
             End SyncLock
-            
+
             If temp_thread IsNot Nothing AndAlso temp_thread.IsAlive Then
                 ' Wait for thread to finish gracefully with timeout
                 Dim timeout As Integer = 0
@@ -1023,13 +1037,13 @@ Public Class Form1
                     System.Threading.Thread.Sleep(10)
                     timeout += 1
                 End While
-                
+
                 ' Force abort if still running
                 If temp_thread.IsAlive Then
                     temp_thread.Abort()
                 End If
             End If
-            
+
             wait_for_thread2 = False
         Catch e As Exception
             ' Thread might already be aborted or null
@@ -1232,7 +1246,7 @@ Public Class Form1
 
                     temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    
+
                     ' Only create bgfx thread for FLANGER (slider < 3), not for CHORUS
                     If slider < 3 Then
                         temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
@@ -1336,7 +1350,7 @@ Public Class Form1
                 SyncLock effectThreadLock
                     effectThreadAbort = True
                 End SyncLock
-                
+
                 ' Wait for previous thread to finish with timeout
                 Dim timeout As Integer = 0
                 While wait_for_thread2 AndAlso timeout < 50
@@ -1363,7 +1377,7 @@ Public Class Form1
 
         wait_for_thread2 = True
         Dim shouldExit As Boolean = False
-        
+
         While True
             ' Check abort flag with lock
             SyncLock effectThreadLock
@@ -1371,9 +1385,9 @@ Public Class Form1
                     shouldExit = True
                 End If
             End SyncLock
-            
+
             If shouldExit Then Exit While
-            
+
             If count = 27 Then
                 count = 3
             End If
@@ -1407,7 +1421,7 @@ Public Class Form1
         Dim flag As Boolean = False
         wait_for_thread2 = True
         Dim shouldExit As Boolean = False
-        
+
         While True
             ' Check abort flag with lock
             SyncLock effectThreadLock
@@ -1415,9 +1429,9 @@ Public Class Form1
                     shouldExit = True
                 End If
             End SyncLock
-            
+
             If shouldExit Then Exit While
-            
+
             If count <= 33 Then
                 flag = True
             ElseIf count >= 99 Then
@@ -1480,6 +1494,7 @@ Public Class Form1
                 current_connector_index = 0
             End If
             UpdateTitleBar()
+            UpdateAPOStatusIndicator()
         End If
 
         ' Initialize connector settings dictionary
@@ -1579,6 +1594,7 @@ Public Class Form1
 
         ' Update title bar with new connector
         UpdateTitleBar()
+        UpdateAPOStatusIndicator()
 
         ' Save config with new connector selection
         SaveConfig()
@@ -1740,6 +1756,7 @@ Public Class Form1
                 If UninstallAPOFromDevice(deviceGuid) Then
                     MsgBox("APO uninstalled successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Uninstallation Complete")
                     RestartAudioService()
+                    UpdateAPOStatusIndicator()
                 Else
                     MsgBox("Failed to uninstall APO.", MsgBoxStyle.Exclamation, "Uninstallation Failed")
                 End If
@@ -1761,6 +1778,7 @@ Public Class Form1
         If InstallAPOToDevice(deviceGuid, installMode) Then
             MsgBox("APO installed successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
             RestartAudioService()
+            UpdateAPOStatusIndicator()
         Else
             MsgBox("Failed to install APO.", MsgBoxStyle.Exclamation, "Installation Failed")
         End If
