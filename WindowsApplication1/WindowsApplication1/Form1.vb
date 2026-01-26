@@ -123,6 +123,7 @@ Public Class Form1
 
     ' Connector management
     Public Shared connector_names As New List(Of String)
+    Public Shared device_guids As New List(Of String) ' Tracks device GUID for each connector entry
     Public Shared current_connector_index As Integer = 0
     Public Shared connector_settings As New Dictionary(Of String, ConnectorSettings)
 
@@ -820,60 +821,71 @@ Public Class Form1
 
     Dim config_file_name As String = "C:\Program Files\EqualizerAPO\config\config.txt"
 
+    ' Helper function to extract connector name from display name "Connector (Device)"
+    Public Function GetConnectorName(displayName As String) As String
+        Dim parenIndex As Integer = displayName.IndexOf("("c)
+        If parenIndex > 0 Then
+            Return displayName.Substring(0, parenIndex).Trim()
+        End If
+        Return displayName
+    End Function
+
+    ' Update the form title bar with current connector name
+    Private Sub UpdateTitleBar()
+        If current_connector_index >= 0 AndAlso current_connector_index < connector_names.Count Then
+            Dim displayName As String = connector_names(current_connector_index)
+            Dim connectorName As String = GetConnectorName(displayName)
+            Me.Text = "VEFX Slider (Current: " & connectorName & ")"
+        Else
+            Me.Text = "VEFX Slider"
+        End If
+    End Sub
+
     ' Function to get connector-specific vefx filename
     Public Function GetVefxFileName() As String
-        Dim connectorName As String = connector_names(current_connector_index).ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+        Dim connectorName As String = GetConnectorName(connector_names(current_connector_index)).ToLower().Replace(" ", "_")
         Return "C:\Program Files\EqualizerAPO\config\vefx_" & connectorName & ".txt"
     End Function
 
-    ' Load audio devices from system using AudioDeviceCmdlets
+    ' Load audio devices from system registry - each device shown separately
     Private Sub LoadAudioDevices()
         connector_names.Clear()
-
-        ' Check if AudioDeviceCmdlets.dll exists
-        Dim dllPath As String = System.IO.Path.Combine(Application.StartupPath, "AudioDeviceCmdlets.dll")
-        If Not System.IO.File.Exists(dllPath) Then
-            MsgBox("AudioDeviceCmdlets.dll not found in application directory." & vbCrLf & vbCrLf & "Please ensure AudioDeviceCmdlets.dll is in the same folder as the application.", MsgBoxStyle.Critical, "Missing DLL")
-            Application.Exit()
-            Return
-        End If
+        device_guids.Clear()
 
         Try
-            ' Create PowerShell runspace with the AudioDeviceCmdlets module
-            Dim initialSessionState As InitialSessionState = InitialSessionState.CreateDefault()
-            initialSessionState.ImportPSModule(New String() {dllPath})
+            ' Enumerate all playback devices from registry
+            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+                Using key As RegistryKey = baseKey.OpenSubKey(RENDER_PATH)
+                    If key IsNot Nothing Then
+                        Dim subKeys() As String = key.GetSubKeyNames()
 
-            Using runspace As Runspace = RunspaceFactory.CreateRunspace(initialSessionState)
-                runspace.Open()
+                        For Each deviceGuid In subKeys
+                            ' Get connector name and device description
+                            Dim connectorName As String = GetDeviceConnectorName(deviceGuid)
+                            Dim deviceDesc As String = GetDeviceDescription(deviceGuid)
 
-                Using pipeline As Pipeline = runspace.CreatePipeline()
-                    pipeline.Commands.AddScript("Get-AudioDevice -List | Where-Object { $_.Type -eq 'Playback' } | Select-Object -ExpandProperty Name")
+                            If Not String.IsNullOrEmpty(connectorName) Then
+                                ' Format as "Connector (Device Description)"
+                                Dim displayName As String = connectorName
+                                If Not String.IsNullOrEmpty(deviceDesc) Then
+                                    displayName &= " (" & deviceDesc & ")"
+                                End If
 
-                    Dim results = pipeline.Invoke()
-
-                    For Each result In results
-                        Dim deviceName As String = result.ToString()
-                        If Not String.IsNullOrEmpty(deviceName) Then
-                            ' Extract connector name (part before the parenthesis)
-                            Dim parenIndex As Integer = deviceName.IndexOf("("c)
-                            If parenIndex > 0 Then
-                                deviceName = deviceName.Substring(0, parenIndex).Trim()
+                                connector_names.Add(displayName)
+                                device_guids.Add(deviceGuid)
                             End If
-                            connector_names.Add(deviceName)
-                        End If
-                    Next
+                        Next
+                    End If
                 End Using
             End Using
         Catch ex As Exception
-            ' Show error and exit
             MsgBox("Error loading audio devices: " & ex.Message, MsgBoxStyle.Critical, "Error")
-            Application.Exit()
-            Return
         End Try
 
         ' Ensure we have at least one device
         If connector_names.Count = 0 Then
-            connector_names.Add("Speakers")
+            connector_names.Add("Speakers (Default)")
+            device_guids.Add("")
         End If
     End Sub
 
@@ -888,10 +900,17 @@ Public Class Form1
             temp_file2 = System.IO.File.ReadAllLines(config_file_name)
             Dim needsUpdate As Boolean = False
 
+            ' Build list of unique connector names (extract from display names)
+            Dim uniqueConnectors As New HashSet(Of String)
+            For Each displayName In connector_names
+                Dim connectorName As String = GetConnectorName(displayName)
+                uniqueConnectors.Add(connectorName)
+            Next
+
             ' Check if each connector's include directive exists
-            For Each connectorName In connector_names
+            For Each connectorName In uniqueConnectors
                 Dim deviceLine As String = "Device: " & connectorName
-                Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+                Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_")
                 Dim includeLine As String = "Include: vefx_" & fileNameSafe & ".txt"
                 Dim foundConnector As Boolean = False
 
@@ -908,7 +927,7 @@ Public Class Form1
                 End If
             Next
 
-            ' If update needed, rebuild config file with all connectors
+            ' If update needed, rebuild config file with unique connectors only
             If needsUpdate Then
                 Dim newConfig As New List(Of String)
 
@@ -919,9 +938,9 @@ Public Class Form1
                     End If
                 Next
 
-                ' Add all connector device blocks
-                For Each connectorName In connector_names
-                    Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+                ' Add connector device blocks - one per unique connector only
+                For Each connectorName In uniqueConnectors
+                    Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_")
                     newConfig.Add("Device: " & connectorName)
                     newConfig.Add("Include: vefx_" & fileNameSafe & ".txt")
                 Next
@@ -933,10 +952,16 @@ Public Class Form1
     End Sub
 
     Public Sub firstrun()
-        ' Load settings for all connectors
-        For i As Integer = 0 To connector_names.Count - 1
-            Dim connectorName As String = connector_names(i)
-            Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_").Replace("(", "").Replace(")", "")
+        ' Build list of unique connector names (extract from display names)
+        Dim uniqueConnectors As New HashSet(Of String)
+        For Each displayName In connector_names
+            Dim connectorName As String = GetConnectorName(displayName)
+            uniqueConnectors.Add(connectorName)
+        Next
+
+        ' Load settings for unique connectors only
+        For Each connectorName In uniqueConnectors
+            Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_")
             Dim vefxFilePath As String = "C:\Program Files\EqualizerAPO\config\vefx_" & fileNameSafe & ".txt"
 
             ' Create empty connector-specific vefx file if it doesn't exist
@@ -946,16 +971,16 @@ Public Class Form1
 
             Dim tempFileLines = IO.File.ReadAllLines(vefxFilePath)
             Dim settings As New ConnectorSettings With {
-                .EffectorOn = 0,
-                .EffectorNum = 1,
-                .EffectorSlider = 3,
-                .LowEQSlider = 3,
-                .HighEQSlider = 3,
-                .FilterSlider = 3,
-                .VolSlider = 3,
-                .ChannelSlider = 1,
-                .BgfxToggle = 1
-            }
+                    .EffectorOn = 0,
+                    .EffectorNum = 1,
+                    .EffectorSlider = 3,
+                    .LowEQSlider = 3,
+                    .HighEQSlider = 3,
+                    .FilterSlider = 3,
+                    .VolSlider = 3,
+                    .ChannelSlider = 1,
+                    .BgfxToggle = 1
+                }
 
             Try
                 If tempFileLines.Length > 0 AndAlso tempFileLines(0) <> "" Then
@@ -973,9 +998,7 @@ Public Class Form1
             End Try
 
             ' Store settings for this connector
-            If connector_settings.ContainsKey(connectorName) Then
-                connector_settings(connectorName) = settings
-            Else
+            If Not connector_settings.ContainsKey(connectorName) Then
                 connector_settings.Add(connectorName, settings)
             End If
         Next
@@ -987,10 +1010,29 @@ Public Class Form1
     End Sub
 
     Public Sub rerun()
+        ' Safely abort any existing effect thread
         Try
-            temp_thread.Abort()
+            SyncLock effectThreadLock
+                effectThreadAbort = True
+            End SyncLock
+            
+            If temp_thread IsNot Nothing AndAlso temp_thread.IsAlive Then
+                ' Wait for thread to finish gracefully with timeout
+                Dim timeout As Integer = 0
+                While wait_for_thread2 AndAlso timeout < 10
+                    System.Threading.Thread.Sleep(10)
+                    timeout += 1
+                End While
+                
+                ' Force abort if still running
+                If temp_thread.IsAlive Then
+                    temp_thread.Abort()
+                End If
+            End If
+            
             wait_for_thread2 = False
         Catch e As Exception
+            ' Thread might already be aborted or null
         End Try
 
         'write
@@ -1190,7 +1232,11 @@ Public Class Form1
 
                     temp_file(66) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
                     temp_file(71) = "Preamp: " & If(slider >= 3, 0, -57) & "dB		#set -57 to kill REVERB		12dB maximum"
-                    temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
+                    
+                    ' Only create bgfx thread for FLANGER (slider < 3), not for CHORUS
+                    If slider < 3 Then
+                        temp_thread = New System.Threading.Thread(AddressOf chorus_thread)
+                    End If
 
 
                 Case 5
@@ -1205,7 +1251,10 @@ Public Class Form1
 
                     temp_file(22) = "Preamp: 0dB"
 
-                    temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
+                    ' Only create bgfx thread for GARGLE (slider >= 4), not for DISTORTION
+                    If slider >= 4 Then
+                        temp_thread = New System.Threading.Thread(AddressOf gargle_thread)
+                    End If
 
                 Case 6
                     temp_file = eq_only_file
@@ -1283,16 +1332,24 @@ Public Class Form1
             temp_file(0) = "#" & num & " " & slider & " " & slider2 & " " & slider3 & " " & slider4 & " " & slider5 & " " & slider6 & " " & bgfx_toggleb
 
             Try
-                ' Signal any running effect thread to stop
-                effectThreadAbort = True
-                While wait_for_thread2
-                    System.Threading.Thread.Sleep(33)
+                ' Signal existing thread to stop
+                SyncLock effectThreadLock
+                    effectThreadAbort = True
+                End SyncLock
+                
+                ' Wait for previous thread to finish with timeout
+                Dim timeout As Integer = 0
+                While wait_for_thread2 AndAlso timeout < 50
+                    System.Threading.Thread.Sleep(10)
+                    timeout += 1
                 End While
 
                 System.IO.File.WriteAllLines(GetVefxFileName(), temp_file)
 
                 ' Reset abort flag and start new thread
-                effectThreadAbort = False
+                SyncLock effectThreadLock
+                    effectThreadAbort = False
+                End SyncLock
                 temp_thread.Start()
             Catch x As Exception
             End Try
@@ -1305,34 +1362,39 @@ Public Class Form1
         Dim flag As Boolean = False
 
         wait_for_thread2 = True
-        While Not effectThreadAbort
+        Dim shouldExit As Boolean = False
+        
+        While True
+            ' Check abort flag with lock
+            SyncLock effectThreadLock
+                If effectThreadAbort Then
+                    shouldExit = True
+                End If
+            End SyncLock
+            
+            If shouldExit Then Exit While
+            
             If count = 27 Then
                 count = 3
             End If
             count += 1
             If (count Mod (7 - effector_slider)) = 0 Then
-                If flag = True Then
-                    flag = False
-                Else
-                    flag = True
-                End If
+                flag = Not flag
             End If
             Try
                 SyncLock effectThreadLock
                     If effectThreadAbort Then Exit While
-                    If temp_file(1) = "#GARGLE" Then
-                        If flag = True Then
-                            temp_file(22) = "Preamp: -18dB"
-                        Else
-                            temp_file(22) = "Preamp: 0dB"
-                        End If
-                        WriteAllLinesBuffered(GetVefxFileName(), temp_file)
+                    ' Update preamp value
+                    If flag Then
+                        temp_file(22) = "Preamp: -18dB"
                     Else
-                        Exit While
+                        temp_file(22) = "Preamp: 0dB"
                     End If
+                    WriteAllLinesBuffered(GetVefxFileName(), temp_file)
                 End SyncLock
             Catch x As Exception
-                Exit While
+                ' Continue on error instead of exiting
+                System.Threading.Thread.Sleep(33)
             End Try
 
             System.Threading.Thread.Sleep(33)
@@ -1344,13 +1406,24 @@ Public Class Form1
         Dim count As Integer = 99
         Dim flag As Boolean = False
         wait_for_thread2 = True
-        While Not effectThreadAbort
+        Dim shouldExit As Boolean = False
+        
+        While True
+            ' Check abort flag with lock
+            SyncLock effectThreadLock
+                If effectThreadAbort Then
+                    shouldExit = True
+                End If
+            End SyncLock
+            
+            If shouldExit Then Exit While
+            
             If count <= 33 Then
                 flag = True
             ElseIf count >= 99 Then
                 flag = False
             End If
-            If flag = True Then
+            If flag Then
                 count += 1
             Else
                 count -= 1
@@ -1358,15 +1431,13 @@ Public Class Form1
             Try
                 SyncLock effectThreadLock
                     If effectThreadAbort Then Exit While
-                    If temp_file(1) = "#FLANGER" Then
-                        temp_file(27) = "Delay: 0." & count & "ms"
-                        WriteAllLinesBuffered(GetVefxFileName(), temp_file)
-                    Else
-                        Exit While
-                    End If
+                    ' Update delay value
+                    temp_file(27) = "Delay: 0." & count & "ms"
+                    WriteAllLinesBuffered(GetVefxFileName(), temp_file)
                 End SyncLock
             Catch x As Exception
-                Exit While
+                ' Continue on error instead of exiting
+                System.Threading.Thread.Sleep(33)
             End Try
 
             System.Threading.Thread.Sleep(33)
@@ -1375,7 +1446,15 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-
+        ' Check if bgfx is active - if so, minimize to tray instead of closing
+        If bgfx_toggleb = 1 AndAlso effector_on <> 0 AndAlso (effector_num = 4 OrElse effector_num = 5) Then
+            ' Cancel the close event
+            e.Cancel = True
+            ' Hide the form instead
+            Me.Hide()
+            ' Show notification that app is still running
+            MsgBox("VEFX Slider minimized to background." & vbCrLf & vbCrLf & "BGFX effects are still active." & vbCrLf & "To completely exit, turn off the effect first or use Task Manager.", MsgBoxStyle.Information, "Running in Background")
+        End If
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -1400,6 +1479,7 @@ Public Class Form1
                 connector_selector.SelectedIndex = 0
                 current_connector_index = 0
             End If
+            UpdateTitleBar()
         End If
 
         ' Initialize connector settings dictionary
@@ -1439,7 +1519,8 @@ Public Class Form1
 
     ' Save current UI values to connector settings
     Private Sub SaveCurrentConnectorSettings()
-        Dim connectorName As String = connector_names(current_connector_index)
+        Dim displayName As String = connector_names(current_connector_index)
+        Dim connectorName As String = GetConnectorName(displayName)
         If connector_settings.ContainsKey(connectorName) Then
             Dim settings As ConnectorSettings = connector_settings(connectorName)
             settings.EffectorOn = effector_on
@@ -1457,7 +1538,8 @@ Public Class Form1
 
     ' Load connector settings to UI
     Private Sub LoadCurrentConnectorSettings()
-        Dim connectorName As String = connector_names(current_connector_index)
+        Dim displayName As String = connector_names(current_connector_index)
+        Dim connectorName As String = GetConnectorName(displayName)
         If connector_settings.ContainsKey(connectorName) Then
             Dim settings As ConnectorSettings = connector_settings(connectorName)
             effector_on = settings.EffectorOn
@@ -1494,6 +1576,9 @@ Public Class Form1
 
         ' Update current connector index
         current_connector_index = connector_selector.SelectedIndex
+
+        ' Update title bar with new connector
+        UpdateTitleBar()
 
         ' Save config with new connector selection
         SaveConfig()
@@ -1634,59 +1719,51 @@ Public Class Form1
     End Sub
 
     Private Sub OpenEAPOConfigToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenEAPOConfigToolStripMenuItem.Click
-        ' Install APO to currently selected connector (all devices sharing the connector name)
+        ' Install APO to currently selected device
         If connector_names.Count = 0 OrElse current_connector_index < 0 OrElse current_connector_index >= connector_names.Count Then
             MsgBox("No audio device selected.", MsgBoxStyle.Exclamation, "APO Installation")
             Return
         End If
 
-        Dim currentConnector As String = connector_names(current_connector_index)
-        Dim deviceGuids As List(Of String) = GetAllDeviceGuidsByName(currentConnector)
+        Dim currentDeviceName As String = connector_names(current_connector_index)
+        Dim deviceGuid As String = device_guids(current_connector_index)
 
-        If deviceGuids Is Nothing OrElse deviceGuids.Count = 0 Then
-            MsgBox("Could not find any devices for: " & currentConnector, MsgBoxStyle.Exclamation, "APO Installation")
+        If String.IsNullOrEmpty(deviceGuid) Then
+            MsgBox("Could not find device GUID for: " & currentDeviceName, MsgBoxStyle.Exclamation, "APO Installation")
             Return
         End If
 
-        Dim successCount As Integer = 0
-        Dim progressMsg As String = ""
-
-        ' Check if any devices have APO installed
-        Dim installedCount As Integer = 0
-        For Each guid In deviceGuids
-            If CheckAPOInstalled(guid) Then installedCount += 1
-        Next
-
-        ' Uninstall if already installed on any device
-        If installedCount > 0 Then
-            Dim result As MsgBoxResult = MsgBox("EqualizerAPO is installed on " & installedCount & " of " & deviceGuids.Count & " device(s) with connector: " & currentConnector & vbCrLf & vbCrLf & "Do you want to uninstall it from ALL devices?", MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "APO Already Installed")
+        ' Check if APO is already installed
+        If CheckAPOInstalled(deviceGuid) Then
+            Dim result As MsgBoxResult = MsgBox("EqualizerAPO is already installed on device: " & currentDeviceName & vbCrLf & vbCrLf & "Do you want to uninstall it?", MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "APO Already Installed")
             If result = MsgBoxResult.Yes Then
-                successCount = 0
-                For Each guid As String In deviceGuids
-                    If UninstallAPOFromDevice(guid) Then successCount += 1
-                Next
-
-                MsgBox("APO uninstalled to " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Uninstallation Complete")
-                RestartAudioService()
+                If UninstallAPOFromDevice(deviceGuid) Then
+                    MsgBox("APO uninstalled successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Uninstallation Complete")
+                    RestartAudioService()
+                Else
+                    MsgBox("Failed to uninstall APO.", MsgBoxStyle.Exclamation, "Uninstallation Failed")
+                End If
             End If
             Return
         End If
 
-        Dim installMode As Integer = 1 ' 2=SFX/EFX, 1=SFX/MFX
+        ' Auto-detect the best install mode for this device
+        Dim installMode As Integer = DetectBestInstallMode(deviceGuid)
+        Dim modeNames As String() = {"LFX/GFX (Legacy)", "SFX/MFX (Win 8.1+)", "SFX/EFX (Win 8.1+)"}
+        Dim modeName As String = If(installMode >= 0 AndAlso installMode < modeNames.Length, modeNames(installMode), "Unknown")
 
         ' Confirmation before installation
-        Dim confirmResult As MsgBoxResult = MsgBox("Install EqualizerAPO to " & deviceGuids.Count & " device(s) with connector: " & currentConnector & "?" & vbCrLf & vbCrLf & "Install Mode: SFX/MFX (Win 8.1+)", MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "Confirm APO Installation")
+        Dim confirmResult As MsgBoxResult = MsgBox("Install EqualizerAPO to device:" & vbCrLf & currentDeviceName & vbCrLf & vbCrLf & "Auto-detected Install Mode: " & modeName, MsgBoxStyle.YesNo Or MsgBoxStyle.Question, "Confirm APO Installation")
         If confirmResult <> MsgBoxResult.Yes Then
             Return
         End If
 
-        successCount = 0
-        For Each guid As String In deviceGuids
-            If InstallAPOToDevice(guid, installMode) Then successCount += 1
-        Next
-
-        MsgBox("APO installed to " & successCount & " of " & deviceGuids.Count & " device(s)." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
-        RestartAudioService()
+        If InstallAPOToDevice(deviceGuid, installMode) Then
+            MsgBox("APO installed successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
+            RestartAudioService()
+        Else
+            MsgBox("Failed to install APO.", MsgBoxStyle.Exclamation, "Installation Failed")
+        End If
     End Sub
 
     Private Sub TheaterToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TheaterToolStripMenuItem.Click
@@ -1962,6 +2039,10 @@ Public Class Form1
     Private Const SFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},5"
     Private Const MFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},6"
     Private Const EFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},7"
+    Private Const MULTI_SFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},13"
+    Private Const MULTI_MFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},14"
+    Private Const MULTI_EFX_GUID As String = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d},15"
+    Private Const COMBINED_DEVICE_VALUE As String = "{b3f8fa53-0004-438e-9003-51a46e139bfc},41"
     Private Const PROCESSING_MODE As String = "{C18E2F7E-933D-4965-B7D1-1EEF228D2AF3}"
     Private Const CHILD_APO_PATH As String = "SOFTWARE\EqualizerAPO\Child APOs"
     Private Const FX_TITLE_VALUE As String = "{b725f130-47ef-101a-a5f1-02608c9eebac},10"
@@ -2081,6 +2162,96 @@ Public Class Form1
         Catch
         End Try
         Return deviceGuid.Substring(0, Math.Min(8, deviceGuid.Length)) & "..."
+    End Function
+
+    Private Function GetDeviceConnectorName(deviceGuid As String) As String
+        Try
+            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+                Using key As RegistryKey = baseKey.OpenSubKey(RENDER_PATH & "\" & deviceGuid & "\Properties")
+                    If key IsNot Nothing Then
+                        ' Get connection name (connector like "Speakers", "Headphones")
+                        Dim name = key.GetValue("{a45c254e-df1c-4efd-8020-67d146a850e0},2")
+                        If name IsNot Nothing Then
+                            Return name.ToString()
+                        End If
+                    End If
+                End Using
+            End Using
+        Catch
+        End Try
+        Return ""
+    End Function
+
+    Private Function GetDeviceDescription(deviceGuid As String) As String
+        Try
+            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+                Using key As RegistryKey = baseKey.OpenSubKey(RENDER_PATH & "\" & deviceGuid & "\Properties")
+                    If key IsNot Nothing Then
+                        ' Get device description (driver/hardware name like "Realtek Audio", "USB Audio")
+                        Dim name = key.GetValue("{b3f8fa53-0004-438e-9003-51a46e139bfc},6")
+                        If name IsNot Nothing Then
+                            Return name.ToString()
+                        End If
+                    End If
+                End Using
+            End Using
+        Catch
+        End Try
+        Return ""
+    End Function
+
+    ''' <summary>
+    ''' Auto-detects the best install mode for a device based on existing APO configuration.
+    ''' This matches the logic from EqualizerAPO's DeviceSelector.
+    ''' </summary>
+    Private Function DetectBestInstallMode(deviceGuid As String) As Integer
+        Try
+            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+                Dim devicePath As String = RENDER_PATH & "\" & deviceGuid
+
+                ' Check if FxProperties exists
+                Using fxKey As RegistryKey = baseKey.OpenSubKey(devicePath & "\FxProperties")
+                    If fxKey Is Nothing Then
+                        ' No FxProperties - default to SFX/EFX for modern devices
+                        Return 2
+                    End If
+
+                    ' Check which APO GUIDs exist
+                    Dim hasLfx As Boolean = fxKey.GetValue(LFX_GUID) IsNot Nothing
+                    Dim hasGfx As Boolean = fxKey.GetValue(GFX_GUID) IsNot Nothing
+                    Dim hasSfx As Boolean = fxKey.GetValue(SFX_GUID) IsNot Nothing
+                    Dim hasMfx As Boolean = fxKey.GetValue(MFX_GUID) IsNot Nothing
+                    Dim hasEfx As Boolean = fxKey.GetValue(EFX_GUID) IsNot Nothing
+                    Dim hasMultiSfx As Boolean = fxKey.GetValue(MULTI_SFX_GUID) IsNot Nothing
+                    Dim hasMultiMfx As Boolean = fxKey.GetValue(MULTI_MFX_GUID) IsNot Nothing
+                    Dim hasMultiEfx As Boolean = fxKey.GetValue(MULTI_EFX_GUID) IsNot Nothing
+
+                    ' Logic from DeviceAPOInfo.cpp (lines 380-399):
+                    ' Only use LFX/GFX if the audio driver supplied only those APOs
+                    If (hasLfx OrElse hasGfx) AndAlso
+                       Not hasSfx AndAlso Not hasMfx AndAlso Not hasEfx AndAlso
+                       Not hasMultiSfx AndAlso Not hasMultiMfx AndAlso Not hasMultiEfx Then
+                        Return 0 ' LFX/GFX mode
+                    End If
+
+                    ' Check if device is combined (bluetooth devices in Windows 11)
+                    Using propsKey As RegistryKey = baseKey.OpenSubKey(devicePath & "\Properties")
+                        If propsKey IsNot Nothing Then
+                            If propsKey.GetValue(COMBINED_DEVICE_VALUE) IsNot Nothing Then
+                                ' Combined device - EFX will not work, use MFX
+                                Return 1 ' SFX/MFX mode
+                            End If
+                        End If
+                    End Using
+
+                    ' Default to SFX/EFX for modern devices (Windows 8.1+)
+                    Return 2
+                End Using
+            End Using
+        Catch ex As Exception
+            ' On error, default to SFX/EFX
+            Return 2
+        End Try
     End Function
 
     Private Function CheckAPOInstalled(deviceGuid As String) As Boolean

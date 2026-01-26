@@ -36,18 +36,18 @@ C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\Window
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\AudioDeviceCmdlets.dll
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\System.Management.Automation.dll
 C:\Users\hoholee12\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.CopyComplete
-C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\AudioDeviceCmdlets.dll
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.exe.config
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.exe
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.pdb
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\VEFX Slider.xml
-C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\System.Management.Automation.dll
-C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.AssemblyReference.cache
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.Form1.resources
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.Resources.resources
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.GenerateResource.cache
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.CoreCompileInputs.cache
-C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.CopyComplete
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.exe
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.xml
 C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\VEFX Slider.pdb
+C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\AudioDeviceCmdlets.dll
+C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\bin\Release\System.Management.Automation.dll
+C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.CopyComplete
+C:\Users\hohol\Documents\GitHub\VirtualSurround-for-normal-headphones\WindowsApplication1\WindowsApplication1\obj\Release\WindowsApplication1.vbproj.AssemblyReference.cache
