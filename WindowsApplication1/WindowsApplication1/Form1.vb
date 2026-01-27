@@ -148,6 +148,10 @@ Public Class Form1
     Private Shared customPresets As New Dictionary(Of String, PresetData)
     Private Shared ReadOnly configFilePath As String = System.IO.Path.Combine(Application.StartupPath, "config.json")
 
+    ' Device refresh timer
+    Private WithEvents deviceRefreshTimer As New Timer()
+    Private Shared lastDeviceGuids As New List(Of String)
+
     ' Structure to hold preset data
     Public Structure PresetData
         Public EffectorOn As Integer
@@ -862,7 +866,11 @@ Public Class Form1
     End Function
 
     ' Load audio devices from system registry - each device shown separately
-    Private Sub LoadAudioDevices()
+    ' Returns True if device list changed, False if unchanged
+    Private Function LoadAudioDevices() As Boolean
+        Dim previousDevices As New List(Of String)(device_guids)
+        Dim previousNames As New List(Of String)(connector_names)
+        
         connector_names.Clear()
         device_guids.Clear()
 
@@ -939,7 +947,20 @@ Public Class Form1
             connector_names.Add("Speakers (Default)")
             device_guids.Add("")
         End If
-    End Sub
+
+        ' Check if device list changed
+        If previousDevices.Count <> device_guids.Count Then
+            Return True
+        End If
+        
+        For i As Integer = 0 To device_guids.Count - 1
+            If i >= previousDevices.Count OrElse device_guids(i) <> previousDevices(i) OrElse connector_names(i) <> previousNames(i) Then
+                Return True
+            End If
+        Next
+        
+        Return False ' No changes detected
+    End Function
 
 
     Public Sub check_config()
@@ -1498,6 +1519,12 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        ' Stop device refresh timer
+        If deviceRefreshTimer IsNot Nothing Then
+            deviceRefreshTimer.Stop()
+            deviceRefreshTimer.Enabled = False
+        End If
+        
         ' Check if bgfx is active - if so, minimize to tray instead of closing
         If bgfx_toggleb = 1 AndAlso effector_on <> 0 AndAlso (effector_num = 4 OrElse effector_num = 5) Then
             ' Cancel the close event
@@ -1506,6 +1533,10 @@ Public Class Form1
             Me.Hide()
             ' Show notification that app is still running
             MsgBox("VEFX Slider minimized to background." & vbCrLf & vbCrLf & "BGFX effects are still active." & vbCrLf & "To completely exit, turn off the effect first or use Task Manager.", MsgBoxStyle.Information, "Running in Background")
+            ' Restart timer if form is being hidden
+            If deviceRefreshTimer IsNot Nothing Then
+                deviceRefreshTimer.Start()
+            End If
         End If
     End Sub
 
@@ -1514,6 +1545,11 @@ Public Class Form1
 
         ' Load audio devices from system
         LoadAudioDevices()
+
+        ' Initialize device refresh timer (refresh every 10 seconds)
+        deviceRefreshTimer.Interval = 10000 ' 10 seconds
+        deviceRefreshTimer.Enabled = True
+        deviceRefreshTimer.Start()
 
         ' Load configuration from config.json (includes last connector and presets)
         LoadConfig()
@@ -2477,8 +2513,6 @@ Public Class Form1
                     End Using
                 End Using
             Catch ex As Exception
-                ' Backup file creation failed - not critical, continue
-                Debug.WriteLine("Backup file creation failed: " & ex.Message)
             End Try
 
             Return True
@@ -2615,6 +2649,53 @@ Public Class Form1
             Return False
         End Try
     End Function
+
+    ' Timer event handler to refresh device list periodically
+    Private Sub deviceRefreshTimer_Tick(sender As Object, e As EventArgs) Handles deviceRefreshTimer.Tick
+        Try
+            Dim devicesChanged As Boolean = LoadAudioDevices()
+            
+            ' Only update UI if devices actually changed
+            If devicesChanged Then
+                ' Store current selection info
+                Dim currentGuid As String = ""
+                Dim currentName As String = ""
+                If current_connector_index >= 0 AndAlso current_connector_index < device_guids.Count Then
+                    currentGuid = device_guids(current_connector_index)
+                    currentName = connector_names(current_connector_index)
+                End If
+                
+                ' Update connector selector
+                connector_selector.Items.Clear()
+                For Each connectorName In connector_names
+                    connector_selector.Items.Add(connectorName)
+                Next
+                
+                ' Try to restore previous selection by GUID, then by name, or default to first
+                Dim newIndex As Integer = -1
+                If Not String.IsNullOrEmpty(currentGuid) Then
+                    newIndex = device_guids.IndexOf(currentGuid)
+                End If
+                
+                If newIndex = -1 AndAlso Not String.IsNullOrEmpty(currentName) Then
+                    newIndex = connector_names.IndexOf(currentName)
+                End If
+                
+                If newIndex = -1 AndAlso connector_names.Count > 0 Then
+                    newIndex = 0
+                End If
+                
+                If newIndex >= 0 Then
+                    current_connector_index = newIndex
+                    connector_selector.SelectedIndex = newIndex
+                    UpdateTitleBar()
+                    UpdateAPOStatusIndicator()
+                End If
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
     Private Function ShowInstallModeDialog() As Integer
         ' Create a simple dialog with radio buttons for install mode selection
         Dim dialog As New Form()
