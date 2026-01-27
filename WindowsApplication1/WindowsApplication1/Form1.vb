@@ -874,6 +874,11 @@ Public Class Form1
                         Dim subKeys() As String = key.GetSubKeyNames()
 
                         For Each deviceGuid In subKeys
+                            ' Skip inactive/disconnected devices
+                            If Not IsDeviceActive(deviceGuid) Then
+                                Continue For
+                            End If
+
                             ' Get connector name and device description
                             Dim connectorName As String = GetDeviceConnectorName(deviceGuid)
                             Dim deviceDesc As String = GetDeviceDescription(deviceGuid)
@@ -892,6 +897,39 @@ Public Class Form1
                     End If
                 End Using
             End Using
+
+            ' Sort devices: first by connector name, then by device name
+            If connector_names.Count > 1 Then
+                ' Create a list of tuples to maintain the relationship between names and GUIDs
+                Dim deviceList As New List(Of Tuple(Of String, String))
+                For i As Integer = 0 To connector_names.Count - 1
+                    deviceList.Add(New Tuple(Of String, String)(connector_names(i), device_guids(i)))
+                Next
+
+                ' Sort by connector name first, then by device name
+                deviceList.Sort(Function(x, y)
+                                    Dim xConnector As String = GetConnectorName(x.Item1)
+                                    Dim yConnector As String = GetConnectorName(y.Item1)
+
+                                    ' Compare connector names first
+                                    Dim connectorCompare As Integer = String.Compare(xConnector, yConnector, StringComparison.OrdinalIgnoreCase)
+                                    If connectorCompare <> 0 Then
+                                        Return connectorCompare
+                                    End If
+
+                                    ' If connector names are the same, compare full display names (includes device name)
+                                    Return String.Compare(x.Item1, y.Item1, StringComparison.OrdinalIgnoreCase)
+                                End Function)
+
+                ' Update the lists with sorted values
+                connector_names.Clear()
+                device_guids.Clear()
+                For Each item In deviceList
+                    connector_names.Add(item.Item1)
+                    device_guids.Add(item.Item2)
+                Next
+            End If
+
         Catch ex As Exception
             MsgBox("Error loading audio devices: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
@@ -1683,7 +1721,7 @@ Public Class Form1
     End Sub
 
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        MsgBox("Made by hoholee12@naver.com" & vbCrLf & "This application requires EqualizerAPO", MsgBoxStyle.OkOnly)
+        MsgBox("Made by hoholee12@gmail.com" & vbCrLf & "This application requires EqualizerAPO", MsgBoxStyle.OkOnly)
     End Sub
 
     Private Sub TunnelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TunnelToolStripMenuItem.Click
@@ -2220,6 +2258,26 @@ Public Class Form1
         Catch
         End Try
         Return ""
+    End Function
+
+    ' Check if device is active (connected and enabled)
+    ' DeviceState values: 1=ACTIVE, 2=DISABLED, 4=NOTPRESENT, 8=UNPLUGGED
+    Private Function IsDeviceActive(deviceGuid As String) As Boolean
+        Try
+            Using baseKey As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+                Using key As RegistryKey = baseKey.OpenSubKey(RENDER_PATH & "\" & deviceGuid)
+                    If key IsNot Nothing Then
+                        Dim stateValue = key.GetValue("DeviceState")
+                        If stateValue IsNot Nothing Then
+                            Dim state As Integer = CInt(stateValue)
+                            Return state = 1 ' Only return true if device state is ACTIVE (1)
+                        End If
+                    End If
+                End Using
+            End Using
+        Catch
+        End Try
+        Return False ' If we can't determine state, assume inactive
     End Function
 
     Private Function CheckAPOInstalled(deviceGuid As String) As Boolean
