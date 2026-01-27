@@ -121,10 +121,15 @@ Public Class Form1
 
     Public Shared bgfx_toggleb As Integer = 1
 
-    ' Connector management
+    ' Device management: connector_names and device_guids are parallel lists
+    ' connector_names: Display names like "Speakers (Realtek Audio)"
+    ' device_guids: Corresponding device GUIDs for APO installation
     Public Shared connector_names As New List(Of String)
-    Public Shared device_guids As New List(Of String) ' Tracks device GUID for each connector entry
+    Public Shared device_guids As New List(Of String)
     Public Shared current_connector_index As Integer = 0
+
+    ' Settings stored by connector type (e.g., "Speakers", "Headphones")
+    ' Multiple devices with same connector type share settings
     Public Shared connector_settings As New Dictionary(Of String, ConnectorSettings)
 
     ' Structure to hold connector-specific settings
@@ -837,9 +842,7 @@ Public Class Form1
     ' Update the form title bar with current connector name
     Private Sub UpdateTitleBar()
         If current_connector_index >= 0 AndAlso current_connector_index < connector_names.Count Then
-            Dim displayName As String = connector_names(current_connector_index)
-            Dim connectorName As String = GetConnectorName(displayName)
-            Me.Text = "VEFX Slider (Current: " & connectorName & ")"
+            Me.Text = "VEFX Slider (Current: " & GetCurrentConnectorName() & ")"
         Else
             Me.Text = "VEFX Slider"
         End If
@@ -859,10 +862,57 @@ Public Class Form1
         End If
     End Sub
 
-    ' Function to get connector-specific vefx filename
+    ' Helper: Get current connector name (without device description)
+    Private Function GetCurrentConnectorName() As String
+        Return GetConnectorName(connector_names(current_connector_index))
+    End Function
+
+    ' Helper: Get vefx filename for a connector name
+    Private Function GetVefxFileNameForConnector(connectorName As String) As String
+        Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_")
+        Return "C:\Program Files\EqualizerAPO\config\vefx_" & fileNameSafe & ".txt"
+    End Function
+
+    ' Helper: Load connector settings from vefx file (or return defaults)
+    Private Function LoadConnectorSettingsFromFile(connectorName As String) As ConnectorSettings
+        Dim settings As New ConnectorSettings With {
+            .EffectorOn = 0,
+            .EffectorNum = 1,
+            .EffectorSlider = 3,
+            .LowEQSlider = 3,
+            .HighEQSlider = 3,
+            .FilterSlider = 3,
+            .VolSlider = 3,
+            .ChannelSlider = 1,
+            .BgfxToggle = 1
+        }
+
+        Try
+            Dim vefxFilePath As String = GetVefxFileNameForConnector(connectorName)
+            If System.IO.File.Exists(vefxFilePath) Then
+                Dim tempFileLines = IO.File.ReadAllLines(vefxFilePath)
+                If tempFileLines.Length > 0 AndAlso tempFileLines(0) <> "" Then
+                    settings.EffectorOn = 1
+                    settings.EffectorNum = Val(tempFileLines(0)(1))
+                    settings.EffectorSlider = Val(tempFileLines(0)(3))
+                    settings.LowEQSlider = Val(tempFileLines(0)(5))
+                    settings.HighEQSlider = Val(tempFileLines(0)(7))
+                    settings.FilterSlider = Val(tempFileLines(0)(9))
+                    settings.VolSlider = Val(tempFileLines(0)(11))
+                    settings.ChannelSlider = Val(tempFileLines(0)(13))
+                    settings.BgfxToggle = Val(tempFileLines(0)(15))
+                End If
+            End If
+        Catch ex As Exception
+            ' If loading fails, return default settings
+        End Try
+
+        Return settings
+    End Function
+
+    ' Function to get connector-specific vefx filename for current device
     Public Function GetVefxFileName() As String
-        Dim connectorName As String = GetConnectorName(connector_names(current_connector_index)).ToLower().Replace(" ", "_")
-        Return "C:\Program Files\EqualizerAPO\config\vefx_" & connectorName & ".txt"
+        Return GetVefxFileNameForConnector(GetCurrentConnectorName())
     End Function
 
     ' Load audio devices from system registry - each device shown separately
@@ -870,7 +920,7 @@ Public Class Form1
     Private Function LoadAudioDevices() As Boolean
         Dim previousDevices As New List(Of String)(device_guids)
         Dim previousNames As New List(Of String)(connector_names)
-        
+
         connector_names.Clear()
         device_guids.Clear()
 
@@ -952,13 +1002,13 @@ Public Class Form1
         If previousDevices.Count <> device_guids.Count Then
             Return True
         End If
-        
+
         For i As Integer = 0 To device_guids.Count - 1
             If i >= previousDevices.Count OrElse device_guids(i) <> previousDevices(i) OrElse connector_names(i) <> previousNames(i) Then
                 Return True
             End If
         Next
-        
+
         Return False ' No changes detected
     End Function
 
@@ -1028,51 +1078,20 @@ Public Class Form1
         ' Build list of unique connector names (extract from display names)
         Dim uniqueConnectors As New HashSet(Of String)
         For Each displayName In connector_names
-            Dim connectorName As String = GetConnectorName(displayName)
-            uniqueConnectors.Add(connectorName)
+            uniqueConnectors.Add(GetConnectorName(displayName))
         Next
 
         ' Load settings for unique connectors only
         For Each connectorName In uniqueConnectors
-            Dim fileNameSafe As String = connectorName.ToLower().Replace(" ", "_")
-            Dim vefxFilePath As String = "C:\Program Files\EqualizerAPO\config\vefx_" & fileNameSafe & ".txt"
-
             ' Create empty connector-specific vefx file if it doesn't exist
+            Dim vefxFilePath As String = GetVefxFileNameForConnector(connectorName)
             If Not System.IO.File.Exists(vefxFilePath) Then
                 System.IO.File.WriteAllText(vefxFilePath, "")
             End If
 
-            Dim tempFileLines = IO.File.ReadAllLines(vefxFilePath)
-            Dim settings As New ConnectorSettings With {
-                    .EffectorOn = 0,
-                    .EffectorNum = 1,
-                    .EffectorSlider = 3,
-                    .LowEQSlider = 3,
-                    .HighEQSlider = 3,
-                    .FilterSlider = 3,
-                    .VolSlider = 3,
-                    .ChannelSlider = 1,
-                    .BgfxToggle = 1
-                }
-
-            Try
-                If tempFileLines.Length > 0 AndAlso tempFileLines(0) <> "" Then
-                    settings.EffectorOn = 1
-                    settings.EffectorNum = Val(tempFileLines(0)(1))
-                    settings.EffectorSlider = Val(tempFileLines(0)(3))
-                    settings.LowEQSlider = Val(tempFileLines(0)(5))
-                    settings.HighEQSlider = Val(tempFileLines(0)(7))
-                    settings.FilterSlider = Val(tempFileLines(0)(9))
-                    settings.VolSlider = Val(tempFileLines(0)(11))
-                    settings.ChannelSlider = Val(tempFileLines(0)(13))
-                    settings.BgfxToggle = Val(tempFileLines(0)(15))
-                End If
-            Catch ex As Exception
-            End Try
-
-            ' Store settings for this connector
+            ' Store settings for this connector (load from file)
             If Not connector_settings.ContainsKey(connectorName) Then
-                connector_settings.Add(connectorName, settings)
+                connector_settings.Add(connectorName, LoadConnectorSettingsFromFile(connectorName))
             End If
         Next
 
@@ -1524,7 +1543,7 @@ Public Class Form1
             deviceRefreshTimer.Stop()
             deviceRefreshTimer.Enabled = False
         End If
-        
+
         ' Check if bgfx is active - if so, minimize to tray instead of closing
         If bgfx_toggleb = 1 AndAlso effector_on <> 0 AndAlso (effector_num = 4 OrElse effector_num = 5) Then
             ' Cancel the close event
@@ -1546,8 +1565,8 @@ Public Class Form1
         ' Load audio devices from system
         LoadAudioDevices()
 
-        ' Initialize device refresh timer (refresh every 10 seconds)
-        deviceRefreshTimer.Interval = 10000 ' 10 seconds
+        ' Initialize device refresh timer (refresh every 5 seconds)
+        deviceRefreshTimer.Interval = 5000 ' 5 seconds
         deviceRefreshTimer.Enabled = True
         deviceRefreshTimer.Start()
 
@@ -1608,8 +1627,7 @@ Public Class Form1
 
     ' Save current UI values to connector settings
     Private Sub SaveCurrentConnectorSettings()
-        Dim displayName As String = connector_names(current_connector_index)
-        Dim connectorName As String = GetConnectorName(displayName)
+        Dim connectorName As String = GetCurrentConnectorName()
         If connector_settings.ContainsKey(connectorName) Then
             Dim settings As ConnectorSettings = connector_settings(connectorName)
             settings.EffectorOn = effector_on
@@ -1627,8 +1645,7 @@ Public Class Form1
 
     ' Load connector settings to UI
     Private Sub LoadCurrentConnectorSettings()
-        Dim displayName As String = connector_names(current_connector_index)
-        Dim connectorName As String = GetConnectorName(displayName)
+        Dim connectorName As String = GetCurrentConnectorName()
         If connector_settings.ContainsKey(connectorName) Then
             Dim settings As ConnectorSettings = connector_settings(connectorName)
             effector_on = settings.EffectorOn
@@ -2654,7 +2671,7 @@ Public Class Form1
     Private Sub deviceRefreshTimer_Tick(sender As Object, e As EventArgs) Handles deviceRefreshTimer.Tick
         Try
             Dim devicesChanged As Boolean = LoadAudioDevices()
-            
+
             ' Only update UI if devices actually changed
             If devicesChanged Then
                 ' Store current selection info
@@ -2664,32 +2681,71 @@ Public Class Form1
                     currentGuid = device_guids(current_connector_index)
                     currentName = connector_names(current_connector_index)
                 End If
-                
+
+                ' Build list of currently existing connector names
+                Dim currentConnectors As New HashSet(Of String)
+                For Each displayName In connector_names
+                    Dim connectorName As String = GetConnectorName(displayName)
+                    currentConnectors.Add(connectorName)
+                Next
+
+                ' Remove settings for connectors that no longer exist
+                Dim keysToRemove As New List(Of String)
+                For Each key In connector_settings.Keys
+                    If Not currentConnectors.Contains(key) Then
+                        keysToRemove.Add(key)
+                    End If
+                Next
+                For Each key In keysToRemove
+                    connector_settings.Remove(key)
+                Next
+
+                ' Initialize settings for new connectors (load from vefx file if exists)
+                For Each connectorName In currentConnectors
+                    If Not connector_settings.ContainsKey(connectorName) Then
+                        connector_settings.Add(connectorName, LoadConnectorSettingsFromFile(connectorName))
+                    End If
+                Next
+
                 ' Update connector selector
                 connector_selector.Items.Clear()
                 For Each connectorName In connector_names
                     connector_selector.Items.Add(connectorName)
                 Next
-                
+
                 ' Try to restore previous selection by GUID, then by name, or default to first
                 Dim newIndex As Integer = -1
                 If Not String.IsNullOrEmpty(currentGuid) Then
                     newIndex = device_guids.IndexOf(currentGuid)
                 End If
-                
+
                 If newIndex = -1 AndAlso Not String.IsNullOrEmpty(currentName) Then
                     newIndex = connector_names.IndexOf(currentName)
                 End If
-                
+
                 If newIndex = -1 AndAlso connector_names.Count > 0 Then
                     newIndex = 0
                 End If
-                
+
                 If newIndex >= 0 Then
+                    ' Check if we're switching to a different connector
+                    Dim connectorChanged As Boolean = (newIndex <> current_connector_index)
+
+                    ' Update index and UI
                     current_connector_index = newIndex
+
+                    ' Temporarily disable event to prevent double-loading
+                    RemoveHandler connector_selector.SelectedIndexChanged, AddressOf connector_selector_SelectedIndexChanged
                     connector_selector.SelectedIndex = newIndex
+                    AddHandler connector_selector.SelectedIndexChanged, AddressOf connector_selector_SelectedIndexChanged
+
                     UpdateTitleBar()
                     UpdateAPOStatusIndicator()
+
+                    ' If connector actually changed, load the new connector's settings
+                    If connectorChanged Then
+                        LoadCurrentConnectorSettings()
+                    End If
                 End If
             End If
         Catch ex As Exception
