@@ -301,7 +301,7 @@ Partial Class Form1
         Me.bgfx_toggle.Name = "bgfx_toggle"
         Me.bgfx_toggle.Size = New System.Drawing.Size(75, 23)
         Me.bgfx_toggle.TabIndex = 19
-        Me.bgfx_toggle.Text = "BGFX on"
+        Me.bgfx_toggle.Text = "BGFX off"
         Me.bgfx_toggle.UseVisualStyleBackColor = True
         '
         'connector_selector
