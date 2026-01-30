@@ -58,6 +58,7 @@ Partial Class Form1
         Me.DNRToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.AddPresetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.vumeterpos = New System.Windows.Forms.Panel()
         CType(Me.VEFX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LOW_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.HIGH_EQ, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -71,12 +72,12 @@ Partial Class Form1
         '
         Me.VEFX.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.VEFX.LargeChange = 1
-        Me.VEFX.Location = New System.Drawing.Point(168, 67)
-        Me.VEFX.Margin = New System.Windows.Forms.Padding(2)
+        Me.VEFX.Location = New System.Drawing.Point(264, 117)
+        Me.VEFX.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.VEFX.Maximum = 6
         Me.VEFX.Name = "VEFX"
         Me.VEFX.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.VEFX.Size = New System.Drawing.Size(45, 120)
+        Me.VEFX.Size = New System.Drawing.Size(80, 210)
         Me.VEFX.TabIndex = 0
         Me.VEFX.Value = 3
         '
@@ -84,12 +85,12 @@ Partial Class Form1
         '
         Me.LOW_EQ.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.LOW_EQ.LargeChange = 1
-        Me.LOW_EQ.Location = New System.Drawing.Point(231, 67)
-        Me.LOW_EQ.Margin = New System.Windows.Forms.Padding(2)
+        Me.LOW_EQ.Location = New System.Drawing.Point(363, 117)
+        Me.LOW_EQ.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.LOW_EQ.Maximum = 6
         Me.LOW_EQ.Name = "LOW_EQ"
         Me.LOW_EQ.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.LOW_EQ.Size = New System.Drawing.Size(45, 120)
+        Me.LOW_EQ.Size = New System.Drawing.Size(80, 210)
         Me.LOW_EQ.TabIndex = 1
         Me.LOW_EQ.Value = 3
         '
@@ -97,12 +98,12 @@ Partial Class Form1
         '
         Me.HIGH_EQ.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.HIGH_EQ.LargeChange = 1
-        Me.HIGH_EQ.Location = New System.Drawing.Point(295, 67)
-        Me.HIGH_EQ.Margin = New System.Windows.Forms.Padding(2)
+        Me.HIGH_EQ.Location = New System.Drawing.Point(464, 117)
+        Me.HIGH_EQ.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.HIGH_EQ.Maximum = 6
         Me.HIGH_EQ.Name = "HIGH_EQ"
         Me.HIGH_EQ.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.HIGH_EQ.Size = New System.Drawing.Size(45, 120)
+        Me.HIGH_EQ.Size = New System.Drawing.Size(80, 210)
         Me.HIGH_EQ.TabIndex = 2
         Me.HIGH_EQ.Value = 3
         '
@@ -110,12 +111,12 @@ Partial Class Form1
         '
         Me.FILTER.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.FILTER.LargeChange = 1
-        Me.FILTER.Location = New System.Drawing.Point(361, 67)
-        Me.FILTER.Margin = New System.Windows.Forms.Padding(2)
+        Me.FILTER.Location = New System.Drawing.Point(567, 117)
+        Me.FILTER.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.FILTER.Maximum = 6
         Me.FILTER.Name = "FILTER"
         Me.FILTER.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.FILTER.Size = New System.Drawing.Size(45, 120)
+        Me.FILTER.Size = New System.Drawing.Size(80, 210)
         Me.FILTER.TabIndex = 3
         Me.FILTER.Value = 3
         '
@@ -123,12 +124,12 @@ Partial Class Form1
         '
         Me.VOLUME.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.VOLUME.LargeChange = 1
-        Me.VOLUME.Location = New System.Drawing.Point(426, 67)
-        Me.VOLUME.Margin = New System.Windows.Forms.Padding(2)
+        Me.VOLUME.Location = New System.Drawing.Point(669, 117)
+        Me.VOLUME.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.VOLUME.Maximum = 6
         Me.VOLUME.Name = "VOLUME"
         Me.VOLUME.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.VOLUME.Size = New System.Drawing.Size(45, 120)
+        Me.VOLUME.Size = New System.Drawing.Size(80, 210)
         Me.VOLUME.TabIndex = 4
         Me.VOLUME.Value = 3
         '
@@ -136,10 +137,10 @@ Partial Class Form1
         '
         Me.EFFECT_ON_OFF.BackgroundImage = Global.WindowsApplication1.My.Resources.Resource1.acrylic_button
         Me.EFFECT_ON_OFF.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.EFFECT_ON_OFF.Location = New System.Drawing.Point(60, 67)
-        Me.EFFECT_ON_OFF.Margin = New System.Windows.Forms.Padding(2)
+        Me.EFFECT_ON_OFF.Location = New System.Drawing.Point(94, 117)
+        Me.EFFECT_ON_OFF.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.EFFECT_ON_OFF.Name = "EFFECT_ON_OFF"
-        Me.EFFECT_ON_OFF.Size = New System.Drawing.Size(55, 45)
+        Me.EFFECT_ON_OFF.Size = New System.Drawing.Size(86, 79)
         Me.EFFECT_ON_OFF.TabIndex = 5
         Me.EFFECT_ON_OFF.UseVisualStyleBackColor = True
         '
@@ -147,109 +148,109 @@ Partial Class Form1
         '
         Me.VEFX_CHANGE.BackgroundImage = Global.WindowsApplication1.My.Resources.Resource1.acrylic_button
         Me.VEFX_CHANGE.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.VEFX_CHANGE.Location = New System.Drawing.Point(60, 166)
-        Me.VEFX_CHANGE.Margin = New System.Windows.Forms.Padding(2)
+        Me.VEFX_CHANGE.Location = New System.Drawing.Point(94, 290)
+        Me.VEFX_CHANGE.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.VEFX_CHANGE.Name = "VEFX_CHANGE"
-        Me.VEFX_CHANGE.Size = New System.Drawing.Size(55, 45)
+        Me.VEFX_CHANGE.Size = New System.Drawing.Size(86, 79)
         Me.VEFX_CHANGE.TabIndex = 6
         Me.VEFX_CHANGE.UseVisualStyleBackColor = True
         '
         'TextBox1
         '
         Me.TextBox1.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox1.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox1.Location = New System.Drawing.Point(60, 26)
-        Me.TextBox1.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox1.Location = New System.Drawing.Point(94, 46)
+        Me.TextBox1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox1.Size = New System.Drawing.Size(110, 30)
         Me.TextBox1.TabIndex = 7
         Me.TextBox1.Text = "EFFECT"
         '
         'TextBox2
         '
         Me.TextBox2.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox2.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox2.Location = New System.Drawing.Point(60, 46)
-        Me.TextBox2.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox2.Location = New System.Drawing.Point(94, 80)
+        Me.TextBox2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox2.Size = New System.Drawing.Size(110, 30)
         Me.TextBox2.TabIndex = 8
         Me.TextBox2.Text = "ON/OFF"
         '
         'TextBox3
         '
         Me.TextBox3.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox3.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox3.Location = New System.Drawing.Point(60, 126)
-        Me.TextBox3.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox3.Location = New System.Drawing.Point(94, 220)
+        Me.TextBox3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox3.Name = "TextBox3"
-        Me.TextBox3.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox3.Size = New System.Drawing.Size(90, 24)
         Me.TextBox3.TabIndex = 9
         Me.TextBox3.Text = "VEFX"
         '
         'TextBox4
         '
         Me.TextBox4.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox4.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox4.Location = New System.Drawing.Point(60, 146)
-        Me.TextBox4.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox4.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox4.Location = New System.Drawing.Point(94, 256)
+        Me.TextBox4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox4.Name = "TextBox4"
-        Me.TextBox4.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox4.Size = New System.Drawing.Size(90, 24)
         Me.TextBox4.TabIndex = 10
         Me.TextBox4.Text = "change"
         '
         'TextBox5
         '
         Me.TextBox5.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox5.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox5.Location = New System.Drawing.Point(161, 46)
-        Me.TextBox5.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox5.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox5.Location = New System.Drawing.Point(253, 80)
+        Me.TextBox5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox5.Name = "TextBox5"
-        Me.TextBox5.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox5.Size = New System.Drawing.Size(86, 24)
         Me.TextBox5.TabIndex = 11
         Me.TextBox5.Text = "VEFX"
         '
         'TextBox6
         '
         Me.TextBox6.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox6.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox6.Location = New System.Drawing.Point(224, 46)
-        Me.TextBox6.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox6.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox6.Location = New System.Drawing.Point(352, 80)
+        Me.TextBox6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox6.Name = "TextBox6"
-        Me.TextBox6.Size = New System.Drawing.Size(60, 14)
+        Me.TextBox6.Size = New System.Drawing.Size(94, 24)
         Me.TextBox6.TabIndex = 12
         Me.TextBox6.Text = "LOW-EQ"
         '
         'TextBox7
         '
         Me.TextBox7.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox7.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox7.Location = New System.Drawing.Point(288, 46)
-        Me.TextBox7.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox7.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox7.Location = New System.Drawing.Point(453, 80)
+        Me.TextBox7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox7.Name = "TextBox7"
-        Me.TextBox7.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox7.Size = New System.Drawing.Size(86, 24)
         Me.TextBox7.TabIndex = 13
         Me.TextBox7.Text = "HI-EQ"
         '
         'TextBox8
         '
         Me.TextBox8.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox8.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox8.Location = New System.Drawing.Point(354, 46)
-        Me.TextBox8.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox8.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox8.Location = New System.Drawing.Point(556, 80)
+        Me.TextBox8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox8.Name = "TextBox8"
-        Me.TextBox8.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox8.Size = New System.Drawing.Size(86, 24)
         Me.TextBox8.TabIndex = 14
         Me.TextBox8.Text = "FILTER"
         '
         'TextBox9
         '
         Me.TextBox9.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox9.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox9.Location = New System.Drawing.Point(419, 46)
-        Me.TextBox9.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox9.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox9.Location = New System.Drawing.Point(658, 80)
+        Me.TextBox9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox9.Name = "TextBox9"
-        Me.TextBox9.Size = New System.Drawing.Size(68, 17)
+        Me.TextBox9.Size = New System.Drawing.Size(107, 30)
         Me.TextBox9.TabIndex = 15
         Me.TextBox9.Text = "VOLUME"
         '
@@ -257,13 +258,13 @@ Partial Class Form1
         '
         Me.EFFECTOR_TEXT.BackColor = System.Drawing.Color.Black
         Me.EFFECTOR_TEXT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.EFFECTOR_TEXT.Font = New System.Drawing.Font("Meiryo", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.EFFECTOR_TEXT.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.EFFECTOR_TEXT.ForeColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(100, Byte), Integer), CType(CType(100, Byte), Integer))
-        Me.EFFECTOR_TEXT.Location = New System.Drawing.Point(260, 220)
-        Me.EFFECTOR_TEXT.Margin = New System.Windows.Forms.Padding(2)
+        Me.EFFECTOR_TEXT.Location = New System.Drawing.Point(409, 385)
+        Me.EFFECTOR_TEXT.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.EFFECTOR_TEXT.Name = "EFFECTOR_TEXT"
         Me.EFFECTOR_TEXT.ReadOnly = True
-        Me.EFFECTOR_TEXT.Size = New System.Drawing.Size(150, 31)
+        Me.EFFECTOR_TEXT.Size = New System.Drawing.Size(235, 39)
         Me.EFFECTOR_TEXT.TabIndex = 16
         Me.EFFECTOR_TEXT.Text = "EFFECTOR OFF"
         Me.EFFECTOR_TEXT.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -272,23 +273,23 @@ Partial Class Form1
         '
         Me.CHANNEL.BackColor = System.Drawing.SystemColors.ScrollBar
         Me.CHANNEL.LargeChange = 1
-        Me.CHANNEL.Location = New System.Drawing.Point(548, 67)
-        Me.CHANNEL.Margin = New System.Windows.Forms.Padding(2)
+        Me.CHANNEL.Location = New System.Drawing.Point(861, 117)
+        Me.CHANNEL.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.CHANNEL.Maximum = 6
         Me.CHANNEL.Name = "CHANNEL"
         Me.CHANNEL.Orientation = System.Windows.Forms.Orientation.Vertical
-        Me.CHANNEL.Size = New System.Drawing.Size(45, 120)
+        Me.CHANNEL.Size = New System.Drawing.Size(80, 210)
         Me.CHANNEL.TabIndex = 17
         Me.CHANNEL.Value = 1
         '
         'TextBox10
         '
         Me.TextBox10.BackColor = System.Drawing.Color.Transparent
-        Me.TextBox10.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox10.Location = New System.Drawing.Point(533, 46)
-        Me.TextBox10.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox10.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox10.Location = New System.Drawing.Point(838, 80)
+        Me.TextBox10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TextBox10.Name = "TextBox10"
-        Me.TextBox10.Size = New System.Drawing.Size(71, 14)
+        Me.TextBox10.Size = New System.Drawing.Size(112, 24)
         Me.TextBox10.TabIndex = 18
         Me.TextBox10.Text = "CHANNEL"
         '
@@ -296,10 +297,11 @@ Partial Class Form1
         '
         Me.bgfx_toggle.BackgroundImage = Global.WindowsApplication1.My.Resources.Resource1.acrylic_button
         Me.bgfx_toggle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.bgfx_toggle.Font = New System.Drawing.Font("Meiryo", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.bgfx_toggle.Location = New System.Drawing.Point(557, 218)
+        Me.bgfx_toggle.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.bgfx_toggle.Location = New System.Drawing.Point(875, 382)
+        Me.bgfx_toggle.Margin = New System.Windows.Forms.Padding(5)
         Me.bgfx_toggle.Name = "bgfx_toggle"
-        Me.bgfx_toggle.Size = New System.Drawing.Size(75, 23)
+        Me.bgfx_toggle.Size = New System.Drawing.Size(118, 40)
         Me.bgfx_toggle.TabIndex = 19
         Me.bgfx_toggle.Text = "BGFX off"
         Me.bgfx_toggle.UseVisualStyleBackColor = True
@@ -308,20 +310,21 @@ Partial Class Form1
         '
         Me.connector_selector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.connector_selector.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.connector_selector.Font = New System.Drawing.Font("Meiryo", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.connector_selector.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.connector_selector.FormattingEnabled = True
-        Me.connector_selector.Location = New System.Drawing.Point(341, -1)
+        Me.connector_selector.Location = New System.Drawing.Point(536, -2)
+        Me.connector_selector.Margin = New System.Windows.Forms.Padding(5)
         Me.connector_selector.Name = "connector_selector"
-        Me.connector_selector.Size = New System.Drawing.Size(303, 25)
+        Me.connector_selector.Size = New System.Drawing.Size(474, 32)
         Me.connector_selector.TabIndex = 20
         '
         'apo_status_indicator
         '
         Me.apo_status_indicator.BackColor = System.Drawing.Color.Red
-        Me.apo_status_indicator.Location = New System.Drawing.Point(240, 225)
-        Me.apo_status_indicator.Margin = New System.Windows.Forms.Padding(2)
+        Me.apo_status_indicator.Location = New System.Drawing.Point(377, 394)
+        Me.apo_status_indicator.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.apo_status_indicator.Name = "apo_status_indicator"
-        Me.apo_status_indicator.Size = New System.Drawing.Size(10, 10)
+        Me.apo_status_indicator.Size = New System.Drawing.Size(16, 18)
         Me.apo_status_indicator.TabIndex = 21
         '
         'MenuStrip1
@@ -330,8 +333,8 @@ Partial Class Form1
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.HelpToolStripMenuItem, Me.PresetsToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(5, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(644, 24)
+        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(8, 4, 0, 4)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1012, 42)
         Me.MenuStrip1.TabIndex = 20
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -339,82 +342,92 @@ Partial Class Form1
         '
         Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ResetAudiosrvToolStripMenuItem, Me.OpenEAPOConfigToolStripMenuItem, Me.AboutToolStripMenuItem})
         Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
-        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
+        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(75, 34)
         Me.HelpToolStripMenuItem.Text = "Help"
         '
         'ResetAudiosrvToolStripMenuItem
         '
         Me.ResetAudiosrvToolStripMenuItem.Name = "ResetAudiosrvToolStripMenuItem"
-        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(300, 22)
+        Me.ResetAudiosrvToolStripMenuItem.Size = New System.Drawing.Size(526, 40)
         Me.ResetAudiosrvToolStripMenuItem.Text = "Reset Audiosrv"
         '
         'OpenEAPOConfigToolStripMenuItem
         '
         Me.OpenEAPOConfigToolStripMenuItem.Name = "OpenEAPOConfigToolStripMenuItem"
-        Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(300, 22)
+        Me.OpenEAPOConfigToolStripMenuItem.Size = New System.Drawing.Size(526, 40)
         Me.OpenEAPOConfigToolStripMenuItem.Text = "Install/Uninstall APO for Current Selection"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(300, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(526, 40)
         Me.AboutToolStripMenuItem.Text = "About"
         '
         'PresetsToolStripMenuItem
         '
         Me.PresetsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DancefloorToolStripMenuItem, Me.MildEchoToolStripMenuItem, Me.TunnelToolStripMenuItem, Me.TheaterToolStripMenuItem, Me.DNRToolStripMenuItem, Me.ToolStripSeparator1, Me.AddPresetToolStripMenuItem})
         Me.PresetsToolStripMenuItem.Name = "PresetsToolStripMenuItem"
-        Me.PresetsToolStripMenuItem.Size = New System.Drawing.Size(56, 20)
+        Me.PresetsToolStripMenuItem.Size = New System.Drawing.Size(97, 34)
         Me.PresetsToolStripMenuItem.Text = "Presets"
         '
         'DancefloorToolStripMenuItem
         '
         Me.DancefloorToolStripMenuItem.Name = "DancefloorToolStripMenuItem"
-        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.DancefloorToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.DancefloorToolStripMenuItem.Text = "Dancefloor"
         '
         'MildEchoToolStripMenuItem
         '
         Me.MildEchoToolStripMenuItem.Name = "MildEchoToolStripMenuItem"
-        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.MildEchoToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.MildEchoToolStripMenuItem.Text = "MildEcho"
         '
         'TunnelToolStripMenuItem
         '
         Me.TunnelToolStripMenuItem.Name = "TunnelToolStripMenuItem"
-        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.TunnelToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.TunnelToolStripMenuItem.Text = "Tunnel"
         '
         'TheaterToolStripMenuItem
         '
         Me.TheaterToolStripMenuItem.Name = "TheaterToolStripMenuItem"
-        Me.TheaterToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.TheaterToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.TheaterToolStripMenuItem.Text = "Theater"
         '
         'DNRToolStripMenuItem
         '
         Me.DNRToolStripMenuItem.Name = "DNRToolStripMenuItem"
-        Me.DNRToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.DNRToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.DNRToolStripMenuItem.Text = "DNR"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(138, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(247, 6)
         '
         'AddPresetToolStripMenuItem
         '
         Me.AddPresetToolStripMenuItem.Name = "AddPresetToolStripMenuItem"
-        Me.AddPresetToolStripMenuItem.Size = New System.Drawing.Size(141, 22)
+        Me.AddPresetToolStripMenuItem.Size = New System.Drawing.Size(250, 40)
         Me.AddPresetToolStripMenuItem.Text = "Add Preset..."
+        '
+        'vumeterpos
+        '
+        Me.vumeterpos.BackColor = System.Drawing.Color.Lime
+        Me.vumeterpos.Location = New System.Drawing.Point(38, 394)
+        Me.vumeterpos.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.vumeterpos.Name = "vumeterpos"
+        Me.vumeterpos.Size = New System.Drawing.Size(306, 18)
+        Me.vumeterpos.TabIndex = 22
         '
         'Form1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(11.0!, 21.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackgroundImage = Global.WindowsApplication1.My.Resources.Resource1.metallic_skin
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(644, 241)
+        Me.ClientSize = New System.Drawing.Size(1012, 422)
+        Me.Controls.Add(Me.vumeterpos)
         Me.Controls.Add(Me.connector_selector)
         Me.Controls.Add(Me.apo_status_indicator)
         Me.Controls.Add(Me.bgfx_toggle)
@@ -441,7 +454,7 @@ Partial Class Form1
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Margin = New System.Windows.Forms.Padding(2)
+        Me.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.MaximizeBox = False
         Me.Name = "Form1"
         Me.Text = "VEFX Slider"
@@ -492,4 +505,5 @@ Partial Class Form1
     Friend WithEvents DNRToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents AddPresetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents vumeterpos As Panel
 End Class

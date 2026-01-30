@@ -1538,6 +1538,9 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        ' Cleanup VU Meter
+        CleanupVUMeter()
+
         ' Stop device refresh timer
         If deviceRefreshTimer IsNot Nothing Then
             deviceRefreshTimer.Stop()
@@ -1623,6 +1626,9 @@ Public Class Form1
 
         ' Load custom presets on startup
         LoadCustomPresets()
+
+        ' Initialize VU Meter
+        InitializeVUMeter()
     End Sub
 
     ' Save current UI values to connector settings
@@ -2821,4 +2827,185 @@ Public Class Form1
     End Function
 
 #End Region
+
+#Region "VU Meter"
+
+    ' COM Interfaces for Audio Meter Information
+    <ComImport>
+    <Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")>
+    Private Class MMDeviceEnumerator
+    End Class
+
+    <Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")>
+    <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
+    Private Interface IMMDeviceEnumerator
+        Function NotImpl1() As Integer
+        Function GetDefaultAudioEndpoint(dataFlow As EDataFlow, role As ERole, <Out> <MarshalAs(UnmanagedType.Interface)> ByRef ppDevice As IMMDevice) As Integer
+    End Interface
+
+    <Guid("D666063F-1587-4E43-81F1-B948E807363F")>
+    <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
+    Private Interface IMMDevice
+        Function Activate(ByRef iid As Guid, dwClsCtx As Integer, pActivationParams As IntPtr, <Out> <MarshalAs(UnmanagedType.IUnknown)> ByRef ppInterface As Object) As Integer
+    End Interface
+
+    <Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")>
+    <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
+    Private Interface IAudioMeterInformation
+        Function GetPeakValue(ByRef pfPeak As Single) As Integer
+        Function GetMeteringChannelCount(ByRef pnChannelCount As UInteger) As Integer
+        Function GetChannelsPeakValues(u32ChannelCount As UInteger, <MarshalAs(UnmanagedType.LPArray, SizeParamIndex:=0)> afPeakValues As Single()) As Integer
+        Function QueryHardwareSupport(ByRef pdwHardwareSupportMask As UInteger) As Integer
+    End Interface
+
+    Private Enum EDataFlow
+        eRender
+        eCapture
+        eAll
+    End Enum
+
+    Private Enum ERole
+        eConsole
+        eMultimedia
+        eCommunications
+    End Enum
+
+    ' VU Meter variables
+    Private meterDevice As IMMDevice = Nothing
+    Private meterInfo As IAudioMeterInformation = Nothing
+    Private WithEvents vuMeterTimer As New Timer()
+    Private vuMeterPanel As Panel
+    Private vuMeterSquares As New List(Of Panel)()
+
+    Private Sub InitializeVUMeter()
+        Try
+            ' Get position and size from vumeterpos control
+            Dim meterLocation As Point = vumeterpos.Location
+            
+            ' Remove the placeholder control
+            Me.Controls.Remove(vumeterpos)
+            vumeterpos.Dispose()
+
+            ' Create VU Meter UI components
+            vuMeterPanel = New Panel()
+            vuMeterPanel.Location = meterLocation
+            vuMeterPanel.Size = New Size(200, 30)
+            vuMeterPanel.BackColor = Color.Transparent
+            vuMeterPanel.BorderStyle = BorderStyle.None
+            Me.Controls.Add(vuMeterPanel)
+
+            ' Create 20 square segments
+            Dim numSquares As Integer = 20
+            Dim squareSize As Integer = 8
+            Dim spacing As Integer = 2
+            
+            vuMeterSquares.Clear()
+            For i As Integer = 0 To numSquares - 1
+                Dim square As New Panel()
+                square.Location = New Point(i * (squareSize + spacing), 0)
+                square.Size = New Size(squareSize, squareSize)
+                square.BackColor = Color.DarkGray
+                square.BorderStyle = BorderStyle.FixedSingle
+                vuMeterPanel.Controls.Add(square)
+                vuMeterSquares.Add(square)
+            Next
+
+            ' Initialize COM objects for audio meter
+            Dim enumerator As Object = New MMDeviceEnumerator()
+            Dim iEnumerator As IMMDeviceEnumerator = DirectCast(enumerator, IMMDeviceEnumerator)
+            
+            ' Get default audio output device
+            Dim hr As Integer = iEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, meterDevice)
+            If hr <> 0 Then
+                Throw New Exception("Failed to get default audio endpoint. HRESULT: 0x" & hr.ToString("X8"))
+            End If
+            
+            ' Activate IAudioMeterInformation
+            Dim IID_IAudioMeterInformation As New Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")
+            Dim obj As Object = Nothing
+            hr = meterDevice.Activate(IID_IAudioMeterInformation, 0, IntPtr.Zero, obj)
+            If hr <> 0 Then
+                Throw New Exception("Failed to activate IAudioMeterInformation. HRESULT: 0x" & hr.ToString("X8"))
+            End If
+            
+            meterInfo = DirectCast(obj, IAudioMeterInformation)
+
+            ' Setup timer to update VU meter (30 FPS)
+            vuMeterTimer.Interval = 33
+            AddHandler vuMeterTimer.Tick, AddressOf VUMeterTimer_Tick
+            vuMeterTimer.Start()
+
+        Catch ex As Exception
+            MessageBox.Show("Failed to initialize VU Meter: " & ex.Message, "VU Meter Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End Try
+    End Sub
+
+    Private Sub VUMeterTimer_Tick(sender As Object, e As EventArgs)
+        Try
+            If meterInfo IsNot Nothing AndAlso vuMeterSquares.Count > 0 Then
+                ' Check if effector is off or APO not installed
+                Dim deviceGuid As String = If(current_connector_index >= 0 AndAlso current_connector_index < device_guids.Count, device_guids(current_connector_index), "")
+                Dim apoInstalled As Boolean = Not String.IsNullOrEmpty(deviceGuid) AndAlso CheckAPOInstalled(deviceGuid)
+                
+                If effector_on = 0 OrElse Not apoInstalled Then
+                    ' Turn off all squares when effector is off or APO not installed
+                    For Each square In vuMeterSquares
+                        square.BackColor = Color.DarkGray
+                    Next
+                    Return
+                End If
+                
+                Dim peakValue As Single = 0
+                meterInfo.GetPeakValue(peakValue)
+                
+                ' Calculate how many squares should be lit
+                Dim numSquares As Integer = vuMeterSquares.Count
+                Dim litSquares As Integer = CInt(peakValue * numSquares)
+                
+                ' Update each square
+                For i As Integer = 0 To numSquares - 1
+                    If i < litSquares Then
+                        ' Light up this square with appropriate color
+                        Dim ratio As Single = CSng(i) / numSquares
+                        If ratio >= 0.85 Then
+                            vuMeterSquares(i).BackColor = Color.Red
+                        ElseIf ratio >= 0.65 Then
+                            vuMeterSquares(i).BackColor = Color.Yellow
+                        Else
+                            vuMeterSquares(i).BackColor = Color.Lime
+                        End If
+                    Else
+                        ' Turn off this square
+                        vuMeterSquares(i).BackColor = Color.DarkGray
+                    End If
+                Next
+            End If
+        Catch ex As Exception
+            ' Silently ignore errors during meter updates
+        End Try
+    End Sub
+
+    Private Sub CleanupVUMeter()
+        Try
+            If vuMeterTimer IsNot Nothing Then
+                vuMeterTimer.Stop()
+                RemoveHandler vuMeterTimer.Tick, AddressOf VUMeterTimer_Tick
+            End If
+
+            If meterInfo IsNot Nothing Then
+                Marshal.ReleaseComObject(meterInfo)
+                meterInfo = Nothing
+            End If
+
+            If meterDevice IsNot Nothing Then
+                Marshal.ReleaseComObject(meterDevice)
+                meterDevice = Nothing
+            End If
+        Catch ex As Exception
+            ' Ignore cleanup errors
+        End Try
+    End Sub
+
+#End Region
+
 End Class
