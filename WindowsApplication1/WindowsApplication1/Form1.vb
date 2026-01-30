@@ -1668,8 +1668,10 @@ Public Class Form1
 
             If bgfx_toggleb = 1 Then
                 bgfx_toggle.Text = "BGFX on"
+                bgfx_toggle.ForeColor = Color.OrangeRed
             Else
                 bgfx_toggle.Text = "BGFX off"
+                bgfx_toggle.ForeColor = Color.Black
             End If
 
             rerun()
@@ -1755,9 +1757,11 @@ Public Class Form1
     Private Sub bgfx_toggle_Click(sender As Object, e As EventArgs) Handles bgfx_toggle.Click
         If bgfx_toggleb = 1 Then    'bgfx on
             bgfx_toggle.Text = "BGFX off"
+            bgfx_toggle.ForeColor = Color.Black
             bgfx_toggleb = 0
         Else                    'bgfx off
             bgfx_toggle.Text = "BGFX on"
+            bgfx_toggle.ForeColor = Color.OrangeRed
             bgfx_toggleb = 1
         End If
 

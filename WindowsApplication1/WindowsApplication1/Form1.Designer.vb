@@ -216,7 +216,7 @@ Partial Class Form1
         Me.TextBox6.Location = New System.Drawing.Point(224, 46)
         Me.TextBox6.Margin = New System.Windows.Forms.Padding(2)
         Me.TextBox6.Name = "TextBox6"
-        Me.TextBox6.Size = New System.Drawing.Size(55, 14)
+        Me.TextBox6.Size = New System.Drawing.Size(60, 14)
         Me.TextBox6.TabIndex = 12
         Me.TextBox6.Text = "LOW-EQ"
         '
