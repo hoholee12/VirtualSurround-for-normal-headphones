@@ -94,7 +94,7 @@ Public Class Form1
     Public Shared effector_on As Integer = 0
     Public Shared echo_texts = New String() {"REVERB 3", "REVERB 2", "REVERB 1", "ECHO 1", "ECHO 2", "ECHO 3", "ECHO 4"}
     Public Shared echo_ex_texts = New String() {"REVERB EX 3", "REVERB EX 2", "REVERB EX 1", "ECHO EX 1", "ECHO EX 2", "ECHO EX 3", "ECHO EX 4"}
-    Public Shared compressor_texts = New String() {"COMPRESSOR 1", "     COMPRESSOR 1      written by manual...as a fan project for beatmania series...have fun!", "COMPRESSOR 1", "COMPRESSOR 1", "COMPRESSOR 2", "COMPRESSOR 3", "COMPRESSOR 4"}
+    Public Shared compressor_texts = New String() {"COMPRESSOR 1", "  COMPRESSOR 1      written by manual...as a fan project for beatmania series...have fun!", "COMPRESSOR 1", "COMPRESSOR 1", "COMPRESSOR 2", "COMPRESSOR 3", "COMPRESSOR 4"}
     Public Shared chorus_texts = New String() {"FLANGER 3", "FLANGER 2", "FLANGER 1", "CHORUS 1", "CHORUS 2", "CHORUS 3", "CHORUS 4"}
     Public Shared gargle_texts = New String() {"DISTORTION 4", "DISTORTION 3", "DISTORTION 2", "DISTORTION 1", "GARGLE 1", "GARGLE 2", "GARGLE 3"}
     Public Shared eq_only_texts = New String() {"EQ ONLY"}
