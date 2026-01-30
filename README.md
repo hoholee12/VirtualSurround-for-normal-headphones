@@ -4,6 +4,8 @@ originally posted on https://sourceforge.net/p/equalizerapo/discussion/general/t
 
 ##
 
+<img width="1128" height="481" alt="image" src="https://github.com/user-attachments/assets/5896a81b-5ab8-4917-bf34-a0cec705f0bc" />
+
 ive created this program with visual basic(im still learning how to code!)
 
 it is based on sound profile by https://sourceforge.net/p/equalizerapo/discussion/general/thread/98a5e135/
