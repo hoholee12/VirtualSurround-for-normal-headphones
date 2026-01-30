@@ -2839,7 +2839,7 @@ Public Class Form1
     <Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")>
     <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
     Private Interface IMMDeviceEnumerator
-        Function NotImpl1() As Integer
+        Function EnumAudioEndpoints(dataFlow As EDataFlow, dwStateMask As Integer, <Out> ByRef ppDevices As IntPtr) As Integer
         Function GetDefaultAudioEndpoint(dataFlow As EDataFlow, role As ERole, <Out> <MarshalAs(UnmanagedType.Interface)> ByRef ppDevice As IMMDevice) As Integer
     End Interface
 
