@@ -1716,6 +1716,7 @@ Public Class Form1
             effector_on = 0
         End If
         rerun()
+        UpdateVUMeterDevice()
 
     End Sub
 
@@ -1861,6 +1862,7 @@ Public Class Form1
                     MsgBox("APO uninstalled successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Uninstallation Complete")
                     RestartAudioService()
                     UpdateAPOStatusIndicator()
+                    UpdateVUMeterDevice()
                 Else
                     MsgBox("Failed to uninstall APO.", MsgBoxStyle.Exclamation, "Uninstallation Failed")
                 End If
@@ -1887,6 +1889,7 @@ Public Class Form1
             MsgBox("APO installed successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
             RestartAudioService()
             UpdateAPOStatusIndicator()
+            UpdateVUMeterDevice()
         Else
             MsgBox("Failed to install APO.", MsgBoxStyle.Exclamation, "Installation Failed")
         End If
@@ -2061,11 +2064,13 @@ Public Class Form1
             hieq_slider = HIGH_EQ.Value
             channel_slider = CHANNEL.Value
 
-            ' Update bgfx button text
+            ' Update bgfx button text and color
             If bgfx_toggleb = 1 Then
                 bgfx_toggle.Text = "BGFX on"
+                bgfx_toggle.ForeColor = Color.OrangeRed
             Else
                 bgfx_toggle.Text = "BGFX off"
+                bgfx_toggle.ForeColor = Color.Black
             End If
 
             rerun()
@@ -2519,32 +2524,6 @@ Public Class Form1
             RegCloseKey(hChildKey)
             hChildKey = IntPtr.Zero
 
-            ' Create backup .reg file
-            Try
-                Dim backupFileName As String = "backup_" & deviceGuid & "_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".reg"
-                Dim backupPath As String = System.IO.Path.Combine(Application.StartupPath, backupFileName)
-
-                Using writer As New System.IO.StreamWriter(backupPath, False, System.Text.Encoding.Unicode)
-                    writer.WriteLine("Windows Registry Editor Version 5.00")
-                    writer.WriteLine()
-                    writer.WriteLine("[HKEY_LOCAL_MACHINE\" & childPath.Replace("\", "\\") & "]")
-                    writer.WriteLine("""Version""=""2""")
-
-                    ' Write backed up values
-                    Using backupKey As RegistryKey = Registry.LocalMachine.OpenSubKey(childPath, False)
-                        If backupKey IsNot Nothing Then
-                            For Each valueName In {LFX_GUID, GFX_GUID, SFX_GUID, MFX_GUID, EFX_GUID}
-                                Dim val As Object = backupKey.GetValue(valueName)
-                                If val IsNot Nothing Then
-                                    writer.WriteLine($"""{valueName}""=""{val.ToString()}""")
-                                End If
-                            Next
-                        End If
-                    End Using
-                End Using
-            Catch ex As Exception
-            End Try
-
             Return True
 
         Catch ex As Exception
@@ -2672,6 +2651,12 @@ Public Class Form1
 
             psi.Arguments = "start Audiosrv"
             Process.Start(psi).WaitForExit()
+
+            ' Wait a bit longer for audio service to fully initialize
+            Threading.Thread.Sleep(1000)
+            
+            ' Update VU meter device after audio service restart
+            UpdateVUMeterDevice()
 
             Return True
         Catch ex As Exception
