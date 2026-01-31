@@ -1700,6 +1700,9 @@ Public Class Form1
 
         ' Load new connector settings
         LoadCurrentConnectorSettings()
+
+        ' Update VU meter to monitor the newly selected device
+        UpdateVUMeterDevice()
     End Sub
 
     Private Sub EFFECTOR_TEXT_TextChanged(sender As Object, e As EventArgs) Handles EFFECTOR_TEXT.TextChanged
@@ -2509,7 +2512,7 @@ Public Class Form1
             End Select
 
             ' Force enable audio enhancements (delete the disable flag)
-            RegDeleteValue(hKey, "{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5")
+            'RegDeleteValue(hKey, "{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5") -> bluetooth volume control does not like this. delete
 
             RegCloseKey(hKey)
             hKey = IntPtr.Zero
@@ -2755,6 +2758,8 @@ Public Class Form1
                     ' If connector actually changed, load the new connector's settings
                     If connectorChanged Then
                         LoadCurrentConnectorSettings()
+                        ' Update VU meter to monitor the new device
+                        UpdateVUMeterDevice()
                     End If
                 End If
             End If
@@ -2843,10 +2848,20 @@ Public Class Form1
         Function GetDefaultAudioEndpoint(dataFlow As EDataFlow, role As ERole, <Out> <MarshalAs(UnmanagedType.Interface)> ByRef ppDevice As IMMDevice) As Integer
     End Interface
 
+    <Guid("0BD7A1BE-7A1A-44DB-8397-CC5392387B5E")>
+    <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
+    Private Interface IMMDeviceCollection
+        Function GetCount(ByRef pcDevices As UInteger) As Integer
+        Function Item(nDevice As UInteger, <Out> <MarshalAs(UnmanagedType.Interface)> ByRef ppDevice As IMMDevice) As Integer
+    End Interface
+
     <Guid("D666063F-1587-4E43-81F1-B948E807363F")>
     <InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
     Private Interface IMMDevice
         Function Activate(ByRef iid As Guid, dwClsCtx As Integer, pActivationParams As IntPtr, <Out> <MarshalAs(UnmanagedType.IUnknown)> ByRef ppInterface As Object) As Integer
+        Function OpenPropertyStore(stgmAccess As Integer, <Out> ByRef ppProperties As IntPtr) As Integer
+        Function GetId(<Out> ByRef ppstrId As IntPtr) As Integer
+        Function GetState(ByRef pdwState As Integer) As Integer
     End Interface
 
     <Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")>
@@ -3003,6 +3018,108 @@ Public Class Form1
             End If
         Catch ex As Exception
             ' Ignore cleanup errors
+        End Try
+    End Sub
+
+    ' Update VU meter to monitor the currently selected device
+    Private Sub UpdateVUMeterDevice()
+        Try
+            ' Release existing COM objects
+            If meterInfo IsNot Nothing Then
+                Try
+                    Marshal.ReleaseComObject(meterInfo)
+                Catch
+                End Try
+                meterInfo = Nothing
+            End If
+
+            If meterDevice IsNot Nothing Then
+                Try
+                    Marshal.ReleaseComObject(meterDevice)
+                Catch
+                End Try
+                meterDevice = Nothing
+            End If
+
+            ' Get the currently selected device GUID
+            If current_connector_index >= 0 AndAlso current_connector_index < device_guids.Count Then
+                Dim deviceGuid As String = device_guids(current_connector_index)
+                
+                If Not String.IsNullOrEmpty(deviceGuid) Then
+                    ' Get device by GUID
+                    Dim enumerator As Object = New MMDeviceEnumerator()
+                    Dim iEnumerator As IMMDeviceEnumerator = DirectCast(enumerator, IMMDeviceEnumerator)
+                    
+                    ' Get device collection
+                    Dim pDevices As IntPtr = IntPtr.Zero
+                    Dim hr As Integer = iEnumerator.EnumAudioEndpoints(EDataFlow.eRender, 1, pDevices) ' 1 = DEVICE_STATE_ACTIVE
+                    
+                    If hr = 0 AndAlso pDevices <> IntPtr.Zero Then
+                        ' Get IMMDeviceCollection interface
+                        Dim deviceCollection As IMMDeviceCollection = DirectCast(Marshal.GetObjectForIUnknown(pDevices), IMMDeviceCollection)
+                        
+                        Dim count As UInteger = 0
+                        deviceCollection.GetCount(count)
+                        
+                        ' Search for device with matching GUID
+                        For i As UInteger = 0 To count - 1
+                            Dim device As IMMDevice = Nothing
+                            deviceCollection.Item(i, device)
+                            
+                            If device IsNot Nothing Then
+                                ' Get device ID
+                                Dim pDeviceId As IntPtr = IntPtr.Zero
+                                device.GetId(pDeviceId)
+                                
+                                If pDeviceId <> IntPtr.Zero Then
+                                    Dim deviceId As String = Marshal.PtrToStringUni(pDeviceId)
+                                    Marshal.FreeCoTaskMem(pDeviceId)
+                                    
+                                    ' Extract GUID from device ID (format: {0.0.0.00000000}.{GUID})
+                                    If deviceId.Contains(deviceGuid) Then
+                                        ' Found matching device
+                                        meterDevice = device
+                                        
+                                        ' Activate IAudioMeterInformation
+                                        Dim IID_IAudioMeterInformation As New Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")
+                                        Dim obj As Object = Nothing
+                                        hr = meterDevice.Activate(IID_IAudioMeterInformation, 0, IntPtr.Zero, obj)
+                                        If hr = 0 Then
+                                            meterInfo = DirectCast(obj, IAudioMeterInformation)
+                                        End If
+                                        Exit For
+                                    End If
+                                End If
+                            End If
+                        Next
+                        
+                        Marshal.ReleaseComObject(deviceCollection)
+                    End If
+                    
+                    Marshal.ReleaseComObject(iEnumerator)
+                End If
+            End If
+            
+            ' If we couldn't get the specific device, fall back to default
+            If meterDevice Is Nothing OrElse meterInfo Is Nothing Then
+                Dim enumerator As Object = New MMDeviceEnumerator()
+                Dim iEnumerator As IMMDeviceEnumerator = DirectCast(enumerator, IMMDeviceEnumerator)
+                
+                Dim hr As Integer = iEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, meterDevice)
+                If hr = 0 Then
+                    Dim IID_IAudioMeterInformation As New Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")
+                    Dim obj As Object = Nothing
+                    hr = meterDevice.Activate(IID_IAudioMeterInformation, 0, IntPtr.Zero, obj)
+                    If hr = 0 Then
+                        meterInfo = DirectCast(obj, IAudioMeterInformation)
+                    End If
+                End If
+                
+                Marshal.ReleaseComObject(iEnumerator)
+            End If
+            
+        Catch ex As Exception
+            ' Silently fail - VU meter will just not work
         End Try
     End Sub
 
