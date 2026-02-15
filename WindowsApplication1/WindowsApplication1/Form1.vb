@@ -172,11 +172,9 @@ Public Class Form1
 
     ' Structure to hold config data (for JSON serialization)
     Public Class ConfigData
-        Public Property LastConnectorIndex As Integer
         Public Property CustomPresets As Dictionary(Of String, PresetData)
 
         Public Sub New()
-            LastConnectorIndex = 0
             CustomPresets = New Dictionary(Of String, PresetData)()
         End Sub
     End Class
@@ -837,6 +835,40 @@ Public Class Form1
             Return displayName.Substring(0, parenIndex).Trim()
         End If
         Return displayName
+    End Function
+
+    ' Get the GUID of the currently active default audio device
+    Private Function GetDefaultAudioDeviceGuid() As String
+        Try
+            Dim enumerator As Object = New MMDeviceEnumerator()
+            Dim iEnumerator As IMMDeviceEnumerator = DirectCast(enumerator, IMMDeviceEnumerator)
+            
+            ' Get default audio output device
+            Dim defaultDevice As IMMDevice = Nothing
+            Dim hr As Integer = iEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, defaultDevice)
+            
+            If hr = 0 AndAlso defaultDevice IsNot Nothing Then
+                ' Get device ID
+                Dim pDeviceId As IntPtr = IntPtr.Zero
+                defaultDevice.GetId(pDeviceId)
+                
+                If pDeviceId <> IntPtr.Zero Then
+                    Dim deviceId As String = Marshal.PtrToStringUni(pDeviceId)
+                    Marshal.FreeCoTaskMem(pDeviceId)
+                    
+                    ' Extract GUID from device ID (format: {0.0.0.00000000}.{GUID})
+                    ' The GUID we need is after the last '.'
+                    If deviceId.Contains("}.{") Then
+                        Dim startIndex As Integer = deviceId.LastIndexOf(".{") + 1
+                        Dim guid As String = deviceId.Substring(startIndex)
+                        Return guid
+                    End If
+                End If
+            End If
+        Catch ex As Exception
+            ' If we can't get default device, return empty string
+        End Try
+        Return String.Empty
     End Function
 
     ' Update the form title bar with current connector name
@@ -1582,13 +1614,29 @@ Public Class Form1
             connector_selector.Items.Add(connectorName)
         Next
         If connector_names.Count > 0 Then
-            ' Set to last used connector from config, or default to 0
-            If current_connector_index >= 0 AndAlso current_connector_index < connector_names.Count Then
-                connector_selector.SelectedIndex = current_connector_index
+            ' Find and select the currently active default audio device
+            Dim defaultGuid As String = GetDefaultAudioDeviceGuid()
+            Dim foundIndex As Integer = -1
+            
+            ' Search for the default device in our device list
+            If Not String.IsNullOrEmpty(defaultGuid) Then
+                For i As Integer = 0 To device_guids.Count - 1
+                    If device_guids(i).Equals(defaultGuid, StringComparison.OrdinalIgnoreCase) Then
+                        foundIndex = i
+                        Exit For
+                    End If
+                Next
+            End If
+            
+            ' Use found default device, or fall back to first device if not found
+            If foundIndex >= 0 Then
+                connector_selector.SelectedIndex = foundIndex
+                current_connector_index = foundIndex
             Else
                 connector_selector.SelectedIndex = 0
                 current_connector_index = 0
             End If
+            
             UpdateTitleBar()
             UpdateAPOStatusIndicator()
         End If
@@ -1977,7 +2025,6 @@ Public Class Form1
     Private Sub SaveConfig()
         Try
             Dim config As New ConfigData With {
-                .LastConnectorIndex = current_connector_index,
                 .CustomPresets = customPresets
             }
 
@@ -1996,11 +2043,6 @@ Public Class Form1
                 Dim json As String = System.IO.File.ReadAllText(configFilePath, System.Text.Encoding.UTF8)
                 Dim serializer As New JavaScriptSerializer()
                 Dim config As ConfigData = serializer.Deserialize(Of ConfigData)(json)
-
-                ' Load last connector index
-                If config.LastConnectorIndex >= 0 AndAlso config.LastConnectorIndex < connector_names.Count Then
-                    current_connector_index = config.LastConnectorIndex
-                End If
 
                 ' Load custom presets
                 If config.CustomPresets IsNot Nothing Then
