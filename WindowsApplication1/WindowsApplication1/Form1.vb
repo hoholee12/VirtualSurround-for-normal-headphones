@@ -65,6 +65,7 @@ Public Class Form1
     Private Const KEY_CREATE_SUB_KEY As Integer = &H4
     Private Const REG_SZ As UInteger = 1
     Private Const REG_MULTI_SZ As UInteger = 7
+    Private Const REG_DWORD As UInteger = 4
     Private Const ERROR_SUCCESS As Integer = 0
 
     <StructLayout(LayoutKind.Sequential)>
@@ -1934,7 +1935,11 @@ Public Class Form1
         End If
 
         If InstallAPOToDevice(deviceGuid, installMode) Then
-            MsgBox("APO installed successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes.", MsgBoxStyle.Information, "Installation Complete")
+            Dim message As String = "APO installed successfully." & vbCrLf & vbCrLf & "The audio service will now restart to apply changes."
+            If installMode = 2 Then
+                message &= vbCrLf & vbCrLf & "Bluetooth Handsfree setting has been disabled for bluetooth APO compatibility."
+            End If
+            MsgBox(message, MsgBoxStyle.Information, "Installation Complete")
             RestartAudioService()
             UpdateAPOStatusIndicator()
             UpdateVUMeterDevice()
@@ -2556,6 +2561,23 @@ Public Class Form1
                     RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},5", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
                     RegSetValueEx(hKey, "{d3993a3f-99c2-4402-b5ec-a92a0367664b},7", 0, REG_MULTI_SZ, processingModeBytes, CUInt(processingModeBytes.Length))
                     ' Don't touch MFX - leave it for driver if it exists
+                    
+                    ' Set Bluetooth audio compatibility settings
+                    Dim hBluetoothKey As IntPtr = IntPtr.Zero
+                    Dim btResult As Integer = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SYSTEM\ControlSet001\Control\Bluetooth\Audio\Hfp\HandsFree", 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, hBluetoothKey)
+                    If btResult = ERROR_SUCCESS Then
+                        Dim enabledValue As UInteger = 0
+                        RegSetValueEx(hBluetoothKey, "Enabled", 0, REG_DWORD, BitConverter.GetBytes(enabledValue), 4)
+                        RegCloseKey(hBluetoothKey)
+                    End If
+                    
+                    Dim hBluetoothAGKey As IntPtr = IntPtr.Zero
+                    btResult = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SYSTEM\ControlSet001\Control\Bluetooth\Audio\Hfp\AudioGateway", 0, KEY_SET_VALUE Or KEY_WOW64_64KEY, hBluetoothAGKey)
+                    If btResult = ERROR_SUCCESS Then
+                        Dim enabledValue As UInteger = 0
+                        RegSetValueEx(hBluetoothAGKey, "Enabled", 0, REG_DWORD, BitConverter.GetBytes(enabledValue), 4)
+                        RegCloseKey(hBluetoothAGKey)
+                    End If
             End Select
 
             ' Force enable audio enhancements (delete the disable flag)
