@@ -59,11 +59,16 @@ def _eq_db(s):       # slider2/3 - 160 Hz / 2500 Hz bands
 
 def _graphiceq_points(effect_type, low_eq, high_eq, filter_slider, bass_shelf=0):
     """VB temp_file[14]: 4-point GraphicEQ -> (g_low, g_160, g_2500, g_hi) dB.
-    bass_shelf: dB reduction applied at 1 Hz (linear rolloff to 0 dB at 160 Hz).
+    bass_shelf: dB reduction at 1 Hz, linear rolloff in log-frequency to 0 dB at 16 kHz.
     """
     f, lo, hi = _filter_db(filter_slider), _eq_db(low_eq), _eq_db(high_eq)
-    g_low = f - bass_shelf if effect_type in (1, 2) else f + 6 - bass_shelf
-    return (g_low, lo, hi, f) if effect_type in (1, 2) else (g_low, lo + 3, hi, f)
+    pts = [f, lo, hi, f] if effect_type in (1, 2) else [f + 6, lo + 3, hi, f]
+    if bass_shelf:
+        ctrl_hz = [1.0, 160.0, 2500.0, 16000.0]
+        log_max = np.log10(ctrl_hz[-1])
+        for i, hz in enumerate(ctrl_hz):
+            pts[i] -= bass_shelf * (1.0 - np.log10(hz) / log_max)
+    return tuple(pts)
 
 
 def _apply_graphiceq(L, R, sr, g_low, g_160, g_2500, g_hi):
@@ -185,7 +190,7 @@ def _reverb_taps(effect_type, s):
 def generate_ir(
     effect_type=1, effect_depth=3, low_eq=3, high_eq=3,
     filter_slider=3, volume=3, channel=1,
-    sample_rate=48000, duration=None, bass_shelf=16,
+    sample_rate=48000, duration=None, bass_shelf=12,
 ):
     """
     Generate a convolution IR from VEFX slider values.
@@ -360,8 +365,8 @@ if __name__ == '__main__':
     p.add_argument('--output',       '-o',    type=str)
     p.add_argument('--vefx',         type=str, metavar='ET ED LE HE FI VOL CHAN BGFX',
                    help='Parse preset string "et ed le he fi vol chan bgfx" (e.g., "1 5 4 5 6 5 1 0")')
-    p.add_argument('--bass-shelf',   type=float, default=16.0, metavar='dB',
-                   help='Bass rolloff: dB reduction at 1 Hz, linear to 0 dB at 160 Hz (default 16)')
+    p.add_argument('--bass-shelf',   type=float, default=12.0, metavar='dB',
+                   help='Bass rolloff: dB reduction at 1 Hz, linear to 0 dB at 160 Hz (default 12)')
     args = p.parse_args()
 
     # Parse --vefx preset string if provided
