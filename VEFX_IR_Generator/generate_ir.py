@@ -284,7 +284,7 @@ def generate_ir(
         #   speaker HPF 250 Hz + GraphicEQ HPF 400 Hz  →  net HPF 400 Hz
         # Echo has a gap at 160-250 Hz (type 2) or 160-400 Hz (type 3)
         if apply_lpf and effect_type in (2, 3):
-            sos_bass = sp.butter(4, 160.0 / (sample_rate / 2.0), btype='low', output='sos')
+            sos_bass = sp.butter(4, 250.0 / (sample_rate / 2.0), btype='low', output='sos')
             if effect_type == 2:
                 sos_upper = sp.butter(2, [250.0, 400.0], btype='bandpass',
                                       fs=sample_rate, output='sos')
